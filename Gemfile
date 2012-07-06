@@ -9,6 +9,10 @@ gem 'sinatra-contrib'
 gem 'oauth2'
 gem 'activerecord'
 gem 'sinatra-session'
-gem 'sqlite3'
 gem 'uuidtools'
 gem 'rake'
+
+group :test, :development do
+  gem 'rspec'
+  gem 'sqlite3'
+end
