@@ -26,6 +26,9 @@ namespace :db do
 end
 
 RSpec::Core::RakeTask.new do |spec|
+  if File.exists?('db/test.sqlite3')
+    File.unlink('db/test.sqlite3')
+  end
   require './test/spec/spec_helper'
   ActiveRecord::Base.logger = Logger.new(STDOUT)
   ActiveRecord::Migration.verbose = true
