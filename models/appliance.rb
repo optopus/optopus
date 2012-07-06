@@ -9,7 +9,7 @@ class Appliance < ActiveRecord::Base
 
   def assign_uuid
     unless self.serial_number.nil? or self.primary_mac_address.nil?
-      self.uuid = UUIDTools::UUID.md5_create(UUIDTools::UUID_DNS_NAMESPACE, "#{self.serial_number.downcase} #{self.primary_mac_address.downcase}").to_s
+      self.uuid = "#{self.serial_number.downcase} #{self.primary_mac_address.downcase}".to_md5_uuid
     end
   end
 end
