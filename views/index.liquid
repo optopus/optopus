@@ -1,0 +1,11 @@
+{% extends "layout" %}
+<div class='row'>
+  <div class='span12'>
+    <h1>Hardware waiting to be provisioned</h1>
+    <ul>
+      {% for appliance in appliances %}
+        <li><a href="/appliances/{{ appliance.uuid }}">{{ appliance.serial_number }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
