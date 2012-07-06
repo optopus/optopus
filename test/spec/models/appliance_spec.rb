@@ -20,4 +20,9 @@ describe Appliance, '#new' do
     appliance = Appliance.new(:serial_number => @valid_serial_number, :primary_mac_address => @valid_mac_address)
     appliance.save!
   end
+
+  it 'fails to save when supplied the same serial_number and primary_mac_address' do
+    appliance = Appliance.new(:serial_number => @valid_serial_number, :primary_mac_address => @valid_mac_address)
+    expect { appliance.save! }.to raise_error(ActiveRecord::RecordInvalid)
+  end
 end
