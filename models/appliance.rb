@@ -1,6 +1,7 @@
 class Appliance < ActiveRecord::Base
   include AttributesToLiquidMethodsMapper
 
+  set_primary_key :uuid
   validates :serial_number, :primary_mac_address, :presence => true
   before_create :assign_uuid
 
