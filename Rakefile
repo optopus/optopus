@@ -1,11 +1,10 @@
 require 'app'
 require 'active_record/fixtures'
+require 'rspec/core/rake_task'
 
 namespace :db do
   task :environment do
     require 'active_record'
-    db_config = YAML::load(File.open(File.join(File.dirname(__FILE__), 'config', 'databases.yaml')))[Inventory::App.environment.to_s]
-    ActiveRecord::Base.establish_connection(db_config)
   end
 
   desc 'Migrate the database'
@@ -24,4 +23,12 @@ namespace :db do
       end
     end
   end
+end
+
+RSpec::Core::RakeTask.new do |spec|
+  require './test/spec/spec_helper'
+  ActiveRecord::Base.logger = Logger.new(STDOUT)
+  ActiveRecord::Migration.verbose = true
+  ActiveRecord::Migrator.migrate('db/migrate')
+  spec.pattern = './test/spec{,/*/**}/*_spec.rb'
 end
