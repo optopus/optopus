@@ -17,8 +17,11 @@ def app
   Inventory::App
 end
 
-RSpec.configure do |config|
-  config.include Rack::Test::Methods
-  config.color_enabled = true
-  config.formatter = :documentation
+# Seems to run tests more than once if we do RSpec.configure more than once
+unless RSpec.configuration.color_enabled == true
+  RSpec.configure do |config|
+    config.include Rack::Test::Methods
+    config.color_enabled = true
+    config.formatter = :documentation
+  end
 end
