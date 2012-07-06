@@ -42,7 +42,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     }
     post '/api/appliance/register', params
     last_response.status.should == 202
-    Appliance.where(:uuid => @appliance_uuid).first.bmc_ip_address.should == @valid_ip_address
+    Optopus::Appliance.where(:uuid => @appliance_uuid).first.bmc_ip_address.should == @valid_ip_address
   end
 
   it 'updates an appliance with bmc_mac_address' do
@@ -53,7 +53,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     }
     post '/api/appliance/register', params
     last_response.status.should == 202
-    Appliance.where(:uuid => @appliance_uuid).first.bmc_mac_address.should == @valid_mac_address
+    Optopus::Appliance.where(:uuid => @appliance_uuid).first.bmc_mac_address.should == @valid_mac_address
   end
 
   it 'updates an appliance with model' do
@@ -64,7 +64,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     }
     post '/api/appliance/register', params
     last_response.status.should == 202
-    Appliance.where(:uuid => @appliance_uuid).first.model.should == @valid_model
+    Optopus::Appliance.where(:uuid => @appliance_uuid).first.model.should == @valid_model
   end
 
   it 'updates an appliance with brand' do
@@ -75,7 +75,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     }
     post '/api/appliance/register', params
     last_response.status.should == 202
-    Appliance.where(:uuid => @appliance_uuid).first.brand.should == @valid_brand
+    Optopus::Appliance.where(:uuid => @appliance_uuid).first.brand.should == @valid_brand
   end
 
   it 'updates an appliance with switch_name' do
@@ -86,7 +86,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     }
     post '/api/appliance/register', params
     last_response.status.should == 202
-    Appliance.where(:uuid => @appliance_uuid).first.switch_name.should == @valid_switch_name
+    Optopus::Appliance.where(:uuid => @appliance_uuid).first.switch_name.should == @valid_switch_name
   end
 
   it 'updates an appliance with switch_port' do
@@ -97,6 +97,6 @@ describe Optopus::App, 'POST /api/appliance/register' do
     }
     post '/api/appliance/register', params
     last_response.status.should == 202
-    Appliance.where(:uuid => @appliance_uuid).first.switch_port.should == @valid_switch_port
+    Optopus::Appliance.where(:uuid => @appliance_uuid).first.switch_port.should == @valid_switch_port
   end
 end

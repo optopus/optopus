@@ -6,9 +6,9 @@ module Optopus
       begin
         validate_param_precense 'serial_number', 'primary_mac_address'
         uuid = "#{params['serial_number'].downcase} #{params['primary_mac_address'].downcase}".to_md5_uuid
-        appliance = Appliance.where(:uuid => uuid).first
+        appliance = Optopus::Appliance.where(:uuid => uuid).first
         if appliance.nil?
-          appliance = Appliance.new(:serial_number => params['serial_number'], :primary_mac_address => params['primary_mac_address'])
+          appliance = Optopus::Appliance.new(:serial_number => params['serial_number'], :primary_mac_address => params['primary_mac_address'])
           logger.info "New appliance found: #{appliance.serial_number} #{appliance.primary_mac_address}"
         end
         appliance.bmc_ip_address = params.delete('bmc_ip_address')
