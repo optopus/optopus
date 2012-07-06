@@ -1,12 +1,17 @@
-require File.join(File.dirname(__FILE__), '..', '..', 'app')
 require 'rack/test'
+require 'sinatra/base'
+
 module Inventory
-  class App
-    set :environment, :test
-    set :raise_errors, :true
-    set :logging, :false
+  class App < Sinatra::Base
+    configure do
+      set :environment, :test
+      set :raise_errors, :true
+      set :logging, :false
+    end
   end
 end
+
+require File.join(File.dirname(__FILE__), '..', '..', 'app')
 
 def app
   Inventory::App
