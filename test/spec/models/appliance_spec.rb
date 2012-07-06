@@ -10,7 +10,7 @@ describe Appliance, '#new' do
     expect { appliance.save! }.to raise_error(ActiveRecord::RecordInvalid)
   end
 
-  it 'saves successfully' do
+  it 'saves successfully when supplied a serial_number and primary_mac_address' do
     appliance = Appliance.new(:serial_number => 'testserial', :primary_mac_address => '01:23:45:67:89:ab')
     appliance.save!
   end
