@@ -13,7 +13,7 @@ require 'attributes_to_liquid_methods_mapper'
 require 'uuidtools'
 require 'active_record'
 
-module Inventory
+module Optopus
   class App < Sinatra::Base
     register Sinatra::ConfigFile
     register Sinatra::Session
@@ -24,7 +24,7 @@ module Inventory
     enable :method_override
     use Rack::Flash
 
-    db_config = YAML::load(File.open(File.join(File.dirname(__FILE__), 'config', 'databases.yaml')))[Inventory::App.environment.to_s]
+    db_config = YAML::load(File.open(File.join(File.dirname(__FILE__), 'config', 'databases.yaml')))[Optopus::App.environment.to_s]
     ActiveRecord::Base.establish_connection(db_config)
   end
 end

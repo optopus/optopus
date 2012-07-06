@@ -1,4 +1,4 @@
-module Inventory
+module Optopus
   class App
     class ParamError < StandardError; end
 

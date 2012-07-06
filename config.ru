@@ -1,4 +1,4 @@
 require 'app'
 map '/' do
-  run Inventory::App
+  run Optopus::App
 end

@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), '..', 'spec_helper')
 
-describe Inventory::App, 'POST /api/appliance/register' do
+describe Optopus::App, 'POST /api/appliance/register' do
   include Rack::Test::Methods
 
   before(:all) do

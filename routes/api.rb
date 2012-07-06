@@ -1,4 +1,4 @@
-module Inventory
+module Optopus
   class App
     after '/api/*', :provides => :json do; end
 

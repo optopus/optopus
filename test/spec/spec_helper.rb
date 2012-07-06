@@ -1,7 +1,7 @@
 require 'rack/test'
 require 'sinatra/base'
 
-module Inventory
+module Optopus
   class App < Sinatra::Base
     configure do
       set :environment, :test
@@ -14,7 +14,7 @@ end
 require File.join(File.dirname(__FILE__), '..', '..', 'app')
 
 def app
-  Inventory::App
+  Optopus::App
 end
 
 # Seems to run tests more than once if we do RSpec.configure more than once
