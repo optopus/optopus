@@ -7,6 +7,10 @@ require 'sinatra/session'
 require 'logger'
 require 'rack-flash'
 require 'core_ext/kernel'
+require 'liquid'
+require 'attributes_to_liquid_methods_mapper'
+require 'uuidtools'
+require 'active_record'
 
 module Inventory
   class App < Sinatra::Base
@@ -18,6 +22,9 @@ module Inventory
     enable :sessions
     enable :method_override
     use Rack::Flash
+
+    db_config = YAML::load(File.open(File.join(File.dirname(__FILE__), 'config', 'databases.yaml')))[Inventory::App.environment.to_s]
+    ActiveRecord::Base.establish_connection(db_config)
   end
 end
 
