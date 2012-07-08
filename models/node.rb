@@ -22,6 +22,12 @@ module Optopus
         # TODO: determine best way to associate an appliance with virtual nodes
       else
         self.appliance = Appliance.where(:uuid => self.uuid).first
+        unless self.appliance.nil?
+          unless self.appliance.provisioned
+            self.appliance.provisioned = true
+            self.appliance.save!
+          end
+        end
       end
     end
   end
