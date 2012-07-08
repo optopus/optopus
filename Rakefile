@@ -26,12 +26,12 @@ namespace :db do
 end
 
 RSpec::Core::RakeTask.new do |spec|
-  if File.exists?('db/test.sqlite3')
-    File.unlink('db/test.sqlite3')
-  end
-  require './test/spec/spec_helper'
-  ActiveRecord::Base.logger = Logger.new(STDOUT)
-  ActiveRecord::Migration.verbose = true
-  ActiveRecord::Migrator.migrate('db/migrate')
   spec.pattern = './test/spec{,/*/**}/*_spec.rb'
+end
+
+task :test do
+  require './test/spec/spec_helper'
+  File.unlink('db/test.sqlite3') if File.exists?('db/test.sqlite3')
+  Rake::Task['db:migrate'].invoke
+  Rake::Task['spec'].invoke
 end
