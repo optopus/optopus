@@ -14,6 +14,11 @@ namespace :db do
     ActiveRecord::Migrator.migrate('db/migrate')
   end
 
+  desc 'Load up seed data'
+  task(:seed => :environment) do
+    require_relative 'db/seed'
+  end
+
   namespace :fixtures do
     desc 'Load fixtures'
     task(:load => :environment) do
