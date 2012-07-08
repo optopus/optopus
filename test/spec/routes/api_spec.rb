@@ -11,6 +11,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     @valid_brand = 'Dell'
     @valid_switch_name = 'testswitch'
     @valid_switch_port = 'ge-0/0/0'
+    @location_name = 'test03'
     @appliance_uuid = "#{@valid_serial_number} #{@valid_mac_address}".to_md5_uuid
   end
 
@@ -29,8 +30,13 @@ describe Optopus::App, 'POST /api/appliance/register' do
     last_response.status.should == 400
   end
 
-  it 'returns a 202 when serial_number and primary_mac_address are supplied' do
-    post '/api/appliance/register', { 'serial_number' => @valid_serial_number, 'primary_mac_address' => @valid_mac_address }
+  it 'returns a 202 when serial_number, primary_mac_address, and location_name are supplied' do
+    params = {
+      'serial_number' => @valid_serial_number,
+      'primary_mac_address' => @valid_mac_address,
+      'location_name' => @location_name,
+    }
+    post '/api/appliance/register', params
     last_response.status.should == 202
   end
 
@@ -38,6 +44,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     params = {
       'serial_number' => @valid_serial_number,
       'primary_mac_address' => @valid_mac_address,
+      'location_name' => @location_name,
       'bmc_ip_address' => @valid_ip_address,
     }
     post '/api/appliance/register', params
@@ -49,6 +56,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     params = {
       'serial_number' => @valid_serial_number,
       'primary_mac_address' => @valid_mac_address,
+      'location_name' => @location_name,
       'bmc_mac_address' => @valid_mac_address,
     }
     post '/api/appliance/register', params
@@ -60,6 +68,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     params = {
       'serial_number' => @valid_serial_number,
       'primary_mac_address' => @valid_mac_address,
+      'location_name' => @location_name,
       'model' => @valid_model,
     }
     post '/api/appliance/register', params
@@ -71,6 +80,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     params = {
       'serial_number' => @valid_serial_number,
       'primary_mac_address' => @valid_mac_address,
+      'location_name' => @location_name,
       'brand' => @valid_brand,
     }
     post '/api/appliance/register', params
@@ -82,6 +92,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     params = {
       'serial_number' => @valid_serial_number,
       'primary_mac_address' => @valid_mac_address,
+      'location_name' => @location_name,
       'switch_name' => @valid_switch_name,
     }
     post '/api/appliance/register', params
@@ -93,6 +104,7 @@ describe Optopus::App, 'POST /api/appliance/register' do
     params = {
       'serial_number' => @valid_serial_number,
       'primary_mac_address' => @valid_mac_address,
+      'location_name' => @location_name,
       'switch_port' => @valid_switch_port,
     }
     post '/api/appliance/register', params

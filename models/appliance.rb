@@ -2,11 +2,13 @@ module Optopus
   class Appliance < ActiveRecord::Base
     include AttributesToLiquidMethodsMapper
 
-    validates :serial_number, :primary_mac_address, :uuid, :presence => true
+    validates :serial_number, :primary_mac_address, :uuid, :location, :presence => true
     validates_uniqueness_of :uuid
+    validates_associated :location
     before_validation :assign_uuid
 
     has_many :nodes
+    belongs_to :location
 
     private
 
