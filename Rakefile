@@ -36,7 +36,9 @@ end
 
 task :test do
   require './test/spec/spec_helper'
-  File.unlink('db/test.sqlite3') if File.exists?('db/test.sqlite3')
+  Optopus::Node.destroy_all
+  Optopus::Appliance.destroy_all
+  Optopus::Location.destroy_all
   Rake::Task['db:migrate'].invoke
   Rake::Task['spec'].invoke
 end
