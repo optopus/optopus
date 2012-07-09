@@ -26,3 +26,7 @@ Finally, run migrations to get necessary schema:
 If you want to populate some seed data for development:
 
     # bundle exec rake db:seed
+
+Running rspec tests:
+
+    # bundle exec rake test
