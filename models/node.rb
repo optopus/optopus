@@ -9,6 +9,8 @@ module Optopus
     before_save :assign_appliance
     belongs_to :appliance
 
+    serialize :facts, ActiveRecord::Coders::Hstore
+
     private
 
     def assign_uuid
