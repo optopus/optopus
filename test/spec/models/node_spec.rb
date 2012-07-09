@@ -42,3 +42,37 @@ describe Optopus::Node, '#new' do
     expect { node.save! }.to raise_error(ActiveRecord::RecordInvalid)
   end
 end
+
+describe Optopus::Node, '#facts' do
+  before(:all) do
+    @facts = {
+      'architecture' => 'x86_64',
+      'domain' => 'home',
+      'fqdn' => 'air.home',
+      'hardwareisa' => 'i386',
+      'hardwaremodel' => 'x86_64',
+      'hostname' => 'air',
+      'id' => 'crazed',
+      'interfaces' => 'lo0,gif0,stf0,en0,p2p0',
+      'ipaddress' => '192.168.1.4',
+    }
+    @node = Optopus::Node.create(
+      :hostname => 'facttest',
+      :serial_number => 'testtest',
+      :primary_mac_address => '01:02:04:04:04:06',
+      :virtual => true
+    )
+  end
+
+  it 'inserts artbitrary key => value items into facts' do
+    @node.facts = @facts
+    @node.save!
+    @node.reload
+    @node.facts.should == @facts
+  end
+
+  it 'can query for facts previously inserted' do
+    node = Optopus::Node.where("facts @> (:key => :value)", :key => 'id', :value => 'crazed').first
+    node.uuid.should == @node.uuid
+  end
+end
