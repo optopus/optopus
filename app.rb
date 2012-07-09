@@ -12,6 +12,8 @@ require 'liquid'
 require 'attributes_to_liquid_methods_mapper'
 require 'uuidtools'
 require 'active_record'
+require 'activerecord-postgres-hstore'
+require 'activerecord-postgres-hstore/activerecord'
 
 module Optopus
   class App < Sinatra::Base
