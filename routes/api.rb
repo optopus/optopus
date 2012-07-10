@@ -2,6 +2,41 @@ module Optopus
   class App
     after '/api/*', :provides => :json do; end
 
+    post '/api/node/register' do
+      begin
+        data = JSON.parse(request.body.read)
+        hostname = data.delete('hostname')
+        serial_number = data.delete('serial_number')
+        primary_mac_address = data.delete('primary_mac_address')
+        facts = data.delete('facts')
+        virtual = data.delete('virtual')
+        raise "No serial_number supplied." if serial_number.nil? || serial_number.empty?
+        raise "No primary_mac_address supplied." if primary_mac_address.nil? || primary_mac_address.empty?
+        raise "No hostname supplied." if hostname.nil? || hostname.empty?
+        raise "No virtual supplied." unless virtual.kind_of?(TrueClass) || virtual.kind_of?(FalseClass)
+        node = Optopus::Node.where(:uuid => "#{serial_number} #{primary_mac_address}".to_md5_uuid).first
+        if node.nil?
+          node = Optopus::Node.new(
+            :serial_number => serial_number,
+            :primary_mac_address => primary_mac_address
+          )
+        end
+        node.virtual = virtual
+        node.hostname = hostname
+        node.facts = facts
+        node.active = true
+        node.save!
+        status 202
+      rescue JSON::ParserError => e
+        status 400
+        body({ :user_error => 'invalid JSON'}.to_json)
+      rescue Exception => e
+        status 400
+        logger.debug "received invalid data: #{request.body.read}"
+        body({ :user_error => e.to_s }.to_json)
+      end
+    end
+
     post '/api/appliance/register' do
       begin
         validate_param_precense 'serial_number', 'primary_mac_address', 'location_name'
