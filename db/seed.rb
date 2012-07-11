@@ -1,8 +1,25 @@
 unless Optopus::App.production?
   # create a bunch of seed data for development purposes
-  [ 'ma01', 'nyc01', 'tx01' ].each do |location_name|
-    if Optopus::Location.where(:common_name => location_name).first.nil?
-      Optopus::Location.create!(:common_name => location_name)
+  location_data = [
+    {
+      :common_name => 'ma01',
+      :city => 'Boston',
+      :state => 'MA',
+    },
+    {
+      :common_name => 'tx01',
+      :city => 'Dallas',
+      :state => 'TX',
+    },
+    {
+      :common_name => 'nyc01',
+      :city => 'New York',
+      :state => 'NY',
+    }
+  ]
+  location_data.each do |data|
+    if Optopus::Location.where(:common_name => data[:common_name]).first.nil?
+      Optopus::Location.create!(:common_name => data[:common_name], :city => data[:city], :state => data[:state])
     end
   end
   appliance_data = [
