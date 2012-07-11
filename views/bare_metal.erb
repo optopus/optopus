@@ -10,5 +10,33 @@
     <div class="page-header">
       <h3><%= location.common_name.upcase %> <small><%= location.city.downcase %>, <%= location.state.downcase %></small></h3>
     </div>
+    <table class="table table-condensed table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Brand</th>
+          <th>Model</th>
+          <th>Serial Number</th>
+          <th>Primary Mac Address</th>
+          <th>Nodes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% location.appliances.each do |appliance| %>
+          <tr>
+            <td><%= appliance.brand.human_empty %></td>
+            <td><%= appliance.model.human_empty %></td>
+            <td><code><%= appliance.serial_number %></code></td>
+            <td><code><%= appliance.primary_mac_address %></code></td>
+            <td>
+              <ul class="unstyled">
+                <% appliance.nodes.each do |node| %>
+                  <li><%= node.hostname %></li>
+                <% end %>
+              </ul>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </section>
 <% end %>
