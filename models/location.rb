@@ -1,7 +1,7 @@
 module Optopus
   class Location < ActiveRecord::Base
 
-    validates :common_name, :presence => true
+    validates :common_name, :city, :state, :presence => true
     validates_uniqueness_of :common_name
 
     has_many :appliances
