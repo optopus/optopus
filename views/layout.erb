@@ -4,15 +4,14 @@
     <title>Optopus</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.css">
-    <style>
-      /*<![CDATA[*/
-        body {
-          padding-top: 60px;
-        }
-      /*]]>*/
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="bootstrap/js/boostrap-scrollspy.js"></script>
+    <script>
+      $('.subnav').scrollspy();
+    </script>
   </head>
-  <body>
+  <body data-spy="scroll">
     <div class='navbar navbar-fixed-top'>
       <div class='navbar-inner'>
         <div class='container'>
@@ -25,15 +24,25 @@
           <div class='nav-collapse'>
             <ul class='nav'>
               <li class='active'>
-                <a href='#'>Test</a>
+                <a href='#'>Overview</a>
+              </li>
+              <li>
+                <a href='#'>Bare Metal</a>
+              </li>
+              <li>
+                <a href='#'>Nodes</a>
+              </li>
+              <li>
+                <a href='#'>Network</a>
               </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
-    <div class='container'>
-      {{ yield }}
+    <%= erb :subnav %>
+    <div class="container">
+      <%= yield %>
     </div>
   </body>
 </html>

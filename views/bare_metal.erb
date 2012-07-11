@@ -1,0 +1,7 @@
+<% locations.each do |location| %>
+  <section id="<%= html_id(location.common_name) %>">
+    <div class="page-header">
+      <h3><%= location.common_name.upcase %> <small><%= location.city.downcase %>, <%= location.state.downcase %></small></h3>
+    </div>
+  </section>
+<% end %>
