@@ -1,3 +1,10 @@
+<script>
+  $('#bare_metal').addClass('active');
+</script>
+<header class="jumbotron subhead">
+  <h1>Bare Metal</h1>
+  <p class="lead">All of your physical hardware will show up here as it registers.</p>
+</header>
 <% locations.each do |location| %>
   <section id="<%= html_id(location.common_name) %>">
     <div class="page-header">
