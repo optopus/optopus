@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 gem 'sinatra'
-gem 'liquid'
+gem 'erubis'
 gem 'json'
 gem 'unicorn'
 gem "rack-flash3", "~> 1.0.1"

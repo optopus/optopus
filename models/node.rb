@@ -1,6 +1,5 @@
 module Optopus
   class Node < ActiveRecord::Base
-    include AttributesToLiquidMethodsMapper
 
     validates :uuid, :hostname, :serial_number, :primary_mac_address, :presence => true
     validates :virtual, :inclusion => { :in => [true, false] }

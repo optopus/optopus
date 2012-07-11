@@ -1,7 +1,8 @@
 module Optopus
   class App
     get '/' do
-      liquid :index, :locals => { :title => 'hi', :appliances => Optopus::Appliance.all }
+      @appliances_to_be_provisioned = Optopus::Appliance.where(:provisioned => false)
+      erb :index
     end
   end
 end
