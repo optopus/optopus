@@ -1,0 +1,8 @@
+development:
+  authorization:
+    type: oauth2
+    oauth2:
+      site: https://example.com
+      token_url: /oauth/access_token
+      client_id: example
+      client_secret: secret

@@ -15,6 +15,8 @@ require 'uuidtools'
 require 'active_record'
 require 'activerecord-postgres-hstore'
 require 'activerecord-postgres-hstore/activerecord'
+require 'optopus/auth'
+require 'optopus/auth/oauth2'
 
 module Optopus
   class App < Sinatra::Base
@@ -26,6 +28,19 @@ module Optopus
     enable :sessions
     enable :method_override
     use Rack::Flash
+
+    register Optopus::Auth
+    register do
+      def auth(type)
+        condition do
+          unless send("is_#{type}?")
+            flash[:error] = 'You are unauthorized.'
+            logger.debug "Unauthorized access to #{request.url}, user must be #{type}"
+            redirect back
+          end
+        end
+      end
+    end
 
     db_config = YAML::load(File.open(File.join(File.dirname(__FILE__), 'config', 'databases.yaml')))[Optopus::App.environment.to_s]
     ActiveRecord::Base.establish_connection(db_config)
