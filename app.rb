@@ -15,6 +15,7 @@ require 'uuidtools'
 require 'active_record'
 require 'activerecord-postgres-hstore'
 require 'activerecord-postgres-hstore/activerecord'
+require 'optopus/plugins'
 require 'optopus/auth'
 require 'optopus/auth/oauth2'
 
@@ -41,6 +42,8 @@ module Optopus
         end
       end
     end
+
+    register Optopus::Plugins
 
     db_config = YAML::load(File.open(File.join(File.dirname(__FILE__), 'config', 'databases.yaml')))[Optopus::App.environment.to_s]
     ActiveRecord::Base.establish_connection(db_config)
