@@ -10,6 +10,7 @@ module Optopus
       end
 
       Optopus::Plugin.constants.each do |const|
+        next if const == 'DontCall'
         puts "Loading plugin: #{const}"
         app.register Optopus::Plugin.const_get(const)
       end
