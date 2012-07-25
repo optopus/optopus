@@ -17,3 +17,10 @@ group :test, :development do
   gem 'rspec'
   gem 'sqlite3'
 end
+
+group :plugins do
+  # Install gems from each plugin
+  Dir.glob(File.join(File.dirname(__FILE__), 'plugins', '**', 'Gemfile')) do |gemfile|
+    eval(IO.read(gemfile), binding)
+  end
+end
