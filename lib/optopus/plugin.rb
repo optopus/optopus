@@ -12,7 +12,7 @@ module Optopus
       base.set :plugin_path, File.dirname(caller[0])
       base.set :name, base.name
       base.set :root, base.name.split('::').last.downcase
-      base.set :load_views, true
+      base.set :views_path, File.join(base.plugin_settings[:plugin_path], base.plugin_settings[:root], 'views')
     end
 
     def plugin(&block)
@@ -37,9 +37,9 @@ module Optopus
 
     def registered(app = nil, &block)
       @app = app
-      load_views if plugin_settings[:load_views]
       app ? replay(app) : record(:class_eval, &block)
-      app.settings.plugin_navigation << plugin_settings[:nav_link]
+      app.settings.plugin_navigation << plugin_settings.delete(:nav_link)
+      app.settings.optopus_plugins << plugin_settings
     end
 
     def routes
@@ -67,16 +67,6 @@ module Optopus
     end
 
     private
-
-    def load_views
-      views_path = File.join(plugin_settings[:plugin_path], plugin_settings[:root], 'views')
-      Dir.glob("#{views_path}/*.erb") do |erb_file|
-        template_name = File.basename(erb_file).gsub('.erb', '')
-        @app.template template_name do
-          File.read(erb_file)
-        end
-      end
-    end
 
     def record(method, *args, &block)
       recorded_methods << [method, args, block]

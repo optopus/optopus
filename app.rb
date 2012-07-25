@@ -48,6 +48,14 @@ module Optopus
 
     db_config = YAML::load(File.open(File.join(File.dirname(__FILE__), 'config', 'databases.yaml')))[Optopus::App.environment.to_s]
     ActiveRecord::Base.establish_connection(db_config)
+
+    # Override the default find_template method so that we search through each plugins views_path
+    set :views, settings.optopus_plugins.inject([]) { |v, p| v << p[:views_path] if p.include?(:views_path) } << 'views'
+    helpers do
+      def find_template(views, name, engine, &block)
+        Array(views).each { |v| super(v, name, engine, &block) }
+      end
+    end
   end
 end
 
