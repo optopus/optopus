@@ -19,6 +19,14 @@ module Optopus
       yield
     end
 
+    def nav_link(options={})
+      if options.include?(:route) && options.include?(:display)
+        set :nav_link, options
+      else
+        raise 'nav_link must contain route and display keys'
+      end
+    end
+
     def set(key, value)
       plugin_settings[key] = value
     end
@@ -31,6 +39,7 @@ module Optopus
       @app = app
       load_views if plugin_settings[:load_views]
       app ? replay(app) : record(:class_eval, &block)
+      app.settings.plugin_navigation << plugin_settings[:nav_link]
     end
 
     def routes
