@@ -12,8 +12,11 @@ module Optopus
 
       Optopus::Plugin.constants.each do |const|
         next if const == 'DontCall'
-        puts "Loading plugin: #{const}"
-        app.register Optopus::Plugin.const_get(const)
+        # Only load a plugin if we have a configuration for it
+        if app.settings.respond_to?(:plugins) && app.settings.plugins.include?(const.downcase)
+          puts "Loading plugin: #{const}"
+          app.register Optopus::Plugin.const_get(const)
+        end
       end
     end
   end
