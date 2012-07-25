@@ -37,6 +37,7 @@ module Optopus
           unless send("is_#{type}?")
             flash[:error] = 'You are unauthorized.'
             logger.debug "Unauthorized access to #{request.url}, user must be #{type}"
+            redirect '/' if request.referer.nil?
             redirect back
           end
         end
