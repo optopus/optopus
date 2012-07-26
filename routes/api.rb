@@ -14,7 +14,8 @@ module Optopus
         raise "No primary_mac_address supplied." if primary_mac_address.nil? || primary_mac_address.empty?
         raise "No hostname supplied." if hostname.nil? || hostname.empty?
         raise "No virtual supplied." unless virtual.kind_of?(TrueClass) || virtual.kind_of?(FalseClass)
-        node = Optopus::Node.where(:uuid => "#{serial_number} #{primary_mac_address}".to_md5_uuid).first
+        uuid = "#{serial_number.downcase} #{primary_mac_address.downcase}".to_md5_uuid
+        node = Optopus::Node.where(:uuid => uuid).first
         if node.nil?
           node = Optopus::Node.new(
             :serial_number => serial_number,
