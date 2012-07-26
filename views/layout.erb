@@ -37,7 +37,7 @@
                 <a href='#'>Network</a>
               </li>
               <% settings.plugin_navigation.each do |nav_link| %>
-                <li><a href="<%= nav_link[:route] %>"><%= nav_link[:display] %></a></li>
+                <li id="<%= html_id(nav_link[:display]) %>"><a href="<%= nav_link[:route] %>"><%= nav_link[:display] %></a></li>
               <% end %>
             </ul>
             <ul class="nav pull-right">
