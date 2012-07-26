@@ -15,7 +15,6 @@ gem 'activerecord-postgresql-adapter'
 
 group :test, :development do
   gem 'rspec'
-  gem 'sqlite3'
 end
 
 group :plugins do
