@@ -27,6 +27,12 @@ module Optopus
       end
     end
 
+    def register_partial(type, partial, options)
+      plugin_settings[:partials] ||= Hash.new
+      plugin_settings[:partials][type.to_sym] ||= Array.new
+      plugin_settings[:partials][type.to_sym] << options.merge({:template => partial})
+    end
+
     def set(key, value)
       plugin_settings[key] = value
     end
@@ -38,7 +44,10 @@ module Optopus
     def registered(app = nil, &block)
       @app = app
       app ? replay(app) : record(:class_eval, &block)
-      app.settings.plugin_navigation << plugin_settings.delete(:nav_link)
+      app.settings.plugin_navigation << plugin_settings.delete(:nav_link) if plugin_settings.include?(:nav_link)
+      if plugin_settings.include?(:partials)
+        app.settings.partials[:node] += plugin_settings[:partials][:node] if plugin_settings[:partials].include?(:node)
+      end
       app.settings.optopus_plugins << plugin_settings
     end
 

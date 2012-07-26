@@ -55,6 +55,10 @@ module Optopus
       def find_template(views, name, engine, &block)
         Array(views).each { |v| super(v, name, engine, &block) }
       end
+
+      def node_partials
+        settings.partials[:node]
+      end
     end
   end
 end
