@@ -1,0 +1,139 @@
+<script>
+  $('#add-record').modal();
+  $('#modify-record').modal();
+  function modify_record(id) {
+    $.get('/api/pdns/record/'+id, function(data) {
+      console.log(data.id);
+      $('#modify-record-id').val(data.id);
+      $('#modify-record-name').val(data.short_name);
+      $('#modify-record-content').val(data.content);
+      $('#modify-record-type').val(data.type);
+      $('#modify-record-ttl').val(data.ttl);
+      $('#modify-record').modal('toggle');
+    });
+  }
+</script>
+<div class="hero-unit">
+  <h2><%= @domain %></h2>
+  <p>Modify some records</p>
+  <p><a class="btn btn-primary btn-large" data-toggle="modal" href="#add-record">Add record</a></p>
+</div>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Content</th>
+      <th>TTL</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @records.each do |record| %>
+      <tr>
+        <td><%= record['name'] %></td>
+        <td><%= record['type'] %></td>
+        <td><%= record['content'] %></td>
+        <td><%= record['ttl'] %></td>
+        <td>
+          <button style="float: left" class="btn btn-mini" onclick="modify_record('<%= record['id'] %>');">Modify</button>
+          <form method="post" action="/pdns/record/<%= record['id'] %>" class="form-inline" style="float: left; margin: 0 0 0 5px;"><input type="hidden" name="_method" value="delete"><button type="submit" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i>Delete</button></form>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="modal hide" id="modify-record">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">x</button>
+    <h3>Modify record</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" method="post">
+      <input type="hidden" id="modify-record-id" name="record-id">
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label" for="modify-record-name">Name</label>
+          <div class="controls">
+            <input type="text" class="span1" id="modify-record-name" name="name"> .<%= @domain %>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="modify-record-content">Content</label>
+          <div class="controls">
+            <input type="text" class="span3" id="modify-record-content" name="content">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="modify-record-type">Type</label>
+          <div class="controls">
+            <select id="modify-record-type" name="type">
+              <option value="A">A</option>
+              <option value="CNAME">CNAME</option>
+              <option value="SOA">SOA</option>
+              <option value="NS">NS</option>
+            </select>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="modify-record-ttl">TTL</label>
+          <div class="controls">
+            <input type="text" class=".span3" id="modify-record-ttl" name="ttl" value="600">
+          </div>
+        </div>
+        <div class="form-actions">
+          <input type="submit" value="Save" class="btn btn-primary">
+          <button class="btn" data-dismiss="modal">Cancel</button>
+        </div>
+      </fieldset>
+    </form>
+      </fieldset>
+    </form>
+  </div>
+</div>
+
+<div class="modal hide" id="add-record">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">x</button>
+    <h3>Add record to <%= @domain %></h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" method="post">
+      <input type="hidden" name="_method" value="put">
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label" for="name">Name</label>
+          <div class="controls">
+            <input type="text" class="span1" id="name" name="name"> .<%= @domain %>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="content">Content</label>
+          <div class="controls">
+            <input type="text" class="span3" id="content" name="content">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="type">Type</label>
+          <div class="controls">
+            <select id="type" name="type">
+              <option value="A">A</option>
+              <option value="CNAME">CNAME</option>
+            </select>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="ttl">TTL</label>
+          <div class="controls">
+            <input type="text" class=".span3" id="ttl" name="ttl" value="600">
+          </div>
+        </div>
+        <div class="form-actions">
+          <input type="submit" value="Save" class="btn btn-primary">
+          <button class="btn" data-dismiss="modal">Cancel</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>
