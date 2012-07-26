@@ -27,13 +27,15 @@ module Optopus
         node.facts = facts
         node.active = true
         node.save!
+        logger.info "Successful node registration via API: #{node.hostname}"
         status 202
       rescue JSON::ParserError => e
         status 400
+        logger.error "Invalid JSON data: #{request.body.read}"
         body({ :user_error => 'invalid JSON'}.to_json)
       rescue Exception => e
         status 400
-        logger.debug "received invalid data: #{request.body.read}"
+        logger.error "Ceceived invalid data: #{e}"
         body({ :user_error => e.to_s }.to_json)
       end
     end
