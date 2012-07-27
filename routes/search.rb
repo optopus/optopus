@@ -10,6 +10,9 @@ module Optopus
         query = query_parts.last
         if query.nil?
           query_string += field + ' '
+        elsif field == query
+          # we only have a query, default to hostname for now
+          query_string += "hostname:#{query}" + ' '
         else
           query = "\"#{query}\"" unless query.include?('*')
           query_string += "#{field}:#{query}" + ' '
