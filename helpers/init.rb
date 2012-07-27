@@ -19,7 +19,7 @@ module Optopus
         @locations ||= Optopus::Location.all
       end
 
-      def validate_param_precense(*keys)
+      def validate_param_presence(*keys)
         keys.each do |key|
           raise ParamError, "Missing required parameter: '#{key}'" unless params.include?(key) && !params[key].empty?
         end
