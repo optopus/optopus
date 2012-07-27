@@ -35,7 +35,7 @@ module Optopus
         body({ :user_error => 'invalid JSON'}.to_json)
       rescue Exception => e
         status 400
-        logger.error "Ceceived invalid data: #{e}"
+        logger.error "Received invalid data: #{e}"
         body({ :user_error => e.to_s }.to_json)
       end
     end
