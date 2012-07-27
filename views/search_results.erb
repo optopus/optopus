@@ -1,3 +1,8 @@
+<% if @search_query %>
+<script>
+  $('#search-query').val('<%= @search_query %>');
+</script>
+<% end %>
 <header class="jumbotron subhead">
   <h1>Search Results</h1>
   <p class="lead"><%= @results.inject(0) { |n, r| n += r[:results].size; n } %> results for <%= @search_query %></p>
