@@ -12,6 +12,7 @@ gem 'sinatra-session'
 gem 'uuidtools'
 gem 'rake'
 gem 'activerecord-postgresql-adapter'
+gem 'tire'
 
 group :test, :development do
   gem 'rspec'
