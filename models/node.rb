@@ -53,6 +53,8 @@ module Optopus
           if serial_number && primary_mac_address && location
             self.appliance = Appliance.new(:serial_number => serial_number, :primary_mac_address => primary_mac_address)
             self.appliance.location = location
+            self.appliance.brand = self.facts['boardmanufacturer']
+            self.appliance.model = self.facts['productname']
             self.appliance.save!
           end
         else
@@ -60,6 +62,9 @@ module Optopus
             self.appliance.provisioned = true
             self.appliance.save!
           end
+          self.appliance.brand = self.facts['boardmanufacturer']
+          self.appliance.model = self.facts['productname']
+          self.appliance.save!
         end
       end
     end
