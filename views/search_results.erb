@@ -6,7 +6,11 @@
   <p class="lead">Search for tings.</p>
 </header>
 
-
 <div>Hello Morld</div>
-
-
+<ul>
+  <% @results.each do |result_set| %>
+    <% result_set.each do |result| %>
+      <li><%= result.hostname %></li>
+    <% end %> 
+  <% end %>
+</ul>
