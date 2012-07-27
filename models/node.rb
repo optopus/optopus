@@ -12,6 +12,12 @@ module Optopus
 
     serialize :facts, ActiveRecord::Coders::Hstore
 
+    mapping do
+      indexes :hostname,  :boost => 100
+      indexes :primary_mac_address, :boost => 1
+      indexes :facts, :boost => 10
+    end
+
     private
 
     def assign_uuid
