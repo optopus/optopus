@@ -1,6 +1,6 @@
 <header class="jumbotron subhead">
   <h1>Search Results</h1>
-  <p class="lead">results for <%= @search_query %></p>
+  <p class="lead"><%= @results.inject(0) { |n, r| n += r[:results].size; n } %> results for <%= @search_query %></p>
 </header>
 
 <% @results.each do |result_set| %>
