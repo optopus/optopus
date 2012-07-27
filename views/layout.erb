@@ -9,8 +9,15 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="/bootstrap/js/bootstrap-scrollspy.js"></script>
     <script src="/bootstrap/js/bootstrap-modal.js"></script>
+    <script src="/js/libs/jquery.hotkeys.js"></script>
     <script>
       $('.subnav').scrollspy();
+      $(document).bind('keyup', '/', function() {
+        $('#search-query').focus();
+      });
+      $(document).bind('keyup', 'f', function() {
+        $('#search-query').focus();
+      });
     </script>
   </head>
   <body data-spy="scroll">
