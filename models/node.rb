@@ -1,5 +1,7 @@
 module Optopus
   class Node < ActiveRecord::Base
+    include Tire::Model::Search
+    include Tire::Model::Callbacks
 
     validates :uuid, :hostname, :serial_number, :primary_mac_address, :presence => true
     validates :virtual, :inclusion => { :in => [true, false] }
@@ -23,7 +25,16 @@ module Optopus
         # TODO: determine best way to associate an appliance with virtual nodes
       else
         self.appliance = Appliance.where(:uuid => self.uuid).first
-        unless self.appliance.nil?
+        if self.appliance.nil?
+          # auto generate an appliance record, since we probably want to know what physical hardware we have
+          serial_number = facts['serialnumber']
+          primary_mac_address = facts['macaddress']
+          location = Location.where(:common_name => facts['location']).first
+          if serial_number && primary_mac_address && location
+            puts "CREATING APPLIANCE"
+            #appliance = Appliance.new(:
+          end
+        else
           unless self.appliance.provisioned
             self.appliance.provisioned = true
             self.appliance.save!

@@ -18,6 +18,7 @@ require 'activerecord-postgres-hstore/activerecord'
 require 'optopus/plugins'
 require 'optopus/auth'
 require 'optopus/auth/oauth2'
+require 'tire'
 
 module Optopus
   class App < Sinatra::Base
@@ -48,6 +49,7 @@ module Optopus
 
     db_config = YAML::load(File.open(File.join(File.dirname(__FILE__), 'config', 'databases.yaml')))[Optopus::App.environment.to_s]
     ActiveRecord::Base.establish_connection(db_config)
+    Tire::Configuration.url settings.elasticsearch[:url]
 
     # Override the default find_template method so that we search through each plugins views_path
     set :views, settings.optopus_plugins.inject([]) { |v, p| v << p[:views_path] if p.include?(:views_path) } << 'views'

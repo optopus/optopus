@@ -1,5 +1,7 @@
 module Optopus
   class Appliance < ActiveRecord::Base
+    include Tire::Model::Search
+    include Tire::Model::Callbacks
 
     validates :serial_number, :primary_mac_address, :uuid, :location, :presence => true
     validates_uniqueness_of :uuid
