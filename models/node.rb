@@ -13,9 +13,10 @@ module Optopus
     serialize :facts, ActiveRecord::Coders::Hstore
 
     mapping do
-      indexes :hostname,  :boost => 100
-      indexes :primary_mac_address, :boost => 1
-      indexes :facts, :boost => 10
+      indexes :id, :index => :not_analyzed
+      indexes :hostname, :boost => 100
+      indexes :macaddress, :as => 'primary_mac_address', :boost => 10
+      indexes :ipaddress, :as => 'facts.ipaddress', :boost => 10
     end
 
     private
