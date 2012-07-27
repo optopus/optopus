@@ -2,24 +2,22 @@ module Optopus
   class App
     get '/search' do
       validate_param_presence 'query'
-      #query = params['query'].gsub(/[\{\}\[\]\(\)]/) { |s| "\\#{s}" } + '*' # quick escaping
       # since we suck at using elasticsearch, split on the first : and assume someone searched for column_name:something
       query_parts = params['query'].gsub(/[\{\}\[\]\(\)]/) { |s| "\\#{s}" }.split(':', 2)
       field = query_parts.first
       query = query_parts.last
-      query = "\"#{query}\"" unless query.include?('*')
-
+      if query.nil?
+        query_string = field
+      else
+        query = "\"#{query}\"" unless query.include?('*')
+        query_string = "#{field}:#{query}"
+      end
+      node_results = Optopus::Node.search(query_string, :size => 2000).sort { |a,b| a.hostname <=> b.hostname }
+      appliance_results = Optopus::Appliance.search(query_string, :size => 2000)
       @search_query = params['query']
       @results = Array.new
-      node_results = Optopus::Node.search(:size => 2000) do 
-        query do
-          string "#{field}:#{query}"
-        end
-
-        #(query, :size => 200)
-      end
-      @results << { :type => :node, :results => node_results.sort { |a,b| a.hostname <=> b.hostname } }
-      @results << { :type => :appliance, :results => Optopus::Appliance.search("#{field}:#{query}") }
+      @results << { :type => :node, :results => node_results }
+      @results << { :type => :appliance, :results => appliance_results }
       erb :search_results
     end
   end
