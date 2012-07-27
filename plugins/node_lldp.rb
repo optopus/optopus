@@ -17,6 +17,7 @@ module Optopus
         view << '<table class="table table-striped table-bordered table-condensed">'
         view << ' <tbody>'
         view << "   <% @node.facts['interfaces'].split(',').each do |interface| %>"
+        view << '   <% if @node.facts["lldp_#{interface}_chassis_name"] && @node.facts["lldp_#{interface}_port_descr"] %>'
         view << '   <tr>'
         view << '     <td style="width: 200px"><%= interface %></td>'
         view << '     <td>'
@@ -26,6 +27,7 @@ module Optopus
         view << '         <li>vlan: <%= @node.facts["lldp_#{interface}_vlan"].human_empty %></td></li>'
         view << '       </ul>'
         view << '   </tr>'
+        view << '   <% end %>'
         view << '   <% end %>'
         view << ' </tbody>'
         view << '</table>'
