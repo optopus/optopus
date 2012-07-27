@@ -1,16 +1,14 @@
-<script>
-  $('#search').addClass('active');
-</script>
 <header class="jumbotron subhead">
-  <h1>Nodes</h1>
-  <p class="lead">Search for tings.</p>
+  <h1>Search Results</h1>
+  <p class="lead">results for <%= @search_query %></p>
 </header>
 
-<div>Hello Morld</div>
-<ul>
-  <% @results.each do |result_set| %>
-    <% result_set.each do |result| %>
-      <li><%= result.hostname %></li>
+<% @results.each do |result_set| %>
+  <h3><%= result_set[:type] %></h3>
+  <ul class="unstyled">
+      <!-- <%= result_set[:type] %> -->
+    <% result_set[:results].each do |result| %>
+      <li><a href="/<%= result_set[:type] %>/<%= result.uuid %>"><%= result.hostname %></a></li>
     <% end %> 
-  <% end %>
-</ul>
+  </ul>
+<% end %>
