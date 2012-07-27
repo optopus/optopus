@@ -1,6 +1,6 @@
 <header class="jumbotron subhead">
   <h1>Search Results</h1>
-  <p class="lead">results for <%= @search_query %></p>
+  <p class="lead"><%= @results.inject(0) { |n, r| n += r[:results].size; n } %> results for <%= @search_query %></p>
 </header>
 
 <% @results.each do |result_set| %>
@@ -8,10 +8,6 @@
   <ul class="unstyled">
     <!-- <%= result_set[:type] %> -->
     <% result_set[:results].each do |result| %>
-      <%  
-          #p result 
-          puts "uuid: #{result.uuid}"
-      %>
       <li><a href="/<%= result_set[:type] %>/<%= result.uuid %>"><%= (result_set[:type] == :node) ? result.hostname : result.serial_number %></a></li>
     <% end %> 
   </ul>

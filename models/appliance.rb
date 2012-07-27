@@ -16,6 +16,7 @@ module Optopus
       indexes :id,          :index => :not_analyzed
       indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
       indexes :uuid,        :boost => 0
+      indexes :serial_number
     end
 
     private

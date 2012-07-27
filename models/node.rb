@@ -29,6 +29,7 @@ module Optopus
         indexes :productname, :as => "facts['productname']", :boost => 10
         indexes :uuid,        :boost => 0
       end
+      indexes :facts
     end
 
     private
