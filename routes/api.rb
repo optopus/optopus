@@ -10,6 +10,8 @@ module Optopus
         primary_mac_address = data.delete('primary_mac_address')
         facts = data.delete('facts')
         virtual = data.delete('virtual')
+        virtual = true if virtual == 'true'
+        virtual = false if virtual == 'false'
         raise "No serial_number supplied." if serial_number.nil? || serial_number.empty?
         raise "No primary_mac_address supplied." if primary_mac_address.nil? || primary_mac_address.empty?
         raise "No hostname supplied." if hostname.nil? || hostname.empty?

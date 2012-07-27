@@ -31,8 +31,9 @@ module Optopus
           primary_mac_address = facts['macaddress']
           location = Location.where(:common_name => facts['location']).first
           if serial_number && primary_mac_address && location
-            puts "CREATING APPLIANCE"
-            #appliance = Appliance.new(:
+            self.appliance = Appliance.new(:serial_number => serial_number, :primary_mac_address => primary_mac_address)
+            self.appliance.location = location
+            self.appliance.save!
           end
         else
           unless self.appliance.provisioned
