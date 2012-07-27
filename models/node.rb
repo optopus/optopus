@@ -28,8 +28,8 @@ module Optopus
         indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
         indexes :productname, :as => "facts['productname']", :boost => 10
         indexes :uuid,        :boost => 0
+        indexes :facts
       end
-      indexes :facts
     end
 
     private
