@@ -16,7 +16,8 @@ module Optopus
       indexes :id, :index => :not_analyzed
       indexes :hostname, :boost => 100
       indexes :macaddress, :as => 'primary_mac_address', :boost => 10
-      indexes :ipaddress, :as => 'facts.ipaddress', :boost => 10
+      indexes :ipaddress, :as => "facts['ipaddress']", :boost => 10
+      indexes :uuid, :boost => 0
     end
 
     private
