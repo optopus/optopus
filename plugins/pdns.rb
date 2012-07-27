@@ -34,7 +34,7 @@ module Optopus
 
       post '/pdns/domain/:id' do
         begin
-          validate_param_precense 'content', 'name', 'type', 'record-id'
+          validate_param_presence 'content', 'name', 'type', 'record-id'
           pdns_client.update_record(
             params['record-id'],
             :domain_id => params[:id],
@@ -53,7 +53,7 @@ module Optopus
 
       put '/pdns/domain/:id' do
         begin
-          validate_param_precense 'content', 'name', 'type', 'ttl'
+          validate_param_presence 'content', 'name', 'type', 'ttl'
           name = "#{params['name']}.#{pdns_client.domain_from_id(params[:id])['name']}"
           pdns_client.create_record(
             :domain_id => params[:id],
