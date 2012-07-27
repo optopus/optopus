@@ -8,10 +8,6 @@
   <ul class="unstyled">
     <!-- <%= result_set[:type] %> -->
     <% result_set[:results].each do |result| %>
-      <%  
-          #p result 
-          puts "uuid: #{result.uuid}"
-      %>
       <li><a href="/<%= result_set[:type] %>/<%= result.uuid %>"><%= (result_set[:type] == :node) ? result.hostname : result.serial_number %></a></li>
     <% end %> 
   </ul>
