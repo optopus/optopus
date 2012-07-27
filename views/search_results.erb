@@ -9,11 +9,13 @@
 </header>
 
 <% @results.each do |result_set| %>
-  <h3><%= result_set[:type] %></h3>
-  <ul class="unstyled">
-    <!-- <%= result_set[:type] %> -->
-    <% result_set[:results].each do |result| %>
-      <li><a href="/<%= result_set[:type] %>/<%= result.uuid %>"><%= (result_set[:type] == :node) ? result.hostname : result.serial_number %></a></li>
-    <% end %> 
-  </ul>
+  <% if result_set[:results].size > 0 %>
+    <h3><%= result_set[:type] %></h3>
+    <ul class="unstyled">
+      <!-- <%= result_set[:type] %> -->
+      <% result_set[:results].each do |result| %>
+        <li><a href="/<%= result_set[:type] %>/<%= result.uuid %>"><%= (result_set[:type] == :node) ? result.hostname : result.serial_number %></a></li>
+      <% end %>
+    </ul>
+  <% end %>
 <% end %>
