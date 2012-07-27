@@ -1,24 +1,29 @@
 module Optopus
   class App
-    get '/search' do
-      validate_param_presence 'query'
-      # since we suck at using elasticsearch, split on the first : and assume someone searched for column_name:something
-      query_string = ''
-      params['query'].split.each do |and_query|
-        query_parts = and_query.gsub(/[\{\}\[\]\(\)]/) { |s| "\\#{s}" }.split(':', 2)
-        field = query_parts.first
-        query = query_parts.last
-        if query.nil?
-          query_string += field + ' '
-        elsif field == query
-          # we only have a query, default to hostname for now
-          query_string += "hostname:#{query}" + ' '
+
+    def elasticsearch_escape(string)
+      if string.include?('*')
+        string.gsub(/[\{\}\[\]\(\):]/) { |s| "\\#{s}" }
+      else
+        "\"#{string}\""
+      end
+    end
+
+    def make_valid_query_string(string)
+      query_string = Array.new
+      string.split.each do |query_part|
+        if query_part.match(/(hostname|switch|macaddress|productname|facts\..*):(.*)/)
+          query_string << "#{$1}:#{elasticsearch_escape($2)}"
         else
-          query = "\"#{query}\"" unless query.include?('*')
-          query_string += "#{field}:#{query}" + ' '
+          query_string << elasticsearch_escape(query_part)
         end
       end
-      query_string.chomp!
+      query_string.join(' ')
+    end
+
+    get '/search' do
+      validate_param_presence 'query'
+      query_string = make_valid_query_string(params['query'])
       node_results = Optopus::Node.search(:size => 2000) do
         query { string query_string, :default_operator => 'AND' }
       end
