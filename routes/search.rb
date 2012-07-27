@@ -25,10 +25,16 @@ module Optopus
       validate_param_presence 'query'
       query_string = make_valid_query_string(params['query'])
       node_results = Optopus::Node.search(:size => 2000) do
-        query { string query_string, :default_operator => 'AND' }
+        query do
+          string query_string, :default_operator => 'AND', :fields => [:hostname, :switch, :macaddress, :productname, 'facts.*']
+        end
+        highlight :hostname, :switch, :macaddress, :productname
       end
       appliance_results = Optopus::Appliance.search(:size => 2000) do
-        query { string query_string, :default_operator => 'AND' }
+        query do
+          string query_string, :default_operator => 'AND', :fields => [:macaddress, :serial_number]
+        end
+        highlight :macaddress, :serial_number
       end
       @search_query = params['query']
       @results = Array.new
