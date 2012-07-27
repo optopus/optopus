@@ -13,11 +13,13 @@ module Optopus
     serialize :facts, ActiveRecord::Coders::Hstore
 
     mapping do
-      indexes :id, :index => :not_analyzed
-      indexes :hostname, :boost => 100
-      indexes :macaddress, :as => 'primary_mac_address', :boost => 10
-      indexes :ipaddress, :as => "facts['ipaddress']", :boost => 10
-      indexes :uuid, :boost => 0
+      indexes :id,          :index => :not_analyzed
+      indexes :hostname,    :boost => 100
+      indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
+      indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
+      indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
+      indexes :productname, :as => "facts['productname']", :boost => 10
+      indexes :uuid,        :boost => 0
     end
 
     private

@@ -12,6 +12,12 @@ module Optopus
     has_many :nodes
     belongs_to :location
 
+    mapping do
+      indexes :id,          :index => :not_analyzed
+      indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
+      indexes :uuid,        :boost => 0
+    end
+
     private
 
     def assign_uuid
