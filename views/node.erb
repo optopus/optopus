@@ -1,0 +1,53 @@
+<% if @node %>
+  <header class="jumbotron subhead">
+    <h1><%= @node.hostname %></h1>
+    <p class="lead">Last checked in <%= (Time.now - @node.updated_at).to_i / 60 %> minutes ago at <%= @node.updated_at.localtime.strftime("%R on %D") %></p>
+  </header>
+  <section id="general">
+    <div class="page-header">
+      <h3>General</h3>
+    </div>
+    <table class="table table-striped table-condensed table-bordered">
+      <tbody>
+        <tr>
+          <td style="width: 200px">Operating System</td>
+          <td><%= @node.facts['operatingsystem'] %> <%= @node.facts['operatingsystemrelease'] %></td>
+        </tr>
+        <tr>
+          <td>Hardware Model</td>
+          <td><%= @node.facts['productname'].human_empty %></td>
+        </tr>
+        <tr>
+          <td>Serial Number</td>
+          <td><%= @node.facts['serialnumber'].human_empty %></td>
+        </tr>
+        <tr>
+          <td>Uptime</td>
+          <td><%= @node.facts['uptime'].human_empty %></td>
+        </tr>
+        <tr>
+          <td>Total Memory</td>
+          <td><%= @node.facts['memorytotal'].human_empty %></td>
+        </tr>
+        <tr>
+          <td>Processor Count</td>
+          <td><%= @node.facts['processorcount'].human_empty %></td>
+        </tr>
+        <tr>
+          <td>Primary IP Address</td>
+          <td><%= @node.facts['ipaddress'].human_empty %> / <%= @node.facts['netmask'] %></td>
+        </tr>
+        <tr>
+          <td>Primary MAC Address</td>
+          <td><%= @node.facts['macaddress'].human_empty %></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <% node_partials.each do |partial| %>
+    <!-- <%= partial[:template] %> -->
+    <section id="<%= html_id(partial[:template].to_s) %>">
+      <%= erb partial[:template] %>
+    </section>
+  <% end %>
+<% end %>

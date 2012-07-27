@@ -14,7 +14,8 @@ module Optopus
         raise "No primary_mac_address supplied." if primary_mac_address.nil? || primary_mac_address.empty?
         raise "No hostname supplied." if hostname.nil? || hostname.empty?
         raise "No virtual supplied." unless virtual.kind_of?(TrueClass) || virtual.kind_of?(FalseClass)
-        node = Optopus::Node.where(:uuid => "#{serial_number} #{primary_mac_address}".to_md5_uuid).first
+        uuid = "#{serial_number.downcase} #{primary_mac_address.downcase}".to_md5_uuid
+        node = Optopus::Node.where(:uuid => uuid).first
         if node.nil?
           node = Optopus::Node.new(
             :serial_number => serial_number,
@@ -26,13 +27,15 @@ module Optopus
         node.facts = facts
         node.active = true
         node.save!
+        logger.info "Successful node registration via API: #{node.hostname}"
         status 202
       rescue JSON::ParserError => e
         status 400
+        logger.error "Invalid JSON data: #{request.body.read}"
         body({ :user_error => 'invalid JSON'}.to_json)
       rescue Exception => e
         status 400
-        logger.debug "received invalid data: #{request.body.read}"
+        logger.error "Ceceived invalid data: #{e}"
         body({ :user_error => e.to_s }.to_json)
       end
     end
