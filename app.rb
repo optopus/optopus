@@ -15,9 +15,7 @@ require 'uuidtools'
 require 'active_record'
 require 'activerecord-postgres-hstore'
 require 'activerecord-postgres-hstore/activerecord'
-require 'optopus/plugins'
-require 'optopus/auth'
-require 'optopus/auth/oauth2'
+require 'optopus'
 require 'tire'
 
 module Optopus
