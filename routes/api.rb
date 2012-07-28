@@ -44,7 +44,7 @@ module Optopus
 
     post '/api/appliance/register' do
       begin
-        validate_param_precense 'serial_number', 'primary_mac_address', 'location_name'
+        validate_param_presence 'serial_number', 'primary_mac_address', 'location_name'
         uuid = "#{params['serial_number'].downcase} #{params['primary_mac_address'].downcase}".to_md5_uuid
         appliance = Optopus::Appliance.where(:uuid => uuid).first
         if appliance.nil?
