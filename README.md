@@ -4,6 +4,7 @@ Everyone's tired of having tons of different systems, optopus is designed to tal
 ## Development
 Requirements:
 - Postgres 9.1 or higher with hstore extension
+- elasticsearch
 - Ruby 1.8.7, might also work on 1.9.x
 
 To get started, install the necessary gems:
@@ -18,6 +19,12 @@ Modify your databases.yaml to reflect your specific settings. Must use Postgresq
 
     CREATE DATABASE optopus_dev;
     CREATE DATABASE optopus_test;
+
+Create an application.yaml:
+
+    # cp config/application.yaml.example config/application.yaml
+
+You will probably want to update the application config with any plugins you want enabled as well as putting the proper elasticsearch location in there.
 
 Finally, run migrations to get necessary schema:
 
