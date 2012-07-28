@@ -19,7 +19,7 @@
         </tr>
         <tr>
           <td>Serial Number</td>
-          <td><%= @node.facts['serialnumber'].human_empty %></td>
+          <td><%= @node.serial_number %></td>
         </tr>
         <tr>
           <td>Uptime</td>
@@ -35,11 +35,11 @@
         </tr>
         <tr>
           <td>Primary IP Address</td>
-          <td><%= @node.facts['ipaddress'].human_empty %> / <%= @node.facts['netmask'] %></td>
+          <td><%= @node.facts['ipaddress'].human_empty %> / <%= @node.facts['netmask'].human_empty %></td>
         </tr>
         <tr>
           <td>Primary MAC Address</td>
-          <td><%= @node.facts['macaddress'].human_empty %></td>
+          <td><%= @node.primary_mac_address.human_empty %></td>
         </tr>
       </tbody>
     </table>
