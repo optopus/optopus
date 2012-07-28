@@ -34,6 +34,8 @@ If you want to populate some seed data for development:
 
     # bundle exec rake db:seed
 
+The seed script located in <code>db/seed.rb</code> will generate 1000 random nodes by default. You can specify the <code>NODES</code> environment variable to generate different amounts.
+
 Running rspec tests:
 
     # bundle exec rake test
