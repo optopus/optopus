@@ -1,5 +1,18 @@
+require 'random-word'
+def random_mac_address
+  ("%02x" % ((rand*64).to_i * 4 | 2)) + (0..4).inject('') { |s,x| s+":%02x" %(rand * 256).to_i }
+end
+
+def random_hostname
+  "#{RandomWord.nouns.next}#{rand(100)}.optopus.local"
+end
+
+def random_serial_number
+  (0..9).inject('') { |s,x| s + rand(9).to_s }
+end
+
+# Generate a bunch of seed data for use in development
 unless Optopus::App.production?
-  # create a bunch of seed data for development purposes
   location_data = [
     {
       :common_name => 'ma01',
@@ -17,46 +30,26 @@ unless Optopus::App.production?
       :state => 'NY',
     }
   ]
+
   location_data.each do |data|
     if Optopus::Location.where(:common_name => data[:common_name]).first.nil?
       Optopus::Location.create!(:common_name => data[:common_name], :city => data[:city], :state => data[:state])
     end
   end
-  device_data = [
-    {
-      :serial_number => 'test001',
-      :primary_mac_address => '01:02:03:04:05:06',
-      :location_name => 'tx01'
-    },
-    {
-      :serial_number => 'test002',
-      :primary_mac_address => '01:02:03:04:05:05',
-      :location_name => 'ma01'
-    },
-    {
-      :serial_number => 'test003',
-      :primary_mac_address => '01:02:03:04:05:09',
-      :location_name => 'nyc01'
-    },
-    {
-      :serial_number => 'test004',
-      :primary_mac_address => '01:02:03:04:05:08',
-      :location_name => 'ma01'
-    },
-    {
-      :serial_number => 'test005',
-      :primary_mac_address => '01:02:03:04:05:07',
-      :location_name => 'ma01'
-    },
-  ]
-  device_data.each do |data|
-    location = Optopus::Location.where(:common_name => data[:location_name]).first
-    device = Optopus::Device.new(:serial_number => data[:serial_number], :primary_mac_address => data[:primary_mac_address])
-    device.location = location
-    device.save!
-    node = Optopus::Node.new(:serial_number => data[:serial_number], :primary_mac_address => data[:primary_mac_address])
-    node.virtual = false
-    node.hostname = data[:serial_number]
-    node.save!
+
+  valid_location_names = Optopus::Location.all.inject([]) { |a, n| a << n.common_name }
+  nodes_to_generate = ENV['NODES'] || 1000
+  (1..nodes_to_generate.to_i).each do
+    n = Optopus::Node.new
+    n.hostname = random_hostname
+    n.primary_mac_address = random_mac_address
+    n.serial_number = random_serial_number
+    n.virtual = false
+    n.facts = {
+      'location' => valid_location_names[rand(valid_location_names.size)],
+      'serialnumber' => n.serial_number,
+      'macaddress' => n.primary_mac_address,
+    }
+    n.save!
   end
 end
