@@ -1,4 +1,6 @@
 development:
+  elasticsearch:
+    url: http://localhost:9200
   authorization:
     type: oauth2
     oauth2:
