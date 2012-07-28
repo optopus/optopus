@@ -16,6 +16,7 @@ gem 'tire'
 
 group :test, :development do
   gem 'rspec'
+  gem 'random-word'
 end
 
 group :plugins do
