@@ -4,7 +4,7 @@ describe Optopus::Appliance, '#new' do
     @valid_mac_address = '01:23:45:67:89:ab'
     @valid_ip_address = '10.10.10.10'
     @valid_serial_number = 'testserial'
-    @test_location = Optopus::Location.new(:common_name => 'test01')
+    @test_location = Optopus::Location.new(:common_name => 'test01', :city => 'test', :state => 'NJ')
   end
 
   it 'fails to save without primary_mac_address' do

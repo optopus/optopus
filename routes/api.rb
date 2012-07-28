@@ -53,7 +53,7 @@ module Optopus
         end
         location = Optopus::Location.where(:common_name => params['location_name']).first
         if location.nil?
-          location = Optopus::Location.new(:common_name => params['location_name'])
+          location = Optopus::Location.new(:common_name => params['location_name'], :city => 'unknown', :state => 'unknown')
           logger.info "New location found: #{location.common_name}"
         end
         appliance.location = location

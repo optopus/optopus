@@ -4,7 +4,7 @@ describe 'Optopus::Node and Optopus::Appliance associations' do
     @valid_mac_address = '01:23:45:67:89:ad'
     @valid_ip_address = '10.10.10.10'
     @valid_serial_number = 'testserial3'
-    @location = Optopus::Location.new(:common_name => 'test02')
+    @location = Optopus::Location.new(:common_name => 'test02', :city => 'test', :state => 'TX')
   end
 
   it 'physical node becomes associated with appliance on creation when matching uuid is found' do

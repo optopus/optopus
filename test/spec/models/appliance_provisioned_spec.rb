@@ -4,7 +4,7 @@ describe 'Optopus::Appliance#provisioned' do
     @valid_mac_address = '01:23:45:67:89:ad'
     @valid_ip_address = '10.10.10.10'
     @valid_serial_number = 'testserial4'
-    @location = Optopus::Location.new(:common_name => 'test03')
+    @location = Optopus::Location.new(:common_name => 'test03', :city => 'test', :state => 'NY')
   end
 
   it 'becomes true when a physical node is created with the same uuid' do
