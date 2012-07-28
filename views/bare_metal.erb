@@ -21,15 +21,15 @@
         </tr>
       </thead>
       <tbody>
-        <% location.appliances.each do |appliance| %>
+        <% location.devices.each do |device| %>
           <tr>
-            <td><%= appliance.brand.human_empty %></td>
-            <td><%= appliance.model.human_empty %></td>
-            <td><code><%= appliance.serial_number %></code></td>
-            <td><code><%= appliance.primary_mac_address %></code></td>
+            <td><%= device.brand.human_empty %></td>
+            <td><%= device.model.human_empty %></td>
+            <td><code><%= device.serial_number %></code></td>
+            <td><code><%= device.primary_mac_address %></code></td>
             <td>
               <ul class="unstyled">
-                <% appliance.nodes.each do |node| %>
+                <% device.nodes.each do |node| %>
                   <li><%= node.hostname %></li>
                 <% end %>
               </ul>

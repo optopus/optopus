@@ -1,5 +1,5 @@
 module Optopus
-  class Appliance < ActiveRecord::Base
+  class Device < ActiveRecord::Base
     include Tire::Model::Search
     include Tire::Model::Callbacks
 

@@ -5,8 +5,8 @@
   <div class='span12'>
     <h1>Hardware waiting to be provisioned</h1>
     <ul>
-      <% @appliances_to_be_provisioned.each do |appliance| -%>
-        <li><a href="/appliances/<%= appliance.uuid %>"><%= appliance.serial_number %></a></li>
+      <% @devices_to_be_provisioned.each do |device| -%>
+        <li><a href="/devices/<%= device.uuid %>"><%= device.serial_number %></a></li>
       <% end -%>
     </ul>
   </div>

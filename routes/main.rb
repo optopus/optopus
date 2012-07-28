@@ -5,7 +5,7 @@ module Optopus
     end
 
     get '/' do
-      @appliances_to_be_provisioned = Optopus::Appliance.where(:provisioned => false)
+      @devices_to_be_provisioned = Optopus::Device.where(:provisioned => false)
       erb :index
     end
   end

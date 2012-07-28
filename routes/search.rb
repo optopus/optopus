@@ -30,7 +30,7 @@ module Optopus
         end
         highlight :hostname, :switch, :macaddress, :productname
       end
-      appliance_results = Optopus::Appliance.search(:size => 2000) do
+      device_results = Optopus::Device.search(:size => 2000) do
         query do
           string query_string, :default_operator => 'AND', :fields => [:macaddress, :serial_number]
         end
@@ -39,7 +39,7 @@ module Optopus
       @search_query = params['query']
       @results = Array.new
       @results << { :type => :node, :results => node_results.sort { |a,b| a.hostname <=> b.hostname } }
-      @results << { :type => :appliance, :results => appliance_results }
+      @results << { :type => :device, :results => device_results }
       erb :search_results
     end
   end

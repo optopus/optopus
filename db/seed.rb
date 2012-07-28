@@ -22,7 +22,7 @@ unless Optopus::App.production?
       Optopus::Location.create!(:common_name => data[:common_name], :city => data[:city], :state => data[:state])
     end
   end
-  appliance_data = [
+  device_data = [
     {
       :serial_number => 'test001',
       :primary_mac_address => '01:02:03:04:05:06',
@@ -49,11 +49,11 @@ unless Optopus::App.production?
       :location_name => 'ma01'
     },
   ]
-  appliance_data.each do |data|
+  device_data.each do |data|
     location = Optopus::Location.where(:common_name => data[:location_name]).first
-    appliance = Optopus::Appliance.new(:serial_number => data[:serial_number], :primary_mac_address => data[:primary_mac_address])
-    appliance.location = location
-    appliance.save!
+    device = Optopus::Device.new(:serial_number => data[:serial_number], :primary_mac_address => data[:primary_mac_address])
+    device.location = location
+    device.save!
     node = Optopus::Node.new(:serial_number => data[:serial_number], :primary_mac_address => data[:primary_mac_address])
     node.virtual = false
     node.hostname = data[:serial_number]

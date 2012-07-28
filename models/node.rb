@@ -7,8 +7,8 @@ module Optopus
     validates :virtual, :inclusion => { :in => [true, false] }
     validates_uniqueness_of :uuid
     before_validation :assign_uuid
-    before_save :assign_appliance
-    belongs_to :appliance
+    before_save :assign_device
+    belongs_to :device
 
     serialize :facts, ActiveRecord::Coders::Hstore
 
@@ -45,33 +45,33 @@ module Optopus
       end
     end
 
-    def assign_appliance
+    def assign_device
       if self.virtual
-        # TODO: determine best way to associate an appliance with virtual nodes
+        # TODO: determine best way to associate an device with virtual nodes
       else
-        self.appliance = Appliance.where(:uuid => self.uuid).first
+        self.device = Device.where(:uuid => self.uuid).first
         unless self.facts.nil?
-          if self.appliance.nil?
-            # auto generate an appliance record, since we probably want to know what physical hardware we have
+          if self.device.nil?
+            # auto generate an device record, since we probably want to know what physical hardware we have
             serial_number = self.facts['serialnumber']
             primary_mac_address = self.facts['macaddress']
             location = Location.where(:common_name => self.facts['location']).first
             if serial_number && primary_mac_address && location
-              self.appliance = Appliance.new(:serial_number => serial_number, :primary_mac_address => primary_mac_address)
-              self.appliance.location = location
-              self.appliance.brand = self.facts['boardmanufacturer']
-              self.appliance.model = self.facts['productname']
-              self.appliance.save!
+              self.device = Device.new(:serial_number => serial_number, :primary_mac_address => primary_mac_address)
+              self.device.location = location
+              self.device.brand = self.facts['boardmanufacturer']
+              self.device.model = self.facts['productname']
+              self.device.save!
             end
           else
-            unless self.appliance.provisioned
-              self.appliance.provisioned = true
+            unless self.device.provisioned
+              self.device.provisioned = true
             end
             if self.facts['boardmanufacturer'] && self.facts['productname']
-              self.appliance.brand = self.facts['boardmanufacturer']
-              self.appliance.model = self.facts['productname']
+              self.device.brand = self.facts['boardmanufacturer']
+              self.device.model = self.facts['productname']
             end
-            self.appliance.save!
+            self.device.save!
           end
         end
       end

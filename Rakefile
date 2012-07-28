@@ -37,7 +37,7 @@ end
 task :test do
   require './test/spec/spec_helper'
   Optopus::Node.destroy_all
-  Optopus::Appliance.destroy_all
+  Optopus::Device.destroy_all
   Optopus::Location.destroy_all
   Rake::Task['db:migrate'].invoke
   Rake::Task['spec'].invoke
