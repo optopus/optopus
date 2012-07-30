@@ -1,2 +1,2 @@
 runtime: ruby18
-run_web: exec unicorn -l ${HTTP_HOST-127.0.0.1}:${HTTP_PORT-8080} -c ${UNICORN_CONFIG-config/unicorn.rb}
+run_web: exec bundle exec unicorn -l ${HTTP_HOST-127.0.0.1}:${HTTP_PORT-8080} -c ${UNICORN_CONFIG-config/unicorn.rb}
