@@ -22,7 +22,7 @@ module Optopus
   class App < Sinatra::Base
     register Sinatra::ConfigFile
     register Sinatra::Session
-    config_file File.expand_path(File.dirname(__FILE__) + '/config/application.yaml')
+    config_file ENV['OPTOPUS_CONFIG_FILE'] || File.expand_path(File.dirname(__FILE__) + '/config/application.yaml')
     set :root, File.dirname(__FILE__)
     enable :logging
     enable :sessions
