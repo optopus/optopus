@@ -45,7 +45,8 @@ module Optopus
 
     register Optopus::Plugins
 
-    db_config = YAML::load(File.open(File.join(File.dirname(__FILE__), 'config', 'databases.yaml')))[Optopus::App.environment.to_s]
+    db_config_file = ENV['OPTOPUS_DATABASE_CONFIG_FILE'] || File.join(File.dirname(__FILE__), 'config', 'databases.yaml')
+    db_config = YAML::load(File.open(db_config_file))[Optopus::App.environment.to_s]
     ActiveRecord::Base.establish_connection(db_config)
     Tire::Configuration.url settings.elasticsearch[:url]
 
