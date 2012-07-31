@@ -4,7 +4,7 @@ describe Optopus::Node, '#new' do
     @valid_mac_address = '01:23:45:67:89:ac'
     @valid_ip_address = '10.10.10.10'
     @valid_serial_number = 'testserial2'
-    @hostname = 'test.host'
+    @hostname = 'test5.host'
   end
 
   it 'fails to save without primary_mac_address' do
@@ -73,6 +73,6 @@ describe Optopus::Node, '#facts' do
 
   it 'can query for facts previously inserted' do
     node = Optopus::Node.where("facts @> (:key => :value)", :key => 'id', :value => 'crazed').first
-    node.uuid.should == @node.uuid
+    node.id.should == @node.id
   end
 end

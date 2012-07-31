@@ -16,8 +16,7 @@ module Optopus
         raise "No primary_mac_address supplied." if primary_mac_address.nil? || primary_mac_address.empty?
         raise "No hostname supplied." if hostname.nil? || hostname.empty?
         raise "No virtual supplied." unless virtual.kind_of?(TrueClass) || virtual.kind_of?(FalseClass)
-        uuid = "#{serial_number.downcase} #{primary_mac_address.downcase}".to_md5_uuid
-        node = Optopus::Node.where(:uuid => uuid).first
+        node = Optopus::Node.where(:primary_mac_address => primary_mac_address.downcase).first
         if node.nil?
           node = Optopus::Node.new(
             :serial_number => serial_number,
@@ -45,8 +44,7 @@ module Optopus
     post '/api/device/register' do
       begin
         validate_param_presence 'serial_number', 'primary_mac_address', 'location_name'
-        uuid = "#{params['serial_number'].downcase} #{params['primary_mac_address'].downcase}".to_md5_uuid
-        device = Optopus::Device.where(:uuid => uuid).first
+        device = Optopus::Device.where(:primary_mac_address => params['primary_mac_address']).where(:serial_number => params['serial_number']).first
         if device.nil?
           device = Optopus::Device.new(:serial_number => params['serial_number'], :primary_mac_address => params['primary_mac_address'])
           logger.info "New device found: #{device.serial_number} #{device.primary_mac_address}"

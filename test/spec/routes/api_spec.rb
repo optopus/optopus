@@ -12,7 +12,6 @@ describe Optopus::App, 'POST /api/node/register' do
     @valid_switch_name = 'testswitch'
     @valid_switch_port = 'ge-0/0/0'
     @location_name = 'test03'
-    @node_uuid = "#{@valid_serial_number} #{@valid_mac_address}".to_md5_uuid
   end
 
   it 'returns a 400 when invalid posting invalid JSON' do
@@ -21,19 +20,19 @@ describe Optopus::App, 'POST /api/node/register' do
   end
 
   it 'returns a 400 when missing virtual' do
-    data = { :primary_mac_address => @valid_mac_address, :serial_number => @valid_serial_number, :hostname => 'test.host' }
+    data = { :primary_mac_address => @valid_mac_address, :serial_number => @valid_serial_number, :hostname => 'test3.host' }
     post '/api/node/register', data.to_json
     last_response.status.should == 400
   end
 
   it 'returns a 400 when missing serial_number' do
-    data = { :virtual => true, :primary_mac_address => @valid_mac_address, :hostname => 'test.host' }
+    data = { :virtual => true, :primary_mac_address => @valid_mac_address, :hostname => 'test3.host' }
     post '/api/node/register', data.to_json
     last_response.status.should == 400
   end
 
   it 'returns a 400 when missing primary_mac_address' do
-    data = { :virtual => true, :serial_number => @valid_serial_number, :hostname => 'test.host' }
+    data = { :virtual => true, :serial_number => @valid_serial_number, :hostname => 'test3.host' }
     post '/api/node/register', data.to_json
     last_response.status.should == 400
   end
@@ -45,16 +44,16 @@ describe Optopus::App, 'POST /api/node/register' do
   end
 
   it 'returns a 202 when supplied virtual, primary_mac_address, serial_number, and hostname' do
-    data = { :virtual => true, :primary_mac_address => @valid_mac_address, :serial_number => @valid_serial_number, :hostname => 'test.host' }
+    data = { :virtual => true, :primary_mac_address => @valid_mac_address, :serial_number => @valid_serial_number, :hostname => 'test31.host' }
     post '/api/node/register', data.to_json
     last_response.status.should == 202
   end
 
   it 'updates a node hostname' do
-    data = { :virtual => true, :primary_mac_address => @valid_mac_address, :serial_number => @valid_serial_number, :hostname => 'test2.host' }
+    data = { :virtual => true, :primary_mac_address => @valid_mac_address, :serial_number => @valid_serial_number, :hostname => 'test14.host' }
     post '/api/node/register', data.to_json
     last_response.status.should == 202
-    Optopus::Node.where(:uuid => @node_uuid).first.hostname == data[:hostname]
+    Optopus::Node.where(:primary_mac_address => @valid_mac_address).first.hostname == data[:hostname]
   end
 end
 
@@ -70,7 +69,6 @@ describe Optopus::App, 'POST /api/device/register' do
     @valid_switch_name = 'testswitch'
     @valid_switch_port = 'ge-0/0/0'
     @location_name = 'test03'
-    @device_uuid = "#{@valid_serial_number} #{@valid_mac_address}".to_md5_uuid
   end
 
   it 'returns a 400 when no parameters are supplied' do
@@ -107,7 +105,7 @@ describe Optopus::App, 'POST /api/device/register' do
     }
     post '/api/device/register', params
     last_response.status.should == 202
-    Optopus::Device.where(:uuid => @device_uuid).first.bmc_ip_address.should == @valid_ip_address
+    Optopus::Device.where(:primary_mac_address => @valid_mac_address).first.bmc_ip_address.should == @valid_ip_address
   end
 
   it 'updates an device with bmc_mac_address' do
@@ -119,7 +117,7 @@ describe Optopus::App, 'POST /api/device/register' do
     }
     post '/api/device/register', params
     last_response.status.should == 202
-    Optopus::Device.where(:uuid => @device_uuid).first.bmc_mac_address.should == @valid_mac_address
+    Optopus::Device.where(:primary_mac_address => @valid_mac_address).first.bmc_mac_address.should == @valid_mac_address
   end
 
   it 'updates an device with model' do
@@ -131,7 +129,7 @@ describe Optopus::App, 'POST /api/device/register' do
     }
     post '/api/device/register', params
     last_response.status.should == 202
-    Optopus::Device.where(:uuid => @device_uuid).first.model.should == @valid_model
+    Optopus::Device.where(:primary_mac_address => @valid_mac_address).first.model.should == @valid_model
   end
 
   it 'updates an device with brand' do
@@ -143,7 +141,7 @@ describe Optopus::App, 'POST /api/device/register' do
     }
     post '/api/device/register', params
     last_response.status.should == 202
-    Optopus::Device.where(:uuid => @device_uuid).first.brand.should == @valid_brand
+    Optopus::Device.where(:primary_mac_address => @valid_mac_address).first.brand.should == @valid_brand
   end
 
   it 'updates an device with switch_name' do
@@ -155,7 +153,7 @@ describe Optopus::App, 'POST /api/device/register' do
     }
     post '/api/device/register', params
     last_response.status.should == 202
-    Optopus::Device.where(:uuid => @device_uuid).first.switch_name.should == @valid_switch_name
+    Optopus::Device.where(:primary_mac_address => @valid_mac_address).first.switch_name.should == @valid_switch_name
   end
 
   it 'updates an device with switch_port' do
@@ -167,6 +165,6 @@ describe Optopus::App, 'POST /api/device/register' do
     }
     post '/api/device/register', params
     last_response.status.should == 202
-    Optopus::Device.where(:uuid => @device_uuid).first.switch_port.should == @valid_switch_port
+    Optopus::Device.where(:primary_mac_address => @valid_mac_address).first.switch_port.should == @valid_switch_port
   end
 end
