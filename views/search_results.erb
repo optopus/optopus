@@ -14,7 +14,7 @@
     <ul class="unstyled">
       <!-- <%= result_set[:type] %> -->
       <% result_set[:results].each do |result| %>
-        <li><a href="/<%= result_set[:type] %>/<%= result.uuid %>"><%= (result_set[:type] == :node) ? result.hostname : result.serial_number %></a></li>
+        <li><a href="/<%= result_set[:type] %>/<%= result.id %>"><%= (result_set[:type] == :node) ? result.hostname : result.serial_number %></a></li>
       <% end %>
     </ul>
   <% end %>

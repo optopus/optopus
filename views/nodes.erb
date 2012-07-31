@@ -22,7 +22,7 @@
       <tbody>
         <% location.nodes.each do |node| %>
           <tr>
-            <td><a href="/node/<%= node.uuid %>"><%= node.hostname %></a></td>
+            <td><a href="/node/<%= node.id %>"><%= node.hostname %></a></td>
             <td><%= node.created_at.strftime("%D %R") %></td>
             <td><%= (Time.now - node.updated_at).to_i / 60 %> minutes ago</td>
           </tr>

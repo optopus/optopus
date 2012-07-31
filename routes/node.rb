@@ -5,10 +5,10 @@ module Optopus
       erb :nodes
     end
 
-    get '/node/:uuid' do
+    get '/node/:id' do
       @subnav = [ { :id => 'general', :name => 'General' } ]
       @subnav += node_partials.inject([]) { |s,p| s << { :id => html_id(p[:template].to_s), :name => p[:display] }; s }
-      @node = Optopus::Node.where(:uuid => params[:uuid]).first
+      @node = Optopus::Node.where(:id => params[:id]).first
       flash[:error] = "This node does not exist." if @node.nil?
       erb :node
     end

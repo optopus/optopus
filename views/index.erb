@@ -6,7 +6,7 @@
     <h1>Hardware waiting to be provisioned</h1>
     <ul>
       <% @devices_to_be_provisioned.each do |device| -%>
-        <li><a href="/devices/<%= device.uuid %>"><%= device.serial_number %></a></li>
+        <li><a href="/devices/<%= device.id %>"><%= device.serial_number %></a></li>
       <% end -%>
     </ul>
   </div>
