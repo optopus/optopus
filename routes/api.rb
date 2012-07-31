@@ -18,9 +18,9 @@ module Optopus
         if not virtual
           raise "No serial_number supplied." if serial_number.nil? || serial_number.empty?
         end
-        node = Optopus::Node.where(:primary_mac_address => primary_mac_address.downcase).first
+        node = Optopus::Node.where(:hostname => hostname).first
         if node.nil?
-          node = Optopus::Node.new(:primary_mac_address => primary_mac_address)
+          node = Optopus::Node.new(:hostname => hostname)
         end
         node.virtual = virtual
         node.hostname = hostname
