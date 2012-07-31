@@ -12,21 +12,21 @@ module Optopus
         virtual = data.delete('virtual')
         virtual = true if virtual == 'true'
         virtual = false if virtual == 'false'
-        raise "No serial_number supplied." if serial_number.nil? || serial_number.empty?
         raise "No primary_mac_address supplied." if primary_mac_address.nil? || primary_mac_address.empty?
         raise "No hostname supplied." if hostname.nil? || hostname.empty?
         raise "No virtual supplied." unless virtual.kind_of?(TrueClass) || virtual.kind_of?(FalseClass)
+        if not virtual
+          raise "No serial_number supplied." if serial_number.nil? || serial_number.empty?
+        end
         node = Optopus::Node.where(:primary_mac_address => primary_mac_address.downcase).first
         if node.nil?
-          node = Optopus::Node.new(
-            :serial_number => serial_number,
-            :primary_mac_address => primary_mac_address
-          )
+          node = Optopus::Node.new(:primary_mac_address => primary_mac_address)
         end
         node.virtual = virtual
         node.hostname = hostname
         node.facts = facts
         node.active = true
+        node.serial_number = serial_number unless serial_number.nil?
         node.save!
         logger.info "Successful node registration via API: #{node.hostname}"
         status 202

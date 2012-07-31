@@ -26,31 +26,31 @@ describe Optopus::App, 'POST /api/node/register' do
   end
 
   it 'returns a 400 when missing serial_number' do
-    data = { :virtual => true, :primary_mac_address => @valid_mac_address, :hostname => 'test3.host' }
+    data = { :virtual => false, :primary_mac_address => @valid_mac_address, :hostname => 'test3.host' }
     post '/api/node/register', data.to_json
     last_response.status.should == 400
   end
 
   it 'returns a 400 when missing primary_mac_address' do
-    data = { :virtual => true, :serial_number => @valid_serial_number, :hostname => 'test3.host' }
+    data = { :virtual => false, :serial_number => @valid_serial_number, :hostname => 'test3.host' }
     post '/api/node/register', data.to_json
     last_response.status.should == 400
   end
 
   it 'returns a 400 when missing hostname' do
-    data = { :virtual => true, :primary_mac_address => @valid_primary_mac_address }
+    data = { :virtual => false, :primary_mac_address => @valid_primary_mac_address }
     post '/api/node/register', data.to_json
     last_response.status.should == 400
   end
 
   it 'returns a 202 when supplied virtual, primary_mac_address, serial_number, and hostname' do
-    data = { :virtual => true, :primary_mac_address => @valid_mac_address, :serial_number => @valid_serial_number, :hostname => 'test31.host' }
+    data = { :virtual => false, :primary_mac_address => @valid_mac_address, :serial_number => @valid_serial_number, :hostname => 'test31.host' }
     post '/api/node/register', data.to_json
     last_response.status.should == 202
   end
 
   it 'updates a node hostname' do
-    data = { :virtual => true, :primary_mac_address => @valid_mac_address, :serial_number => @valid_serial_number, :hostname => 'test14.host' }
+    data = { :virtual => false, :primary_mac_address => @valid_mac_address, :serial_number => @valid_serial_number, :hostname => 'test14.host' }
     post '/api/node/register', data.to_json
     last_response.status.should == 202
     Optopus::Node.where(:primary_mac_address => @valid_mac_address).first.hostname == data[:hostname]
