@@ -27,6 +27,7 @@ module Optopus
         node.facts = facts
         node.active = true
         node.serial_number = serial_number unless serial_number.nil?
+        node.primary_mac_address = primary_mac_address
         node.save!
         logger.info "Successful node registration via API: #{node.hostname}"
         status 202
