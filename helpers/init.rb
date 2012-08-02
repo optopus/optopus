@@ -19,6 +19,14 @@ module Optopus
         @locations ||= Optopus::Location.all
       end
 
+      def handle_error(exception, status_code=400)
+        logger.error exception.to_s
+        logger.info exception.backtrace.join("\t\n")
+        flash[:error] = exception.to_s
+        status status_code
+        redirect back
+      end
+
       def validate_param_presence(*keys)
         keys.each do |key|
           raise ParamError, "Missing required parameter: '#{key}'" unless params.include?(key) && !params[key].empty?
