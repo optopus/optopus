@@ -32,11 +32,6 @@ module Optopus
       indexes :facts,       :boost => 1
     end
 
-    def facts
-      # if a node has no facts set, we get nil back which is problematic, so lets return an empty hash in that case
-      read_attribute(:facts) || Hash.new
-    end
-
     private
 
     def downcase_primary_mac_address
