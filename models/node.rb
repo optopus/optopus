@@ -11,6 +11,7 @@ module Optopus
     belongs_to :device
 
     serialize :facts, ActiveRecord::Coders::Hstore
+    serialize :properties, ActiveRecord::Coders::Hstore
 
     settings :analysis => {
         :analyzer => {
