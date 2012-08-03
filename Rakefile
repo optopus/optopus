@@ -53,6 +53,7 @@ task :test do
   Optopus::Device.destroy_all
   Optopus::Location.destroy_all
   Optopus::User.destroy_all
+  Optopus::Role.destroy_all
   Rake::Task['db:migrate'].invoke
   Rake::Task['spec'].invoke
 end
