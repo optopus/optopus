@@ -32,6 +32,14 @@ module Optopus
       indexes :facts,       :boost => 1
     end
 
+    def self.active
+      where(:active => true)
+    end
+
+    def self.inactive
+      where(:active => false)
+    end
+
     private
 
     def downcase_primary_mac_address
