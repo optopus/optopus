@@ -1,4 +1,5 @@
 require 'backports/basic_object' unless defined? BasicObject
+require_relative 'plugin/model'
 
 module Optopus
   module Plugin

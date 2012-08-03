@@ -19,6 +19,19 @@ namespace :db do
     require_relative 'db/seed'
   end
 
+  namespace :migrate do
+    desc 'Migrate the database for plugins'
+    task(:plugins => :environment) do
+      ActiveRecord::Base.logger = Logger.new(STDOUT)
+      ActiveRecord::Base.timestamped_migrations = true
+      ActiveRecord::Base.table_name_prefix = 'plugin_'
+      ActiveRecord::Migration.verbose = true
+      Dir.glob(File.join(File.expand_path(Optopus::App.root), 'plugins', '*', 'db', 'migrate')).each do |migrate_dir|
+        ActiveRecord::Migrator.migrate(migrate_dir)
+      end
+    end
+  end
+
   namespace :fixtures do
     desc 'Load fixtures'
     task(:load => :environment) do
