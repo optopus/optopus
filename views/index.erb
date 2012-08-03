@@ -1,13 +1,48 @@
-<script>
-  $('#overview').addClass('active');
-</script>
 <div class='row'>
-  <div class='span12'>
-    <h1>Hardware waiting to be provisioned</h1>
-    <ul>
-      <% @devices_to_be_provisioned.each do |device| -%>
-        <li><a href="/devices/<%= device.id %>"><%= device.serial_number %></a></li>
-      <% end -%>
-    </ul>
+  <div class='span7'>
+    <h2>Graphs</h2>
+    <%# TODO: implement graphs %>
   </div>
+  <% if @inactive_nodes && @inactive_nodes.size > 0 %>
+    <div class='span4 well'>
+      <h3>Dead nodes</h3>
+      <table class='table table-condensed table-striped'>
+        <% @inactive_nodes.each do |node| %>
+          <tr>
+            <td><a href="/node/<%= node.id %>"><%= node.hostname %></a></td>
+            <td>
+              <form method="post" action="/node/<%= node.id %>" class="form-inline" style="float: left; margin: 0 0 0 5px;"><input type="hidden" name="_method" value="delete"><button type="submit" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i>Delete</button></form>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+      <p class='pull-right'><a href="#">show all</a></p>
+    </div>
+  <% end%>
+  <% if @new_nodes && @new_nodes.size > 0 %>
+    <div class='span4 offset7 well'>
+      <h3>New nodes</h3>
+      <table class='table table-condensed table-striped'>
+        <% @new_nodes.each do |node| %>
+          <tr>
+            <td><a href="/node/<%= node.id %>"><%= node.hostname %></a></td>
+          </tr>
+        <% end %>
+      </table>
+      <p class='pull-right'><a href="#">show all</a></p>
+    </div>
+  <% end %>
+  <% if @devices_to_be_provisioned && @devices_to_be_provisioned.size > 0 %>
+    <div class='span4 offset7 well'>
+      <h3>New devices</h3>
+      <table class='table table-condensed table-striped'>
+        <% @devices_to_be_provisioned.each do |device| -%>
+          <tr>
+            <td><a href="/devices/<%= device.id %>"><%= device.serial_number %></a></td>
+          </tr>
+        <% end -%>
+      </table>
+      <p class='pull-right'><a href="#">show all</a></p>
+    </div>
+  <% end %>
 </div>
