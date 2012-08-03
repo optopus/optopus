@@ -13,7 +13,7 @@ module Optopus
       base.set :plugin_path, File.dirname(caller[0])
       base.set :name, base.name
       base.set :root, base.name.split('::').last.downcase
-      base.set :views_path, File.join(base.plugin_settings[:plugin_path], base.plugin_settings[:root], 'views')
+      base.set :views_path, File.join(base.plugin_settings[:plugin_path], 'views')
     end
 
     def plugin(&block)
