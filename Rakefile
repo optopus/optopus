@@ -2,6 +2,8 @@ require 'app'
 require 'active_record/fixtures'
 require 'rspec/core/rake_task'
 
+Dir.glob("#{File.expand_path(Optopus::App.root)}/rake/*.rake") { |r| import r }
+
 namespace :db do
   task :environment do
     require 'active_record'
