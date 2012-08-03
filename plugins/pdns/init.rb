@@ -12,7 +12,7 @@ module Optopus
             :mysql_username => settings.plugins['pdns']['mysql']['username'],
             :mysql_password => settings.plugins['pdns']['mysql']['password'],
             :mysql_database => settings.plugins['pdns']['mysql']['database'],
-            :restrict_domains => [ '%dev.%', '%qa.%' ]
+            :restrict_domains => settings.plugins['pdns']['mysql']['restrict_domains']
           )
         end
       end
