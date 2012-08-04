@@ -1,0 +1,24 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal">x</button>
+  <h3>Modify roles for <%= @modify_user.display_name %></h3>
+</div>
+<div class="modal-body">
+  <form class="form-horizontal" method="post" action="/admin/user/<%= @modify_user.id %>/roles">
+    <fieldset>
+      <div class="control-group">
+        <label class="control-label" for="roles">Roles</label>
+        <div class="controls">
+          <% @roles.each do |role| %>
+            <label class="checkbox">
+              <input type="checkbox" name="<%= html_id("role_#{role.name}") %>" value="<%= role.id %>" <%= @modify_user.member_of?(role.id) ? 'checked="checked"' : '' %>/>
+              <%= role.name %>
+            </label>
+          <% end %>
+        </div>
+      </div>
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Submit"/>
+      </div>
+    </fieldset>
+  </form>
+</div>
