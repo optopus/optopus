@@ -11,6 +11,11 @@ def random_serial_number
   (0..9).inject('') { |s,x| s + rand(9).to_s }
 end
 
+# Create the special admin role if it doesn't exist
+admin = Optopus::Role.where(:name => 'admin').first || Optopus::Role.new(:name => 'admin')
+admin.save!
+
+
 # Generate a bunch of seed data for use in development
 unless Optopus::App.production?
   location_data = [
