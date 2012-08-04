@@ -15,6 +15,15 @@ module Optopus
         @user != nil
       end
 
+      def is_admin?
+        return false unless is_user?
+        @user.roles.where(:id => admin_role.id).first != nil
+      end
+
+      def admin_role
+        @admin_role ||= Optopus::Role.where(:name => 'admin').first
+      end
+
       def locations
         @locations ||= Optopus::Location.all
       end
@@ -34,7 +43,12 @@ module Optopus
       end
 
       def display_login_or_logout
-        logged_in? ? "<a href=\"/logout\">Logout</a>" : "<a href=\"/login?redirect=#{URI.escape(request.fullpath)}\">Login</a>"
+        case logged_in?
+        when true
+          is_admin? ? erb(:admin_menu) : "<li><a href=\"/logout\">Logout</a></li>"
+        else
+          "<li><a href=\"/login?redirect=#{URI.escape(request.fullpath)}\">Login</a></li>"
+        end
       end
 
       def subnav_from_locations
