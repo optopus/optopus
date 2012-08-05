@@ -6,6 +6,7 @@ module Optopus
   end
 
   def self.models
+    @models ||= []
     Optopus.constants.each do |const_name|
       constant = Optopus.const_get(const_name)
       if !constant.nil? && constant.is_a?(Class)
