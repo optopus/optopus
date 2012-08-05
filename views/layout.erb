@@ -43,6 +43,9 @@
               <li>
                 <a href='#'>Network</a>
               </li>
+              <li id="events">
+                <a href='/events'>Events</a>
+              </li>
               <% settings.plugin_navigation.each do |nav_link| %>
                 <li id="<%= html_id(nav_link[:display]) %>"><a href="<%= nav_link[:route] %>"><%= nav_link[:display] %></a></li>
               <% end %>
