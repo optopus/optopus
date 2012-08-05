@@ -70,6 +70,10 @@ module Optopus
           subnav << { :id => html_id(location.common_name), :name => location.common_name.upcase }
         end
       end
+
+      def rickshaw_data_node_creation_by_day
+        Optopus::Node.count(:group => "DATE(created_at)").inject('[') { |data, (date, count)| data + "{ x: #{Time.parse(date).to_i}, y: #{count} }," } + ']'
+      end
     end
   end
 end

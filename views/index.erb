@@ -1,10 +1,28 @@
-<div class='row'>
+<div class='row-fluid'>
   <div class='span7'>
-    <h2>Graphs</h2>
-    <%# TODO: implement graphs %>
+    <div class="page-header">
+      <h3>Node creation by day</h3>
+    </div>
+    <div id="nodes-by-day" style="margin-left: 80px"></div>
+    <script>
+      var nodes_data = <%= rickshaw_data_node_creation_by_day %>;
+      var nodes_graph = new Rickshaw.Graph( {
+              element: document.querySelector("#nodes-by-day"),
+              width: 580,
+              height: 250,
+              renderer: 'bar',
+              series: [ {
+                      color: 'steelblue',
+                      data: nodes_data
+              } ]
+      } );
+      var x_axis = new Rickshaw.Graph.Axis.Time( { graph: nodes_graph } );
+      nodes_graph.render();
+    </script>
   </div>
+  <div class='span4'>
   <% if @recent_events && @recent_events.size > 0 %>
-    <div class='span4 offset7 well'>
+    <div class='well'>
       <h3>Recent events</h3>
       <table class='table table-condensed table-striped'>
         <% @recent_events.each do |event| -%>
@@ -17,7 +35,7 @@
     </div>
   <% end %>
   <% if @inactive_nodes && @inactive_nodes.size > 0 %>
-    <div class='span4 offset7 well'>
+    <div class='well'>
       <h3>Dead nodes</h3>
       <table class='table table-condensed table-striped'>
         <% @inactive_nodes.each do |node| %>
@@ -33,7 +51,7 @@
     </div>
   <% end%>
   <% if @new_nodes && @new_nodes.size > 0 %>
-    <div class='span4 offset7 well'>
+    <div class='well'>
       <h3>New nodes</h3>
       <table class='table table-condensed table-striped'>
         <% @new_nodes.each do |node| %>
@@ -46,7 +64,7 @@
     </div>
   <% end %>
   <% if @devices_to_be_provisioned && @devices_to_be_provisioned.size > 0 %>
-    <div class='span4 offset7 well'>
+    <div class='well'>
       <h3>New devices</h3>
       <table class='table table-condensed table-striped'>
         <% @devices_to_be_provisioned.each do |device| -%>
@@ -58,4 +76,5 @@
       <p class='pull-right'><a href="#">show all</a></p>
     </div>
   <% end %>
+</div>
 </div>
