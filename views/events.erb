@@ -7,6 +7,7 @@
     <tr>
       <th>ID</th>
       <th>Created</th>
+      <th>Type</th>
       <th>Message</th>
     </tr>
   </thead>
@@ -15,6 +16,7 @@
       <tr>
         <td><%= event.id %></td>
         <td><%= event.created_at.strftime("%D %R") %></td>
+        <td><a href="/search?query=event_type%3A<%= event.type %>"><%= event.type %></a></td>
         <td><%= event.rendered_message %></td>
       </tr>
     <% end %>
