@@ -6,6 +6,10 @@ module Optopus
       def self.table_name
         "#{self.table_name_prefix}#{undecorated_table_name}"
       end
+
+      def self.inherited(subclass)
+        Optopus.register_model(subclass)
+      end
     end
   end
 end
