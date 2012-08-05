@@ -7,18 +7,26 @@ module Optopus
 
       helpers do
         def pdns_client
-          @pdns_client ||= ::PDNS::Client.new(
+          return @pdns_client if @pdns_client
+          pdns_settings = {
             :mysql_hostname => settings.plugins['pdns']['mysql']['hostname'],
             :mysql_username => settings.plugins['pdns']['mysql']['username'],
             :mysql_password => settings.plugins['pdns']['mysql']['password'],
             :mysql_database => settings.plugins['pdns']['mysql']['database'],
-            :restrict_domains => settings.plugins['pdns']['mysql']['restrict_domains']
-          )
+          }
+          unless is_admin?
+            pdns_settings[:restirct_domains] = settings.plugins['pdns']['mysql']['restrict_domains']
+          end
+          @pdns_client
         end
       end
 
       plugin do
         nav_link :display => 'PowerDNS', :route => '/pdns'
+      end
+
+      before '/pdns/*', :auth => :user do
+        # ensure we at least have a user for all pdns routes
       end
 
       get '/pdns', :auth => :user do
