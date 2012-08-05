@@ -1,5 +1,6 @@
 module Optopus
   class User < ActiveRecord::Base
+    include AttributesToLiquidMethodsMapper
     validates :username, :display_name, :presence => true
     validates_uniqueness_of :username
     serialize :properties, ActiveRecord::Coders::Hstore

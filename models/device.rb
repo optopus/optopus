@@ -2,6 +2,7 @@ module Optopus
   class Device < ActiveRecord::Base
     include Tire::Model::Search
     include Tire::Model::Callbacks
+    include AttributesToLiquidMethodsMapper
 
     validates :serial_number, :primary_mac_address, :location, :presence => true
     validates_uniqueness_of :primary_mac_address

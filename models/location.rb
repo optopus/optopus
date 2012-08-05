@@ -1,5 +1,6 @@
 module Optopus
   class Location < ActiveRecord::Base
+    include AttributesToLiquidMethodsMapper
 
     validates :common_name, :city, :state, :presence => true
     validates_uniqueness_of :common_name

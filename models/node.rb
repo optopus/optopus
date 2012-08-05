@@ -2,6 +2,7 @@ module Optopus
   class Node < ActiveRecord::Base
     include Tire::Model::Search
     include Tire::Model::Callbacks
+    include AttributesToLiquidMethodsMapper
 
     validates :hostname, :primary_mac_address, :presence => true
     validates :virtual, :inclusion => { :in => [true, false] }
