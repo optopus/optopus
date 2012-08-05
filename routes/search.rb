@@ -12,7 +12,7 @@ module Optopus
     def make_valid_query_string(string)
       query_string = Array.new
       string.split.each do |query_part|
-        if query_part.match(/(hostname|switch|macaddress|productname|facts\..*):(.*)/)
+        if query_part.match(/(hostname|switch|macaddress|productname|facts\..*|event_type|event_message):(.*)/)
           query_string << "#{$1}:#{elasticsearch_escape($2)}"
         else
           query_string << elasticsearch_escape(query_part)
@@ -36,10 +36,17 @@ module Optopus
         end
         highlight :macaddress, :serial_number
       end
+      event_results = Optopus::Event.search(:size => 2000) do
+        query do
+          string query_string, :default_operator => 'AND', :fields => [:event_type, :event_message]
+        end
+        highlight :event_type
+      end
       @search_query = params['query']
       @results = Array.new
       @results << { :type => :node, :results => node_results.sort { |a,b| a.hostname <=> b.hostname } }
       @results << { :type => :device, :results => device_results }
+      @results << { :type => :event, :results => event_results }
       erb :search_results
     end
   end

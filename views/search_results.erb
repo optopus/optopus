@@ -14,7 +14,11 @@
     <ul class="unstyled">
       <!-- <%= result_set[:type] %> -->
       <% result_set[:results].each do |result| %>
-        <li><a href="/<%= result_set[:type] %>/<%= result.id %>"><%= (result_set[:type] == :node) ? result.hostname : result.serial_number %></a></li>
+        <% if result_set[:type] == :event %>
+          <li><a href="/search?query=event_type%3A<%= result.event_type %>"><%= result.event_type %></a>: <%= result.event_message %></li>
+        <% else %>
+          <li><a href="/<%= result_set[:type] %>/<%= result.id %>"><%= (result_set[:type] == :node) ? result.hostname : result.serial_number %></a></li>
+        <% end %>
       <% end %>
     </ul>
   <% end %>

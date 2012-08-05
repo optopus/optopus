@@ -1,7 +1,15 @@
 module Optopus
   class Event < ActiveRecord::Base
+    include Tire::Model::Search
+    include Tire::Model::Callbacks
     include AttributesToLiquidMethodsMapper
     serialize :properties, ActiveRecord::Coders::Hstore
+
+    mapping do
+      indexes :id, :index => :not_analyzed
+      indexes :event_message, :as => "rendered_message", :boost => 10
+      indexes :event_type, :as => 'type', :boost => 20
+    end
 
     def rendered_message
       Liquid::Template.parse(message).render 'references' => references
