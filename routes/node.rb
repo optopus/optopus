@@ -13,6 +13,17 @@ module Optopus
       erb :node
     end
 
+    delete '/node/:id' do
+      node = Optopus::Node.where(:id => params[:id]).first
+      begin
+        node.destroy
+        flash[:success] = "Deleted #{node.hostname} successfully!"
+        redirect back
+      rescue Exception => e
+        handle_error(e)
+      end
+    end
+
     # post a single key => value
     post '/node/:id/property/:key/:value' do
       node = Optopus::Node.where(:id => params[:id]).first
