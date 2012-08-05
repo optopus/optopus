@@ -32,19 +32,9 @@ module Optopus
 
     register Optopus::Auth
     register do
-      def auth(type)
+      def auth(role_name)
         condition do
-          unless send("is_#{type}?")
-            if logged_in?
-              flash[:error] = 'You are unauthorized.'
-              logger.debug "Unauthorized access to #{request.url}, user must be #{type}"
-              redirect '/' if request.referer.nil?
-              redirect back
-            else
-              redirect_url = request.referer.nil? ? '/' : request.referer
-              redirect "/login?redirect=#{URI.encode(redirect_url)}"
-            end
-          end
+          handle_unauthorized_access unless (role_name == :user) ? is_user? : is_authorized?(role_name)
         end
       end
     end

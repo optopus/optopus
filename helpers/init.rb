@@ -29,6 +29,13 @@ module Optopus
         @user != nil
       end
 
+      def is_authorized?(role_name)
+        return false unless is_user?
+        role = Optopus::Role.where(:name => role_name).first
+        raise "Invalid role name: #{role_name}" if role.nil?
+        @user.member_of?(role.id)
+      end
+
       def is_admin?
         return false unless is_user?
         @user.roles.where(:id => admin_role.id).first != nil
@@ -48,6 +55,18 @@ module Optopus
         flash[:error] = exception.to_s
         status status_code
         redirect back
+      end
+
+      def handle_unauthorized_access
+        if logged_in?
+          flash[:error] = 'You are unauthorized.'
+          logger.debug "Unauthorized access to #{request.url}, user must be #{type}"
+          redirect '/' if request.referer.nil?
+          redirect back
+        else
+          redirect_url = request.referer.nil? ? '/' : request.referer
+          redirect "/login?redirect=#{URI.encode(redirect_url)}"
+        end
       end
 
       def validate_param_presence(*keys)
