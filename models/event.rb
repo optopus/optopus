@@ -2,8 +2,6 @@ module Optopus
   class Event < ActiveRecord::Base
     include AttributesToLiquidMethodsMapper
     serialize :properties, ActiveRecord::Coders::Hstore
-    belongs_to :event_type
-    validates_associated :event_type
 
     def rendered_message
       Liquid::Template.parse(message).render 'references' => references
