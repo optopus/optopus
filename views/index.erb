@@ -3,8 +3,21 @@
     <h2>Graphs</h2>
     <%# TODO: implement graphs %>
   </div>
+  <% if @recent_events && @recent_events.size > 0 %>
+    <div class='span4 offset7 well'>
+      <h3>Recent events</h3>
+      <table class='table table-condensed table-striped'>
+        <% @recent_events.each do |event| -%>
+          <tr>
+            <td><%= event.rendered_message %></td>
+          </tr>
+        <% end -%>
+      </table>
+      <p class='pull-right'><a href="#">show all</a></p>
+    </div>
+  <% end %>
   <% if @inactive_nodes && @inactive_nodes.size > 0 %>
-    <div class='span4 well'>
+    <div class='span4 offset7 well'>
       <h3>Dead nodes</h3>
       <table class='table table-condensed table-striped'>
         <% @inactive_nodes.each do |node| %>

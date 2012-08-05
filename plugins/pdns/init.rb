@@ -35,7 +35,7 @@ module Optopus
       post '/pdns/domain/:id' do
         begin
           validate_param_presence 'content', 'name', 'type', 'record-id'
-          pdns_client.update_record(
+          dns_hostname = pdns_client.update_record(
             params['record-id'],
             :domain_id => params[:id],
             :short_name => params['name'],
@@ -43,6 +43,7 @@ module Optopus
             :content => params['content'],
             :ttl => params['ttl']
           )
+          register_event "<a href=\"/user/{{ references.user.id }}\">{{ references.user.display_name }}</a> updated #{dns_hostname}", :type => 'dns_update'
         rescue Exception => e
           status 400
           flash[:error] = e.to_s
@@ -62,6 +63,7 @@ module Optopus
             :content   => params['content'],
             :ttl       => params['ttl']
           )
+          register_event "<a href=\"/user/{{ references.user.id }}\">{{ references.user.display_name }}</a> created #{name}", :type => 'dns_created'
         rescue Exception => e
           status 400
           flash[:error] = e.to_s
@@ -71,7 +73,8 @@ module Optopus
       end
 
       delete '/pdns/record/:id' do
-        pdns_client.delete_record(params[:id])
+        dns_hostname = pdns_client.delete_record(params[:id])
+        register_event "<a href=\"/user/{{ references.user.id }}\">{{ references.user.display_name }}</a> deleted #{dns_hostname}", :type => 'dns_deleted'
         redirect back
       end
 

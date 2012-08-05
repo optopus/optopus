@@ -54,10 +54,13 @@ module PDNS
         update_string += "#{key}='#{escape(record[key].to_s)}', " unless record[key].nil?
       end
       @mysql_client.query("UPDATE records SET #{update_string.chomp(', ')} WHERE id=#{id}")
+      record['name']
     end
 
     def delete_record(id)
+      name = record_from_id(id)['name']
       @mysql_client.query("DELETE from records WHERE id=#{escape(id.to_s)}")
+      name
     end
 
     def records(id=nil)

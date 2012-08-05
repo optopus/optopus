@@ -7,6 +7,14 @@ module Optopus
       Liquid::Template.parse(message).render 'references' => references
     end
 
+    def type
+      properties['event_type']
+    end
+
+    def type=(value)
+      properties['event_type'] = value
+    end
+
     def references
       references = Hash.new
       properties.each do |key, value|

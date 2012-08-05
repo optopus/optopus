@@ -3,6 +3,20 @@ module Optopus
     class ParamError < StandardError; end
 
     helpers do
+      def register_event(message, options={})
+        references = options.delete(:references) || Array.new
+        type = options.delete(:type) || 'generic'
+        raise 'references must be an array' unless references.kind_of?(Array)
+        event = Optopus::Event.new
+        event.message = message
+        references << @user
+        references.each do |reference|
+          event.properties["#{reference.class.table_name.singularize}_id"] = reference.id
+        end
+        event.type = type
+        event.save!
+      end
+
       def html_id(string)
         string.downcase.gsub(' ', '_')
       end

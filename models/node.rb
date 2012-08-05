@@ -10,6 +10,7 @@ module Optopus
     before_validation :downcase_primary_mac_address
     before_save :assign_device
     belongs_to :device
+    after_create :register_create_event
 
     serialize :facts, ActiveRecord::Coders::Hstore
     serialize :properties, ActiveRecord::Coders::Hstore
@@ -42,6 +43,14 @@ module Optopus
     end
 
     private
+
+    def register_create_event
+      event = Optopus::Event.new
+      event.message = "<a href=\"/node/{{ references.node.id }}\">{{ references.node.hostname }}</a> has been created"
+      event.type = 'node_created'
+      event.properties['node_id'] = id
+      event.save!
+    end
 
     def downcase_primary_mac_address
       self.primary_mac_address = self.primary_mac_address.downcase unless self.primary_mac_address.nil?

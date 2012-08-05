@@ -18,6 +18,7 @@ module Optopus
       begin
         node.destroy
         flash[:success] = "Deleted #{node.hostname} successfully!"
+        register_event "<a href=\"/user/{{ references.user.id }}\">{{ references.user.display_name }}</a> deleted #{node.hostname}", :type => 'node_deleted'
         redirect back
       rescue Exception => e
         handle_error(e)
