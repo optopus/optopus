@@ -17,6 +17,7 @@ require 'activerecord-postgres-hstore'
 require 'activerecord-postgres-hstore/activerecord'
 require 'optopus'
 require 'tire'
+require 'liquid'
 
 module Optopus
   class App < Sinatra::Base

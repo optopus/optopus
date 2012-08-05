@@ -13,6 +13,7 @@ gem 'uuidtools'
 gem 'rake'
 gem 'activerecord-postgresql-adapter'
 gem 'tire'
+gem 'liquid'
 
 group :test, :development do
   gem 'rspec'

@@ -29,6 +29,7 @@ GEM
     jwt (0.1.5)
       multi_json (>= 1.0)
     kgio (2.7.4)
+    liquid (2.3.0)
     mime-types (1.19)
     multi_json (1.3.6)
     multipart-post (1.1.5)
@@ -98,6 +99,7 @@ DEPENDENCIES
   activerecord-postgresql-adapter
   erubis
   json
+  liquid
   mysql2
   oauth2
   rack-flash3 (~> 1.0.1)
