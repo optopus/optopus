@@ -17,7 +17,7 @@ module Optopus
           unless is_admin?
             pdns_settings[:restirct_domains] = settings.plugins['pdns']['mysql']['restrict_domains']
           end
-          @pdns_client
+          @pdns_client = ::PDNS::Client.new(pdns_settings)
         end
       end
 
