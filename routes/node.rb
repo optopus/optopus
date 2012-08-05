@@ -13,7 +13,7 @@ module Optopus
       erb :node
     end
 
-    delete '/node/:id' do
+    delete '/node/:id', :auth => :admin do
       node = Optopus::Node.where(:id => params[:id]).first
       begin
         node.destroy
