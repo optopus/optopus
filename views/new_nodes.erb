@@ -1,0 +1,13 @@
+<div class="page-header">
+  <h1>New Nodes</h1>
+  <p class="lead">The following have been added in the last week.</p>
+</div>
+<table class="table table-condensed table-striped">
+  <tbody>
+    <% @nodes.each do |node| %>
+      <tr>
+        <td><a href="/node/<%= node.id %>"><%= node.hostname %></a></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

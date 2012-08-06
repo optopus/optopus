@@ -4,5 +4,10 @@ module Optopus
       subnav_from_locations
       erb :bare_metal
     end
+
+    get '/devices/new' do
+      @devices = Optopus::Device.where(:provisioned => false)
+      erb :new_devices
+    end
   end
 end

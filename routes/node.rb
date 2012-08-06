@@ -5,6 +5,16 @@ module Optopus
       erb :nodes
     end
 
+    get '/nodes/new' do
+      @nodes = Optopus::Node.where('created_at > ?', 7.days.ago).order('created_at DESC')
+      erb :new_nodes
+    end
+
+    get '/nodes/dead' do
+      @nodes = Optopus::Node.inactive
+      erb :dead_nodes
+    end
+
     get '/node/:id' do
       @subnav = [ { :id => 'general', :name => 'General' } ]
       @subnav += node_partials.inject([]) { |s,p| s << { :id => html_id(p[:template].to_s), :name => p[:display] }; s }

@@ -1,0 +1,11 @@
+<div class="page-header">
+  <h1>New Devices</h1>
+  <p class="lead">The following have been added in the last week.</p>
+</div>
+<table class="table table-condensed table-striped">
+  <tbody>
+    <% @devices.each do |device| %>
+      <tr><td><%= device.hostname %></td></tr>
+    <% end %>
+  </tbody>
+</table>
