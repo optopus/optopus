@@ -24,7 +24,7 @@ module Optopus
 
     def register_create_event
       event = Optopus::Event.new
-      event.message = "<a href=\"/device/{{ references.device.id }}\">{{ references.device.serial_number }}</a> has been created"
+      event.message = "new device <a href=\"/device/{{ references.device.id }}\">{{ references.device.serial_number }}</a> has been created"
       event.type = 'device_created'
       event.properties['device_id'] = id
       event.save!

@@ -46,7 +46,7 @@ module Optopus
 
     def register_create_event
       event = Optopus::Event.new
-      event.message = "<a href=\"/node/{{ references.node.id }}\">{{ references.node.hostname }}</a> has been created"
+      event.message = "new node <a href=\"/node/{{ references.node.id }}\">{{ references.node.hostname }}</a> has been created"
       event.type = 'node_created'
       event.properties['node_id'] = id
       event.save!
