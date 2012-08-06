@@ -4,8 +4,10 @@
       <h1>Overview</h1>
       <p class="lead">Currently watching out for <b><%= @active_node_count %></b> nodes</p>
     </div>
+    <h3>Active nodes over time</h3>
+    <div id="active-nodes-over-time" style="margin-top: 20px; margin-left: 80px; margin-bottom: 20px"></div>
     <h3>Node creation by day</h3>
-    <div id="nodes-by-day" style="margin-top: 20px; margin-left: 80px"></div>
+    <div id="nodes-by-day" style="margin-top: 20px; margin-left: 80px; margin-bottom: 20px"></div>
     <script>
       var nodes_data = <%= rickshaw_data_node_creation_by_day %>;
       var nodes_graph = new Rickshaw.Graph( {
@@ -20,6 +22,20 @@
       } );
       var x_axis = new Rickshaw.Graph.Axis.Time( { graph: nodes_graph } );
       nodes_graph.render();
+
+      var active_nodes_data = <%= rickshaw_data_active_nodes_over_time %>;
+      var active_nodes_graph = new Rickshaw.Graph( {
+              element: document.querySelector("#active-nodes-over-time"),
+              width: 580,
+              height: 150,
+              series: [ {
+                      color: 'steelblue',
+                      data: nodes_data
+              } ]
+      } );
+
+      var active_nodes_x_axis = new Rickshaw.Graph.Axis.Time( { graph: active_nodes_graph } );
+      active_nodes_graph.render();
     </script>
   </div>
   <div class='span4'>

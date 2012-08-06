@@ -93,6 +93,12 @@ module Optopus
       def rickshaw_data_node_creation_by_day
         Optopus::Node.count(:group => "DATE(created_at)").inject('[') { |data, (date, count)| data + "{ x: #{Time.parse(date).to_i}, y: #{count} }," } + ']'
       end
+
+      def rickshaw_data_active_nodes_over_time
+        Optopus::Event.where("properties -> 'event_type' = 'node_count'").inject('[') do |data, event|
+          data + "{ x: #{event.created_at.to_i}, y: #{event.properties['node_count']} },"
+        end + ']'
+      end
     end
   end
 end
