@@ -25,9 +25,10 @@ module Optopus
         nav_link :display => 'PowerDNS', :route => '/pdns'
       end
 
-      before '/pdns/*', :auth => :user do
-        # ensure we at least have a user for all pdns routes
-      end
+      # TODO: the below causes redirect loop
+      #before '/pdns/*', :auth => :user do
+      #  # ensure we at least have a user for all pdns routes
+      #end
 
       get '/pdns', :auth => :user do
         @domains = pdns_client.domains
