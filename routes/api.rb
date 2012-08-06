@@ -72,5 +72,29 @@ module Optopus
         body({ :server_error => e.to_s }.to_json)
       end
     end
+
+    put '/api/event' do
+      begin
+        type = nil
+        message = nil
+        case request.content_type
+        when 'application/json'
+          data = JSON.parse(request.body.read)
+          type = data['type'] || 'generic'
+          message = data['message']
+        else
+          validate_param_presence 'message'
+          type = params['event'] || 'generic'
+          message = params['message']
+        end
+        event = Optopus::Event.new(:message => message)
+        event.type = type
+        event.save!
+        status 201
+      rescue Exception => e
+        status 400
+        body({:error => e.to_s})
+      end
+    end
   end
 end
