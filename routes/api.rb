@@ -96,5 +96,14 @@ module Optopus
         body({:error => e.to_s})
       end
     end
+
+    get '/api/nodes/active' do
+      begin
+        body(Optopus::Node.active.to_json)
+      rescue Exception => e
+        status 500
+        body({ :server_error => e.to_s })
+      end
+    end
   end
 end
