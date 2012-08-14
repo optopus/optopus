@@ -1,0 +1,43 @@
+<script>
+  $('#delete-confirmation').modal();
+  $('#dead-confirmation').modal();
+</script>
+
+<ul class="nav nav-list">
+  <li class="nav-header">Node Actions</li>
+  <li><a href="#" onclick="$('#delete-confirmation').modal('show')"><i class="icon-trash"></i>Delete node</a></li>
+  <li><a href="#" onclick="$('#dead-confirmation').modal('show')"><i class="icon-off"></i>Mark node as dead</a></li>
+</ul>
+
+<div id="delete-confirmation" class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Confirmation</h3>
+  </div>
+  <div class="modal-body">
+    <p>Please confirm that you would like to delete <em><%= @node.hostname %></em>. This cannot be undone.</p>
+  </div>
+  <div class="modal-footer">
+    <form id="delete-node" method="post" action="/node/<%= @node.id %>">
+      <input type="hidden" name="_method" value="delete">
+      <input class="btn btn-danger" type="submit" value="Delete">
+      <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    </form>
+  </div>
+</div>
+
+<div id="dead-confirmation" class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Confirmation</h3>
+  </div>
+  <div class="modal-body">
+    <p>Please confirm that you would like to mark <em><%= @node.hostname %></em> as dead.</p>
+  </div>
+  <div class="modal-footer">
+    <form id="dead-node" method="post" action="/node/<%= @node.id %>/inactive">
+      <input class="btn btn-primary" type="submit" value="Mark dead">
+      <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    </form>
+  </div>
+</div>

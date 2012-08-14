@@ -29,6 +29,21 @@ module Optopus
         node.destroy
         flash[:success] = "Deleted #{node.hostname} successfully!"
         register_event "<a href=\"/user/{{ references.user.id }}\">{{ references.user.display_name }}</a> deleted #{node.hostname}", :type => 'node_deleted'
+        redirect '/'
+      rescue Exception => e
+        handle_error(e)
+      end
+    end
+
+    # mark node as dead
+    post '/node/:id/inactive', :auth => :admin do
+      node = Optopus::Node.where(:id => params[:id]).first
+      begin
+        raise "Node '#{params[:id]}' does not exists." if node.nil?
+        node.active = false
+        node.save!
+        flash[:success] = "Marked #{node.hostname} as dead successfully!"
+        register_event "<a href=\"/user/{{ references.user.id }}\">{{ references.user.display_name }}</a> marked #{node.hostname} as dead", :type => 'node_inactive'
         redirect back
       rescue Exception => e
         handle_error(e)
