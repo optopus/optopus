@@ -12,7 +12,7 @@ module Optopus
         view << "<% if @node.facts.include?('interfaces') %>"
         view << '<div class="page-header">'
         view << ' <h3>Network connectivity</h3>'
-        view << ' <small>Data connected from lldp</small>'
+        view << ' <small>Data collected from lldp</small>'
         view << '</div>'
         view << '<table class="table table-striped table-bordered table-condensed">'
         view << ' <tbody>'
