@@ -84,7 +84,7 @@ module Optopus
           message = data['message']
         else
           validate_param_presence 'message'
-          type = params['event'] || 'generic'
+          type = params['type'] || 'generic'
           message = params['message']
         end
         event = Optopus::Event.new(:message => message)
