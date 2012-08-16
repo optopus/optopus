@@ -7,7 +7,7 @@ module Optopus
     has_and_belongs_to_many :roles
 
     def events
-      Optopus::Event.where("properties -> 'user_id' = '#{id}'").order('created_at DESC')
+      Optopus::Event.where("properties -> 'user_id' = '#{id}' or properties -> 'user_username' = '#{username}'").order('created_at DESC')
     end
 
     def member_of?(role_id)
