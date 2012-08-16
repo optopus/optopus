@@ -92,13 +92,13 @@ module Optopus
 
       def rickshaw_data_node_creation_by_day
         Optopus::Node.order('date_created_at ASC').count(:group => "DATE(created_at)").inject('[') do |data, (date, count)|
-          data + "{ x: #{Time.parse(date).to_i}, y: #{count} },"
+          data + "{ x: #{Time.parse(date).to_i}, y: #{count.to_i} },"
         end + ']'
       end
 
       def rickshaw_data_active_nodes_over_time
         Optopus::Event.order('created_at ASC').where("properties -> 'event_type' = 'node_count'").inject('[') do |data, event|
-          data + "{ x: #{event.created_at.to_i}, y: #{event.properties['node_count']} },"
+          data + "{ x: #{event.created_at.to_i}, y: #{event.properties['node_count'].to_i} },"
         end + ']'
       end
     end
