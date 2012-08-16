@@ -18,6 +18,11 @@
     <script>
       $('.subnav').scrollspy();
       $('.dropdown-toggle').dropdown();
+      $(function () {
+        $('#search-query').focus(function() {
+          $(this).select();
+        });
+      });
       $(document).bind('keyup', '/', function() {
         $('#search-query').focus();
       });
