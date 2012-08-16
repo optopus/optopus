@@ -73,22 +73,35 @@ module Optopus
       end
     end
 
+    # references can be passed in as a hash
+    # ex: { 'username' => 'test' }
     put '/api/event' do
       begin
         type = nil
         message = nil
+        references = nil
         case request.content_type
         when 'application/json'
           data = JSON.parse(request.body.read)
           type = data['type'] || 'generic'
           message = data['message']
+          references = data['references']
         else
           validate_param_presence 'message'
           type = params['type'] || 'generic'
           message = params['message']
+          # TODO: support references in non-json form
         end
         event = Optopus::Event.new(:message => message)
         event.type = type
+        if references
+          if references.include?('username')
+            event.properties['user_username'] = references.delete('username')
+          end
+          if references.include?('hostname')
+            event.properties['node_hostname'] = references.delete('hostname')
+          end
+        end
         event.save!
         status 201
       rescue Exception => e
