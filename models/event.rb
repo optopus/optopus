@@ -23,11 +23,12 @@ module Optopus
       properties['event_type'] = value
     end
 
+    # TODO: split references out into their own hstore column to avoid collision
     def references
       references = Hash.new
       properties.each do |key, value|
         next if key == 'event_type'
-        if key.match(/^(.*)_(\w+)/)
+        if key.match(/^(.*)_(username|id|hostname)/)
           reference_type = $1
           column = $2.to_sym
           Optopus.models.each do |model|
