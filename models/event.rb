@@ -26,11 +26,13 @@ module Optopus
     def references
       references = Hash.new
       properties.each do |key, value|
-        if key.match(/^(.*)_id/)
+        next if key == 'event_type'
+        if key.match(/^(.*)_(\w+)/)
           reference_type = $1
+          column = $2.to_sym
           Optopus.models.each do |model|
             if model.respond_to?(:table_name) && model.table_name.singularize == reference_type
-              references[reference_type] = model.find_by_id(value)
+              references[reference_type] = model.where(column => value).first
               break
             end
           end
