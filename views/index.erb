@@ -1,3 +1,22 @@
+<style>
+  .chart-container {
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-top: 20px;
+    margin-left: 40px;
+    margin-bottom: 20px;
+  }
+  .chart {
+    position: relative;
+    left: 40px;
+  }
+  .y-axis {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+  }
+</style>
 <div class='row-fluid'>
   <div class='span7'>
     <div class="page-header">
@@ -5,10 +24,17 @@
       <p class="lead">Currently watching out for <b><%= @active_node_count %></b> nodes</p>
     </div>
     <h3>Active nodes over time</h3>
-    <div id="active-nodes-over-time" style="margin-top: 20px; margin-left: 80px; margin-bottom: 20px"></div>
+    <div class="chart-container">
+      <div class="chart" id="active-nodes-over-time"></div>
+      <div class="y-axis" id="active-nodes-over-time-y-axis"></div>
+    </div>
     <h3>Node creation by day</h3>
-    <div id="nodes-by-day" style="margin-top: 20px; margin-left: 80px; margin-bottom: 20px"></div>
+    <div class="chart-container">
+      <div class="chart" id="nodes-by-day"></div>
+      <div class="y-axis" id="nodes-by-day-y-axis"></div>
+    </div>
     <script>
+      // nodes by day graph
       var nodes_data = <%= rickshaw_data_node_creation_by_day %>;
       var nodes_graph = new Rickshaw.Graph( {
               element: document.querySelector("#nodes-by-day"),
@@ -16,25 +42,43 @@
               height: 150,
               renderer: 'bar',
               series: [ {
+                      name: 'nodes',
                       color: 'steelblue',
                       data: nodes_data
               } ]
       } );
-      var x_axis = new Rickshaw.Graph.Axis.Time( { graph: nodes_graph } );
+      var hover_detail = new Rickshaw.Graph.HoverDetail( {
+        graph: nodes_graph
+      });     var x_axis = new Rickshaw.Graph.Axis.Time( { graph: nodes_graph } );
+      var y_axis = new Rickshaw.Graph.Axis.Y({
+        graph: nodes_graph,
+        orientation: 'left',
+        element: document.getElementById('nodes-by-day-y-axis'),
+      });
       nodes_graph.render();
 
+      // active nodes over time graph
       var active_nodes_data = <%= rickshaw_data_active_nodes_over_time %>;
       var active_nodes_graph = new Rickshaw.Graph( {
               element: document.querySelector("#active-nodes-over-time"),
               width: 580,
               height: 150,
               series: [ {
+                      name: 'nodes',
                       color: 'steelblue',
                       data: active_nodes_data
               } ]
       } );
+      var active_nodes_hover_detail = new Rickshaw.Graph.HoverDetail( {
+        graph: active_nodes_graph
+      });
 
       var active_nodes_x_axis = new Rickshaw.Graph.Axis.Time( { graph: active_nodes_graph } );
+      var active_nodes_y_axis = new Rickshaw.Graph.Axis.Y({
+        graph: active_nodes_graph,
+        orientation: 'left',
+        element: document.getElementById('active-nodes-over-time-y-axis'),
+      });
       active_nodes_graph.render();
     </script>
   </div>
