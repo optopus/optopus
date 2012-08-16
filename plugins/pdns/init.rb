@@ -52,7 +52,7 @@ module Optopus
             :content => params['content'],
             :ttl => params['ttl']
           )
-          register_event "<a href=\"/user/{{ references.user.id }}\">{{ references.user.display_name }}</a> updated dns #{dns_hostname}", :type => 'dns_update'
+          register_event "{{ references.user.to_link }} updated dns #{dns_hostname}", :type => 'dns_update'
         rescue Exception => e
           status 400
           flash[:error] = e.to_s
@@ -72,7 +72,7 @@ module Optopus
             :content   => params['content'],
             :ttl       => params['ttl']
           )
-          register_event "<a href=\"/user/{{ references.user.id }}\">{{ references.user.display_name }}</a> created dns record for #{name}", :type => 'dns_created'
+          register_event "{{ references.user.to_link }} created dns record for #{name}", :type => 'dns_created'
         rescue Exception => e
           status 400
           flash[:error] = e.to_s
@@ -83,7 +83,7 @@ module Optopus
 
       delete '/pdns/record/:id' do
         dns_hostname = pdns_client.delete_record(params[:id])
-        register_event "<a href=\"/user/{{ references.user.id }}\">{{ references.user.display_name }}</a> deleted dns record for #{dns_hostname}", :type => 'dns_deleted'
+        register_event "{{ references.user.to_link }} deleted dns record for #{dns_hostname}", :type => 'dns_deleted'
         redirect back
       end
 

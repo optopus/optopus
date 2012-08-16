@@ -14,6 +14,7 @@ module Optopus
 
     serialize :facts, ActiveRecord::Coders::Hstore
     serialize :properties, ActiveRecord::Coders::Hstore
+    liquid_methods :to_link
 
     settings :analysis => {
         :analyzer => {
@@ -42,11 +43,15 @@ module Optopus
       where(:active => false)
     end
 
+    def to_link
+      "<a href=\"/node/#{id}\">#{hostname}</a>"
+    end
+
     private
 
     def register_create_event
       event = Optopus::Event.new
-      event.message = "new node <a href=\"/node/{{ references.node.id }}\">{{ references.node.hostname }}</a> has been created"
+      event.message = "new node {{ references.node.to_link }} has been created"
       event.type = 'node_created'
       event.properties['node_id'] = id
       event.save!
