@@ -41,5 +41,13 @@ module Optopus
       end
       references
     end
+
+    def self.unique_event_types
+      select("DISTINCT properties -> 'event_type' AS event_type").inject([]) {|a,e| a << e.read_attribute(:event_type)}
+    end
+
+    def self.group_event_type_by_created_at(event_type)
+      where("properties -> 'event_type' = '#{event_type}'").order('date_created_at ASC').count(:group => "DATE(created_at)")
+    end
   end
 end
