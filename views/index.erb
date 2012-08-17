@@ -37,6 +37,11 @@
       <div class="chart" id="nodes-by-day-chart"></div>
       <div class="y-axis" id="nodes-by-day-chart-y-axis"></div>
     </div>
+    <h3>Event types by day</h3>
+    <div class="chart-container">
+      <div class="chart" id="events-by-day-chart"></div>
+      <div class="y-axis" id="events-by-day-chart-y-axis"></div>
+    </div>
     <script>
       function createGraph(name, series, opts) {
         opts = opts || {}
@@ -86,6 +91,17 @@
       }]
       var nodesByDayGraph = createGraph('nodes-by-day', nodesByDaySeries, { renderer: 'bar' });
       nodesByDayGraph.render();
+
+      var eventsByDaySeries = jQuery.parseJSON('<%= rickshaw_series_event_types_by_day %>');
+      var palette = new Rickshaw.Color.Palette();
+      $.each(eventsByDaySeries, function() {
+        if (this.color === undefined) {
+          this.color = palette.color()
+        }
+      });
+      Rickshaw.Series.zeroFill(eventsByDaySeries);
+      var eventsByDayGraph = createGraph('events-by-day', eventsByDaySeries);
+      eventsByDayGraph.render();
     </script>
   </div>
   <div class='span4'>

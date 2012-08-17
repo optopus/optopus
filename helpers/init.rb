@@ -101,6 +101,15 @@ module Optopus
           data + "{ x: #{event.created_at.to_i}, y: #{event.properties['node_count'].to_i} },"
         end + ']'
       end
+
+      def rickshaw_series_event_types_by_day
+        Optopus::Event.unique_event_types.inject([]) do |series, event_type|
+          data = Optopus::Event.group_event_type_by_created_at(event_type).inject([]) do |data, (date, count)|
+            data << { :x => Time.parse(date).to_i, :y => count.to_i }
+          end
+          series << { :data => data, :name => event_type }
+        end.to_json
+      end
     end
   end
 end
