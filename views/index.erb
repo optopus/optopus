@@ -27,6 +27,11 @@
       <h1>Overview</h1>
       <p class="lead">Currently watching out for <b><%= @active_node_count %></b> nodes</p>
     </div>
+    <h3>Event types by day</h3>
+    <div class="chart-container">
+      <div class="chart" id="events-by-day-chart"></div>
+      <div class="y-axis" id="events-by-day-chart-y-axis"></div>
+    </div>
     <h3>Active nodes over time</h3>
     <div class="chart-container">
       <div class="chart" id="active-nodes-over-time-chart"></div>
@@ -36,11 +41,6 @@
     <div class="chart-container">
       <div class="chart" id="nodes-by-day-chart"></div>
       <div class="y-axis" id="nodes-by-day-chart-y-axis"></div>
-    </div>
-    <h3>Event types by day</h3>
-    <div class="chart-container">
-      <div class="chart" id="events-by-day-chart"></div>
-      <div class="y-axis" id="events-by-day-chart-y-axis"></div>
     </div>
     <script>
       function createGraph(name, series, opts) {
