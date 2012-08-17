@@ -100,7 +100,7 @@
         }
       });
       Rickshaw.Series.zeroFill(eventsByDaySeries);
-      var eventsByDayGraph = createGraph('events-by-day', eventsByDaySeries);
+      var eventsByDayGraph = createGraph('events-by-day', eventsByDaySeries, { renderer: 'line' });
       eventsByDayGraph.render();
     </script>
   </div>
