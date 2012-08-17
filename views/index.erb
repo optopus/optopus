@@ -25,61 +25,63 @@
     </div>
     <h3>Active nodes over time</h3>
     <div class="chart-container">
-      <div class="chart" id="active-nodes-over-time"></div>
-      <div class="y-axis" id="active-nodes-over-time-y-axis"></div>
+      <div class="chart" id="active-nodes-over-time-chart"></div>
+      <div class="y-axis" id="active-nodes-over-time-chart-y-axis"></div>
     </div>
     <h3>Node creation by day</h3>
     <div class="chart-container">
-      <div class="chart" id="nodes-by-day"></div>
-      <div class="y-axis" id="nodes-by-day-y-axis"></div>
+      <div class="chart" id="nodes-by-day-chart"></div>
+      <div class="y-axis" id="nodes-by-day-chart-y-axis"></div>
     </div>
     <script>
-      // nodes by day graph
-      var nodes_data = <%= rickshaw_data_node_creation_by_day %>;
-      var nodes_graph = new Rickshaw.Graph( {
-              element: document.querySelector("#nodes-by-day"),
-              width: 580,
-              height: 150,
-              renderer: 'bar',
-              series: [ {
-                      name: 'nodes',
-                      color: 'steelblue',
-                      data: nodes_data
-              } ]
-      } );
-      var hover_detail = new Rickshaw.Graph.HoverDetail( {
-        graph: nodes_graph
-      });     var x_axis = new Rickshaw.Graph.Axis.Time( { graph: nodes_graph } );
-      var y_axis = new Rickshaw.Graph.Axis.Y({
-        graph: nodes_graph,
-        orientation: 'left',
-        element: document.getElementById('nodes-by-day-y-axis'),
-      });
-      nodes_graph.render();
+      function createGraph(name, series, opts) {
+        opts = opts || {}
+        graphRenderer = opts.renderer || 'stack'
+        graphWidth = opts.width || 580
+        graphHeight = opts.height || 150
+        var graph = new Rickshaw.Graph({
+          element: document.getElementById(name + '-chart'),
+          width: graphWidth,
+          height: graphHeight,
+          renderer: graphRenderer,
+          series: series
+        });
 
-      // active nodes over time graph
-      var active_nodes_data = <%= rickshaw_data_active_nodes_over_time %>;
-      var active_nodes_graph = new Rickshaw.Graph( {
-              element: document.querySelector("#active-nodes-over-time"),
-              width: 580,
-              height: 150,
-              series: [ {
-                      name: 'nodes',
-                      color: 'steelblue',
-                      data: active_nodes_data
-              } ]
-      } );
-      var active_nodes_hover_detail = new Rickshaw.Graph.HoverDetail( {
-        graph: active_nodes_graph
-      });
+        var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+          graph: graph,
+          formatter: function(series, x, y) {
+            var date = '<span class="date">' + new Date(x * 1000).toUTCString() + '</span>';
+            var swatch = '<span class="detail_swatch" style="background-color: ' + series.color + '"></span>';
+            var content = swatch + series.name + ": " + parseInt(y) + '<br>' + date;
+            return content;
+          }
+        });
 
-      var active_nodes_x_axis = new Rickshaw.Graph.Axis.Time( { graph: active_nodes_graph } );
-      var active_nodes_y_axis = new Rickshaw.Graph.Axis.Y({
-        graph: active_nodes_graph,
-        orientation: 'left',
-        element: document.getElementById('active-nodes-over-time-y-axis'),
-      });
-      active_nodes_graph.render();
+        var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+        var y_axis = new Rickshaw.Graph.Axis.Y({
+          graph: graph,
+          orientation: 'left',
+          element: document.getElementById(name + '-chart-y-axis'),
+        });
+
+        return graph;
+      }
+
+      var activeNodesOverTimeSeries = [{
+        name: 'nodes',
+        color: 'steelblue',
+        data: <%= rickshaw_data_active_nodes_over_time %>
+      }]
+      var activeNodesOverTimeGraph = createGraph('active-nodes-over-time', activeNodesOverTimeSeries);
+      activeNodesOverTimeGraph.render();
+
+      var nodesByDaySeries = [{
+        name: 'nodes',
+        color: 'steelblue',
+        data: <%= rickshaw_data_node_creation_by_day %>
+      }]
+      var nodesByDayGraph = createGraph('nodes-by-day', nodesByDaySeries, { renderer: 'bar' });
+      nodesByDayGraph.render();
     </script>
   </div>
   <div class='span4'>
