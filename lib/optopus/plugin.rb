@@ -34,6 +34,25 @@ module Optopus
       plugin_settings[:partials][type.to_sym] << options.merge({:template => partial})
     end
 
+    # make it easy for plugins to include roles that they need for authorization purposes
+    def register_role(name)
+      Optopus::Models.ensure_exists('Optopus::Role', :name => name)
+    end
+
+    # provide a way to store modules that models should use as mixins
+    def register_mixin(model_type, mixin)
+      possible_models = {
+        :devices   => 'Optopus::Device',
+        :events    => 'Optopus::Event',
+        :locations => 'Optopus::Location',
+        :nodes     => 'Optopus::Node',
+        :roles     => 'Optopus::Role',
+      }
+      model = possible_models[model_type]
+      raise "invalid model type, valid types: #{possible_models.keys.join(', ')}" if model.nil?
+      Optopus::Models.register_mixin(model, mixin)
+    end
+
     def set(key, value)
       plugin_settings[key] = value
     end
