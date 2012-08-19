@@ -1,5 +1,5 @@
 module Optopus
-  class Device < ActiveRecord::Base
+  class Device < Optopus::Model
     include Tire::Model::Search
     include Tire::Model::Callbacks
     include AttributesToLiquidMethodsMapper

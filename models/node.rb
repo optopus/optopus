@@ -1,5 +1,5 @@
 module Optopus
-  class Node < ActiveRecord::Base
+  class Node < Optopus::Model
     include Tire::Model::Search
     include Tire::Model::Callbacks
     include AttributesToLiquidMethodsMapper

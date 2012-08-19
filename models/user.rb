@@ -1,5 +1,5 @@
 module Optopus
-  class User < ActiveRecord::Base
+  class User < Optopus::Model
     include AttributesToLiquidMethodsMapper
     validates :username, :display_name, :presence => true
     validates_uniqueness_of :username

@@ -1,5 +1,5 @@
 module Optopus
-  class Event < ActiveRecord::Base
+  class Event < Optopus::Model
     include Tire::Model::Search
     include Tire::Model::Callbacks
     include AttributesToLiquidMethodsMapper
@@ -31,7 +31,7 @@ module Optopus
         if key.match(/^(.*)_(username|id|hostname)/)
           reference_type = $1
           column = $2.to_sym
-          Optopus.models.each do |model|
+          Optopus::Models.list.each do |model|
             if model.respond_to?(:table_name) && model.table_name.singularize == reference_type
               references[reference_type] = model.where(column => value).first
               break

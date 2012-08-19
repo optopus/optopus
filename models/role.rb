@@ -1,5 +1,5 @@
 module Optopus
-  class Role < ActiveRecord::Base
+  class Role < Optopus::Model
     include AttributesToLiquidMethodsMapper
     validates :name, :presence => true
     validates_uniqueness_of :name
