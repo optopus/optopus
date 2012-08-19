@@ -1,5 +1,9 @@
 module Optopus
   class App
+    admin_menu = Optopus::Menu::Section.new(:name => 'admin_menu', :required_role => 'admin')
+    admin_menu.add_link :display => 'Users', :href => '/admin/users'
+    Optopus::Menu.register_section(admin_menu)
+
     before '/admin/*', :auth => :admin do; end
 
     get '/admin/users' do

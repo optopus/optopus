@@ -1,3 +1,4 @@
+require_relative 'menu'
 module Optopus
   class App
     class ParamError < StandardError; end
@@ -78,7 +79,7 @@ module Optopus
       def display_login_or_logout
         case logged_in?
         when true
-          is_admin? ? erb(:admin_menu) : "<li><a href=\"/logout\">Logout</a></li>"
+          erb :user_menu
         else
           "<li><a href=\"/login?redirect=#{URI.escape(request.fullpath)}\">Login</a></li>"
         end
