@@ -53,6 +53,11 @@ module Optopus
       Optopus::Models.register_mixin(model, mixin)
     end
 
+    # allow plugins to register new menu sections
+    def register_menu(section)
+      Optopus::Menu.register_section(section)
+    end
+
     def set(key, value)
       plugin_settings[key] = value
     end
