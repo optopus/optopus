@@ -9,6 +9,11 @@ module Optopus
         register_role 'teams_admin'
       end
 
+      get '/teams/admin', :auth => 'teams_admin' do
+        @teams = Optopus::Role.teams
+        erb :teams_admin
+      end
+
     end
   end
 end
