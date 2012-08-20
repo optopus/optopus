@@ -104,4 +104,35 @@ module Optopus
       end
     end
   end
+
+  # We inherit Optopus::Node, to provide a search interface into libvirt data
+  # and allow postgresql lookups against hypervisors
+  class Hypervisor < Node
+    mapping do
+      indexes :libvirt, :as => 'libvirt_data', :type => 'object'
+    end
+
+    def self.find_domain(domain)
+      search("libvirt.domains.name:\"#{domain}\"")
+    end
+
+    def libvirt_data
+      begin
+        JSON.parse(properties['libvirt_data'])
+      rescue Exception => e
+        # silently return nil if we fail to parse json
+        nil
+      end
+    end
+
+    # Libvirt data is assumed to be added via custom mcollective agent which has:
+    # 'domains' => [
+    #   { 'name' => hostname_of_server }
+    # ]
+    # TODO: include the custom mcollective agent with optopus
+    def libvirt_data=(value)
+      raise 'libvirt data must be supplied as a hash' unless value.is_a?(Hash)
+      properties['libvirt_data'] = value.to_json
+    end
+  end
 end
