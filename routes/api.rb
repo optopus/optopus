@@ -110,6 +110,21 @@ module Optopus
       end
     end
 
+    get '/api/events' do
+      events = Optopus::Event.all.inject([]) do |events, event|
+        events << {
+          :message    => event.rendered_message,
+          :type       => event.type,
+          :id         => event.id,
+          :created    => event.created_at,
+          :references => event.references.inject([]) { |references, (type, reference)|
+            references << { type => reference.to_h } if reference.respond_to?(:to_h)
+          }
+        }
+      end
+      body(events.to_json)
+    end
+
     get '/api/nodes/active' do
       begin
         body(Optopus::Node.active.to_json)
