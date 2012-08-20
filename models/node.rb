@@ -47,6 +47,10 @@ module Optopus
       "<a href=\"/node/#{id}\">#{hostname}</a>"
     end
 
+    def to_h
+      { :hostname => hostname, :virtual => virtual, :primary_mac_address => primary_mac_address }
+    end
+
     private
 
     def register_create_event

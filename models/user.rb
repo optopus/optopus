@@ -11,6 +11,10 @@ module Optopus
       "<a href=\"/user/#{username}\">#{display_name}</a>"
     end
 
+    def to_h
+      { :username => username, :display_name => display_name }
+    end
+
     def events
       Optopus::Event.where("properties -> 'user_id' = '#{id}' or properties -> 'user_username' = '#{username}'").order('created_at DESC')
     end
