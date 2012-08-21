@@ -51,6 +51,13 @@ module Optopus
       { :hostname => hostname, :virtual => virtual, :primary_mac_address => primary_mac_address }
     end
 
+    # This uses tire search functionality to load up hypervisors
+    # that potentially contain this virtual machine.
+    def find_hypervisor_host
+      return [] unless self.virtual
+      Optopus::Hypervisor.search("libvirt.domains.name:\"#{self.hostname}\"", :load => true)
+    end
+
     private
 
     def register_create_event
