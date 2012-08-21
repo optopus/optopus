@@ -18,12 +18,12 @@ module PDNS
     def domains
       domains = Array.new
       if @restrict_domains.nil?
-        @mysql_client.query("SELECT id,name from domains").each do |row|
+        @mysql_client.query("SELECT id, name FROM domains ORDER BY name").each do |row|
           domains << row
         end
       else
         @restrict_domains.each do |restriction|
-          @mysql_client.query("SELECT id, name from domains WHERE name like '#{escape(restriction)}'").each do |row|
+          @mysql_client.query("SELECT id, name FROM domains WHERE name LIKE '#{escape(restriction)}'").each do |row|
             domains << row
           end
         end
@@ -32,11 +32,11 @@ module PDNS
     end
 
     def domain_from_id(id)
-      @mysql_client.query("SELECT name from domains where id=#{escape(id.to_s)}").first
+      @mysql_client.query("SELECT name FROM domains WHERE id=#{escape(id.to_s)}").first
     end
 
     def record_from_id(id)
-      @mysql_client.query("SELECT * from records where id=#{escape(id.to_s)}").first
+      @mysql_client.query("SELECT * FROM records WHERE id=#{escape(id.to_s)}").first
     end
 
     def update_record(id, data={})
@@ -59,15 +59,15 @@ module PDNS
 
     def delete_record(id)
       name = record_from_id(id)['name']
-      @mysql_client.query("DELETE from records WHERE id=#{escape(id.to_s)}")
+      @mysql_client.query("DELETE FROM records WHERE id=#{escape(id.to_s)}")
       name
     end
 
     def records(id=nil)
       if id.nil?
-        @mysql_client.query("SELECT * from records").to_a
+        @mysql_client.query("SELECT * FROM records ORDER BY name").to_a
       else
-        @mysql_client.query("SELECT * from records where domain_id=#{escape(id)}").to_a
+        @mysql_client.query("SELECT * FROM records WHERE domain_id=#{escape(id)} ORDER BY name").to_a
       end
     end
 
