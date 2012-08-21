@@ -5,21 +5,15 @@
 <% end %>
 <header class="jumbotron subhead">
   <h1>Search Results</h1>
-  <p class="lead"><%= @results.inject(0) { |n, r| n += r[:results].size; n } %> results for <%= @search_query %></p>
+  <p class="lead"><%= @results.inject(0) { |n, r| n += r[:result_set].size; n } %> results for <%= @search_query %></p>
 </header>
 
-<% @results.each do |result_set| %>
-  <% if result_set[:results].size > 0 %>
-    <h3><%= result_set[:type] %></h3>
-    <ul class="unstyled">
-      <!-- <%= result_set[:type] %> -->
-      <% result_set[:results].each do |result| %>
-        <% if result_set[:type] == :event %>
-          <li><a href="/search?query=event_type%3A<%= result.event_type %>"><%= result.event_type %></a>: <%= result.event_message %></li>
-        <% else %>
-          <li><a href="/<%= result_set[:type] %>/<%= result.id %>"><%= (result_set[:type] == :node) ? result.hostname : result.serial_number %></a></li>
-        <% end %>
-      <% end %>
-    </ul>
-  <% end %>
+<% @results.each do |result| %>
+  <h3><%= result[:type] %></h3>
+  <!-- <%= result[:type] %> -->
+  <ul class="unstyled">
+    <% result[:result_set].each do |item| %>
+      <li><%= item.to_hash[result[:display_key]] %></li>
+    <% end %>
+  </ul>
 <% end %>

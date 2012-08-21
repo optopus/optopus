@@ -16,6 +16,10 @@ module Optopus
     serialize :properties, ActiveRecord::Coders::Hstore
     liquid_methods :to_link
 
+    set_search_options :default_operator => 'AND', :fields => [:hostname, :switch, :macaddress, :productname, 'facts.*']
+    set_highlight_fields :hostname, :switch, :macaddress, :productname
+    set_search_display_key :link
+
     settings :analysis => {
         :analyzer => {
           :hostname => {
@@ -26,6 +30,7 @@ module Optopus
       } do
       mapping do
         indexes :id,          :index => :not_analyzed
+        indexes :link,        :as => 'to_link', :index => :not_analyzed
         indexes :hostname,    :boost => 100, :analyzer => 'hostname'
         indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
         indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
@@ -141,8 +146,14 @@ module Optopus
       end
     end
 
+    set_search_options :default_operator => 'AND', :fields => ['libvirt.domain.names']
+    set_highlight_fields 'libvirt.domain.names'
+    set_search_display_key :link
+
     mapping do
       indexes :libvirt, :as => 'libvirt_data', :type => 'object'
+      indexes :link,    :as => 'to_link', :index => :not_analyzed
+      indexes :hostname
     end
 
     def self.find_domain(domain)

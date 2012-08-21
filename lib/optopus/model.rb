@@ -1,6 +1,37 @@
 module Optopus
   class Model < ActiveRecord::Base
     self.abstract_class = true
+
+    def self.search_options
+      @search_options ||= Hash.new
+    end
+
+    def self.highlight_fields
+      @highlight_fields
+    end
+
+    def self.search_display_key
+      @search_display_key ||= :name
+    end
+
+    # Allows models to set what search options are used for
+    # the model. This only gets used in Optopus::Search
+    def self.set_search_options(options)
+      @search_options = options
+    end
+
+    # Allows models to set what search fields to return highlight
+    # data on. This only gets used in Optopus::Search
+    def self.set_highlight_fields(*args)
+      @highlight_fields = args
+    end
+
+    # Allows models to set what search field is used for display
+    # purposes on the result page.
+    def self.set_search_display_key(value)
+      @search_display_key = value.to_sym
+    end
+
     def self.inherited(subclass)
       # ensure ActiveRecord::Base#inherited runs first
       super
