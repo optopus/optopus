@@ -17,6 +17,7 @@ require 'activerecord-postgres-hstore'
 require 'activerecord-postgres-hstore/activerecord'
 require 'optopus'
 require 'tire'
+require 'tire_monkey_patches'
 require 'liquid'
 
 module Optopus
