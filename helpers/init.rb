@@ -91,6 +91,15 @@ module Optopus
         end
       end
 
+      # returns an unstyled list from an array. attemps to turn the item into a link or a string
+      def display_unstyled_list_from_array(array)
+        list = '<ul class="unstyled">'
+        array.each do |item|
+          list += '<li>' + (item.respond_to?(:to_link) ? item.to_link : item.to_s)  + '</li>'
+        end
+        list += '</ul>'
+      end
+
       def rickshaw_data_node_creation_by_day
         Optopus::Node.order('date_created_at ASC').count(:group => "DATE(created_at)").inject('[') do |data, (date, count)|
           data + "{ x: #{Time.parse(date).to_i}, y: #{count.to_i} },"

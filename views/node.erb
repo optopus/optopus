@@ -48,6 +48,12 @@
               <td>Primary MAC Address</td>
               <td><%= @node.primary_mac_address.human_empty %></td>
             </tr>
+            <tr>
+              <% if @node.virtual %>
+                <td>Hypervisor Host</td>
+                <td><%= display_unstyled_list_from_array(@node.find_hypervisor_host) %></td>
+              <% end %>
+            </tr>
           </tbody>
         </table>
       </section>
