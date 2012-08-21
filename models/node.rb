@@ -146,8 +146,8 @@ module Optopus
       end
     end
 
-    set_search_options :default_operator => 'AND', :fields => ['libvirt.domain.names']
-    set_highlight_fields 'libvirt.domain.names'
+    set_search_options :default_operator => 'AND', :fields => ['libvirt.domains.name']
+    set_highlight_fields 'libvirt.domains.name'
     set_search_display_key :link
 
     mapping do
