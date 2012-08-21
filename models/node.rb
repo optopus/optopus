@@ -136,7 +136,6 @@ module Optopus
     # 'domains' => [
     #   { 'name' => hostname_of_server }
     # ]
-    # TODO: include the custom mcollective agent with optopus
     def libvirt_data=(value)
       raise 'libvirt data must be supplied as a hash' unless value.is_a?(Hash)
       properties['libvirt_data'] = value.to_json
