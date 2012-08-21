@@ -115,6 +115,32 @@ module Optopus
   # We inherit Optopus::Node, to provide a search interface into libvirt data
   # and allow postgresql lookups against hypervisors
   class Hypervisor < Node
+
+    # Simple class that allows taking libvirt_data['domains']
+    # and turning them into usable classes
+    class Domain
+      attr_reader :autostart, :cpu_count, :id, :name, :state, :vnc_port, :node
+      def initialize(data)
+        @autostart = data.delete('autostart')
+        @cpu_count = data.delete('cpu_count')
+        @id        = data.delete('id')
+        @memory    = data.delete('memory')
+        @name      = data.delete('name')
+        @state     = data.delete('state')
+        @vnc_port  = data.delete('vnc_port')
+        @node      = Optopus::Node.where(:hostname => @name).first unless @name.nil?
+      end
+
+      def memory
+        # libvirtd mcollective agent stores memory in kilobytes
+        "#{@memory.to_i / 1024} MB"
+      end
+
+      def to_link
+        @node ? @node.to_link : @name
+      end
+    end
+
     mapping do
       indexes :libvirt, :as => 'libvirt_data', :type => 'object'
     end
@@ -139,6 +165,13 @@ module Optopus
     def libvirt_data=(value)
       raise 'libvirt data must be supplied as a hash' unless value.is_a?(Hash)
       properties['libvirt_data'] = value.to_json
+    end
+
+    def domains
+      return [] unless libvirt_data.include?('domains')
+      libvirt_data['domains'].inject([]) do |domains, domain_data|
+        domains << Domain.new(domain_data)
+      end
     end
   end
 end

@@ -57,6 +57,40 @@
           </tbody>
         </table>
       </section>
+      <% if @node.type == 'Optopus::Hypervisor' && @node.libvirt_data.include?('domains') %>
+        <section id="hypervisor">
+          <div class="page-header">
+            <h3>Hypervisor Data</h3>
+            <p class="lead">Data gathered from the libvirtd mcollective agent</p>
+          </div>
+          <table class="table table-condensed table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Domain</th>
+                <th>Memory</th>
+                <th>CPU Count</th>
+                <th>State</th>
+                <th>VNC Port</th>
+                <th>Autostart</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @node.domains.each do |domain| %>
+                <tr>
+                  <td><%= domain.id %></td>
+                  <td><%= domain.to_link %></td>
+                  <td><%= domain.memory %></td>
+                  <td><%= domain.cpu_count %></td>
+                  <td><%= domain.state %></td>
+                  <td><%= domain.vnc_port %></td>
+                  <td><%= domain.autostart %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </section>
+      <% end %>
       <% node_partials.each do |partial| %>
         <!-- <%= partial[:template] %> -->
         <section id="<%= html_id(partial[:template].to_s) %>">
