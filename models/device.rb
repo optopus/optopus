@@ -14,6 +14,10 @@ module Optopus
     has_many :nodes
     belongs_to :location
 
+    set_search_options :default_operator => 'AND', :fields => [:serial_number, :macaddress]
+    set_highlight_fields :serial_number, :macaddress
+    set_search_display_key :serial_number
+
     mapping do
       indexes :id,          :index => :not_analyzed
       indexes :macaddress,  :as => 'primary_mac_address', :boost => 10

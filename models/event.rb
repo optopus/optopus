@@ -5,6 +5,10 @@ module Optopus
     include AttributesToLiquidMethodsMapper
     serialize :properties, ActiveRecord::Coders::Hstore
 
+    set_search_options :default_operator => 'AND', :fields => [:event_message, :event_type]
+    set_highlight_fields :event_message, :event_type
+    set_search_display_key :event_message
+
     mapping do
       indexes :id, :index => :not_analyzed
       indexes :event_message, :as => "rendered_message", :boost => 10
