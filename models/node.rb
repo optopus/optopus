@@ -36,6 +36,7 @@ module Optopus
         indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
         indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
         indexes :productname, :as => "facts['productname']", :boost => 10
+        indexes :location,    :as => 'location.common_name', :boost => 10
       end
       indexes :facts,       :boost => 1
     end
@@ -46,6 +47,10 @@ module Optopus
 
     def self.inactive
       where(:active => false)
+    end
+
+    def location
+      device.location
     end
 
     def to_link
@@ -167,6 +172,7 @@ module Optopus
         indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
         indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
         indexes :productname, :as => "facts['productname']", :boost => 10
+        indexes :location,    :as => 'location.common_name', :boost => 10
       end
       indexes :facts,       :boost => 1
       indexes :libvirt, :as => 'libvirt_data', :type => 'object'
