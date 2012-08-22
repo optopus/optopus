@@ -2,11 +2,15 @@ module Optopus
   module Search
     def self.query(string, max_result_size=2000)
       query_string = make_valid_query_string(string)
+      filter_options = options.delete(:filter)
+      types = options.delete(:types)
+      max_result_size = options.delete(:max_result_size) || 2000
       results = []
 
       # Loop through each of the models, checking if they respond to search
       # if they do, perform a search and store the results
-      Optopus::Models.list.each do |model|
+      models = types ? types.map { |t| Optopus::Models.type(t) } : Optopus::Models.list
+      models.each do |model|
         next unless model.respond_to?(:search)
         search_options = model.respond_to?(:search_options) ? model.search_options : Hash.new
         highlight_fields = model.respond_to?(:highlight_fields) ? model.highlight_fields : nil
@@ -15,6 +19,7 @@ module Optopus
             string query_string, search_options
           end
           highlight *highlight_fields if highlight_fields
+          filter *filter_options if filter_options
         end
         if result_set.size > 0
           results << { :type => model.to_s.demodulize.underscore, :result_set => result_set, :display_key => model.search_display_key }
