@@ -176,6 +176,23 @@ module Optopus
       search("libvirt.domains.name:\"#{domain}\"")
     end
 
+    # capacity search expects range to be a hash of field => range_values
+    #   example:
+    #     { 'libvirt.free_disk' => { :gt => 100 },
+    #       'libvirt.blah' => { :gt => 200 } }
+    def self.capacity_search(ranges)
+      raise 'capacity_search expects hash' unless ranges.kind_of?(Hash)
+      search(:size => 2000) do
+        query do
+          boolean do
+            ranges.each do |field, value|
+              must { range field, value }
+            end
+          end
+        end
+      end
+    end
+
     def libvirt_data
       begin
         JSON.parse(properties['libvirt_data'])
