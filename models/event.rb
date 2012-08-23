@@ -30,7 +30,9 @@ module Optopus
     # return the largest time unit as a string since this
     # event has been created.
     def time_ago
-      num = (Time.now.to_i - created_at.to_i) / 60
+      num = Time.now.to_i - created_at.to_i
+      return "#{num} seconds ago" if num < 60
+      num = num / 60
       return "#{num} minutes ago" if num < 60
       num = num / 60
       return "#{num} hours ago" if num < 24
