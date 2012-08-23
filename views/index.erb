@@ -111,7 +111,7 @@
       <table class='table table-condensed table-striped'>
         <% @recent_events.each do |event| -%>
           <tr>
-            <td><%= event.rendered_message %></td>
+            <td><%= event.rendered_message %> <small class="pull-right muted"><%= event.time_ago %></small></td>
           </tr>
         <% end -%>
       </table>
