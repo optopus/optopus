@@ -1,0 +1,89 @@
+<style>
+  .slider {
+    margin-top: 7px;
+    margin-left: 7px;
+  }
+</style>
+<script>
+  $(document).ready(function() {
+    $(".slider").slider({
+      value: 1,
+      min: 1,
+      max: <%= hypervisor_planner_settings[:max_cpus] / hypervisor_planner_settings[:cpu_multiplier] %>,
+      step: 1,
+      slide: function(event, ui) {
+        $('#node-cpus').html(ui.value * <%= hypervisor_planner_settings[:cpu_multiplier] %> + ' cores');
+        $('#node-memory').html(ui.value * <%= hypervisor_planner_settings[:memory_multiplier] %> + ' GB');
+        $('#node-disk').html(ui.value * <%= hypervisor_planner_settings[:disk_multiplier] %> + ' GB');
+
+        $('#node-cpus-value').val(ui.value * <%= hypervisor_planner_settings[:cpu_multiplier] %>);
+        $('#node-memory-value').val(ui.value * <%= hypervisor_planner_settings[:memory_multiplier] %>);
+        $('#node-disk-value').val(ui.value * <%= hypervisor_planner_settings[:disk_multiplier] %>);
+      }
+    });
+  });
+</script>
+
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal">x</button>
+  <h3>Hypervisor Planner</h3>
+</div>
+
+<div class="modal-body">
+  <div class="span4">
+    <form class="form form-horizontal" action="/util/hypervisor_planner">
+      <input type="hidden" name="node-cpus" id="node-cpus-value" value="<%= hypervisor_planner_settings[:cpu_multiplier] %>">
+      <input type="hidden" name="node-memory" id="node-memory-value" value="<%= hypervisor_planner_settings[:memory_multiplier] %>">
+      <input type="hidden" name="node-disk" id="node-disk-value" value="<%= hypervisor_planner_settings[:disk_multiplier] %>">
+      <div class="control-group">
+        <label class="control-label" for="node-cpus">CPU Cores:</label>
+        <div class="controls">
+          <div id="node-cpus" style="margin-top: 5px"><%= hypervisor_planner_settings[:cpu_multiplier] %> cores</div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="node-memory">Memory:</label>
+        <div class="controls">
+          <div id="node-memory" style="margin-top: 5px"><%= hypervisor_planner_settings[:memory_multiplier] %> GB</div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="node-disk">Disk Space:</label>
+        <div class="controls">
+          <div id="node-disk" style="margin-top: 5px"><%= hypervisor_planner_settings[:disk_multiplier] %> GB</div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="node-location">Location:</label>
+        <div class="controls">
+          <select id="node-location" name="node-location">
+            <option>Any</option>
+            <% locations.each do |location| %>
+              <option><%= location.common_name %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="node-ratio">Ratio Slider:</label>
+        <div class="controls">
+          <div id="node-ratio" class="slider"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn btn-primary">Find Space</button>
+      </div>
+    </div>
+    </form>
+  </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<header class="jumbotron subhead">
+  <h1>Hypervisor Planner</h1>
+  <p class="lead">Found <%= @capable_hypervisors.size %> capable hypervisors with <%= @capacity_search_string %>.</p>
+</header>
+<table class="table table-condensed table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Hostname</th>
+      <th>Available CPUs</th>
+      <th>Available Memory</th>
+      <th>Available Disk</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @capable_hypervisors.each do |hypervisor| %>
+      <tr>
+        <td><%= hypervisor.link %></td>
+        <td><%= hypervisor.libvirt.node_free_cpus %></td>
+        <td><%= hypervisor.libvirt.node_free_memory.to_i.bytes_to_gigabytes %> GB</td>
+        <td><%= hypervisor.libvirt.free_disk.to_i.bytes_to_gigabytes %> GB</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
