@@ -50,7 +50,7 @@ module Optopus
     end
 
     def location
-      virtual ? facts['location'] : device.location
+      virtual ? Optopus::Location.where(:common_name => facts['location']).first : device.location
     end
 
     def to_link
