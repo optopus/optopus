@@ -91,6 +91,20 @@ module Optopus
         end
       end
 
+      # return a progress style based on a given interger
+      def progress_style(integer)
+        case integer
+        when 0..20
+          'progress-success'
+        when 21..60
+          'progress-info'
+        when 61..90
+          'progress-warning'
+        else
+          'progress-danger'
+        end
+      end
+
       # returns an unstyled list from an array. attemps to turn the item into a link or a string
       def display_unstyled_list_from_array(array)
         list = '<ul class="unstyled">'
