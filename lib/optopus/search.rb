@@ -1,6 +1,7 @@
 module Optopus
   module Search
-    def self.query(string, max_result_size=2000)
+    def self.query(string, options={})
+      raise 'Options must be a hash' unless options.kind_of?(Hash)
       query_string = make_valid_query_string(string)
       filter_options = options.delete(:filter)
       types = options.delete(:types)
