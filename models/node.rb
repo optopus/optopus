@@ -50,7 +50,7 @@ module Optopus
     end
 
     def location
-      device.location
+      virtual ? facts['location'] : device.location
     end
 
     def to_link
