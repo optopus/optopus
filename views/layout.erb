@@ -18,8 +18,15 @@
     <script src="/rickshaw/rickshaw.js"></script>
     <script src="/js/libs/jquery.hotkeys.js"></script>
     <script>
+      function load_util(path) {
+        $.get(path, function(data) {
+          $('#utils').html(data);
+          $('#utils').modal('show');
+        });
+      }
       $('.subnav').scrollspy();
       $('.dropdown-toggle').dropdown();
+      $('#utils').modal();
       $(function () {
         $('#search-query').focus(function() {
           $(this).select();
@@ -62,11 +69,6 @@
               <% end %>
             </ul>
             <ul class="nav pull-right">
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Utilities</a>
-              </li>
-            </ul>
-            <ul class="nav pull-right">
               <%= display_login_or_logout %>
             </ul>
             <ul class="nav pull-right">
@@ -85,4 +87,5 @@
       <%= yield %>
     </div>
   </body>
+  <div id="utils" class="modal hide"></div>
 </html>
