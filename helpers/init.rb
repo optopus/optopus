@@ -47,7 +47,7 @@ module Optopus
       end
 
       def locations
-        @locations ||= Optopus::Location.all
+        @locations ||= Optopus::Location.order('common_name')
       end
 
       def handle_error(exception, status_code=400)
