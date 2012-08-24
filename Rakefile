@@ -28,9 +28,10 @@ namespace :db do
       ActiveRecord::Base.timestamped_migrations = true
       ActiveRecord::Base.table_name_prefix = 'plugin_'
       ActiveRecord::Migration.verbose = true
-      plugins_path = ENV['PLUGINS_PATH'] || File.join(File.expand_path(Optopus::App.root), 'plugins')
-      Dir.glob(File.join(plugins_path, '*', 'db', 'migrate')).each do |migrate_dir|
-        ActiveRecord::Migrator.migrate(migrate_dir)
+      Optopus::Plugins.paths.each do |plugins_path|
+        Dir.glob(File.join(plugins_path, '*', 'db', 'migrate')).each do |migrate_dir|
+          ActiveRecord::Migrator.migrate(migrate_dir)
+        end
       end
     end
   end
