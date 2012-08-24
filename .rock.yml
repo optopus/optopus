@@ -1,5 +1,6 @@
 env:
   GEM_HOME: "${PROJECT_PATH}/vendor/bundle/ruby/${RUBY_ABI}"
 runtime: ruby18
+run: bundle exec shotgun
 run_web: exec unicorn -l ${HTTP_HOST-127.0.0.1}:${HTTP_PORT-8080} -c ${UNICORN_CONFIG-config/unicorn.rb}
 test: echo true
