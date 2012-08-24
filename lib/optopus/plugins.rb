@@ -5,7 +5,7 @@ module Optopus
       app.set :optopus_plugins, Array.new
       app.set :partials, { :node => Array.new }
       plugin_paths = [ File.expand_path(File.dirname(app.root), 'plugins') ]
-      plugin_paths << app.settings.plugin_paths if app.settings.respond_to?(:plugin_paths)
+      plugin_paths += app.settings.plugin_paths if app.settings.respond_to?(:plugin_paths)
       plugin_paths.each do |path|
         Dir.glob("#{path}/*/init.rb").each do |plugin|
           require plugin
