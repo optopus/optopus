@@ -182,6 +182,34 @@ module Optopus
       search("libvirt.domains.name:\"#{domain}\"")
     end
 
+    # it would be nice if hstore could parse the json in libvirt_data
+    # but unfortunately we have to sum hypervisor stats in code
+    def self.resources_by_location
+      Optopus::Location.all.inject({}) do |location_resources, location|
+        resources = resources_for_location(location)
+        location_resources[location.common_name] = resources unless resources.nil?
+        location_resources
+      end
+    end
+
+    def self.resources_for_location(location)
+      resources = {
+        :node_free_memory  => 0,
+        :node_total_memory => 0,
+        :node_total_cpus   => 0,
+        :node_running_cpus => 0,
+      }
+      resources = location.nodes.where(:type => 'Optopus::Hypervisor').where("properties ? 'libvirt_data'").inject(resources) do |resources, hypervisor|
+        resources.keys.inject(resources) do |resources, key|
+          resources[key] += hypervisor.libvirt_data[key.to_s] unless hypervisor.libvirt_data[key.to_s].nil?
+          resources
+        end
+      end
+
+      # return nil if we didn't find any resources
+      (resources.values.inject(0) { |n, v| n+=v } == 0) ? nil : resources
+    end
+
     # capacity search expects range to be a hash of field => range_values
     #   example:
     #     { 'libvirt.free_disk' => { :gt => 100 },
