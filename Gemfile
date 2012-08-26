@@ -14,6 +14,7 @@ gem 'rake'
 gem 'activerecord-postgresql-adapter'
 gem 'tire'
 gem 'liquid'
+gem 'postgres_ext'
 
 group :test, :development do
   gem 'rspec'
