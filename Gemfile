@@ -23,7 +23,13 @@ end
 
 group :plugins do
   # Install gems from each plugin
-  Dir.glob(File.join(File.dirname(__FILE__), 'plugins', '**', 'Gemfile')) do |gemfile|
-    eval(IO.read(gemfile), binding)
+  paths = File.join(File.expand_path(File.dirname(__FILE__)), 'plugins')
+  if ENV['PLUGIN_PATHS']
+    paths += ':' + ENV['PLUGIN_PATHS']
+  end
+  paths.split(':').each do |path|
+    Dir.glob(File.join(path, '**', 'Gemfile')) do |gemfile|
+      eval(IO.read(gemfile), binding)
+    end
   end
 end

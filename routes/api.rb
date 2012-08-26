@@ -9,6 +9,7 @@ module Optopus
         serial_number = data.delete('serial_number')
         primary_mac_address = data.delete('primary_mac_address')
         facts = data.delete('facts')
+        libvirt = data.delete('libvirt')
         virtual = data.delete('virtual')
         virtual = true if virtual == 'true'
         virtual = false if virtual == 'false'
@@ -28,6 +29,18 @@ module Optopus
         node.active = true
         node.serial_number = serial_number unless serial_number.nil?
         node.primary_mac_address = primary_mac_address
+        if libvirt
+          unless node.kind_of?(Optopus::Hypervisor)
+            # if the node registers with libvirt data
+            # we will assume it should be of the Optopus::Hypervisor type
+            node.type = 'Optopus::Hypervisor'
+            node.save!
+            # in order to access the libvirt_data method,
+            # we have to re-initialize the node instance
+            node = Optopus::Node.find_by_id(node.id)
+          end
+          node.libvirt_data = libvirt
+        end
         node.save!
         logger.info "Successful node registration via API: #{node.hostname}"
         status 202
@@ -108,6 +121,21 @@ module Optopus
         status 400
         body({:error => e.to_s})
       end
+    end
+
+    get '/api/events' do
+      events = Optopus::Event.all.inject([]) do |events, event|
+        events << {
+          :message    => event.rendered_message,
+          :type       => event.type,
+          :id         => event.id,
+          :created    => event.created_at,
+          :references => event.references.inject([]) { |references, (type, reference)|
+            references << { type => reference.to_h } if reference.respond_to?(:to_h)
+          }
+        }
+      end
+      body(events.to_json)
     end
 
     get '/api/nodes/active' do

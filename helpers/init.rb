@@ -47,7 +47,7 @@ module Optopus
       end
 
       def locations
-        @locations ||= Optopus::Location.all
+        @locations ||= Optopus::Location.order('common_name')
       end
 
       def handle_error(exception, status_code=400)
@@ -89,6 +89,29 @@ module Optopus
         @subnav = locations.inject(Array.new) do |subnav, location|
           subnav << { :id => html_id(location.common_name), :name => location.common_name.upcase }
         end
+      end
+
+      # return a progress style based on a given interger
+      def progress_style(integer)
+        case integer
+        when 0..20
+          'progress-success'
+        when 21..60
+          'progress-info'
+        when 61..90
+          'progress-warning'
+        else
+          'progress-danger'
+        end
+      end
+
+      # returns an unstyled list from an array. attemps to turn the item into a link or a string
+      def display_unstyled_list_from_array(array)
+        list = '<ul class="unstyled">'
+        array.each do |item|
+          list += '<li>' + (item.respond_to?(:to_link) ? item.to_link : item.to_s)  + '</li>'
+        end
+        list += '</ul>'
       end
 
       def rickshaw_data_node_creation_by_day

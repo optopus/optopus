@@ -8,6 +8,7 @@ module Optopus
       end
 
       def self.inherited(subclass)
+        super
         Optopus::Models.register_model(subclass)
       end
     end

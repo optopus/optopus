@@ -16,6 +16,10 @@ module Optopus
     serialize :properties, ActiveRecord::Coders::Hstore
     liquid_methods :to_link
 
+    set_search_options :default_operator => 'AND', :fields => [:hostname, :switch, :macaddress, :productname, 'facts.*']
+    set_highlight_fields :hostname, :switch, :macaddress, :productname
+    set_search_display_key :link
+
     settings :analysis => {
         :analyzer => {
           :hostname => {
@@ -26,11 +30,13 @@ module Optopus
       } do
       mapping do
         indexes :id,          :index => :not_analyzed
+        indexes :link,        :as => 'to_link', :index => :not_analyzed
         indexes :hostname,    :boost => 100, :analyzer => 'hostname'
         indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
         indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
         indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
         indexes :productname, :as => "facts['productname']", :boost => 10
+        indexes :location,    :as => 'location.common_name', :boost => 10
       end
       indexes :facts,       :boost => 1
     end
@@ -43,8 +49,23 @@ module Optopus
       where(:active => false)
     end
 
+    def location
+      virtual ? Optopus::Location.where(:common_name => facts['location']).first : device.location
+    end
+
     def to_link
       "<a href=\"/node/#{id}\">#{hostname}</a>"
+    end
+
+    def to_h
+      { :hostname => hostname, :virtual => virtual, :primary_mac_address => primary_mac_address }
+    end
+
+    # This uses tire search functionality to load up hypervisors
+    # that potentially contain this virtual machine.
+    def find_hypervisor_host
+      return [] unless self.virtual
+      Optopus::Hypervisor.search("libvirt.domains.name:\"#{self.hostname}\"", :load => true)
     end
 
     private
@@ -97,6 +118,138 @@ module Optopus
             self.device.save!
           end
         end
+      end
+    end
+  end
+
+  # We inherit Optopus::Node, to provide a search interface into libvirt data
+  # and allow postgresql lookups against hypervisors
+  class Hypervisor < Node
+
+    # Simple class that allows taking libvirt_data['domains']
+    # and turning them into usable classes
+    class Domain
+      attr_reader :autostart, :cpu_count, :id, :name, :state, :vnc_port, :node
+      def initialize(data)
+        @autostart = data.delete('autostart')
+        @cpu_count = data.delete('cpu_count')
+        @id        = data.delete('id')
+        @memory    = data.delete('memory')
+        @name      = data.delete('name')
+        @state     = data.delete('state')
+        @vnc_port  = data.delete('vnc_port')
+        @node      = Optopus::Node.where(:hostname => @name).first unless @name.nil?
+      end
+
+      def memory
+        # libvirtd mcollective agent stores memory in kilobytes
+        "#{@memory.to_i / 1024} MB"
+      end
+
+      def to_link
+        @node ? @node.to_link : @name
+      end
+    end
+
+    set_search_options :default_operator => 'AND', :fields => ['libvirt.domains.name', :hostname, :switch, :macaddress, :productname, 'facts.*']
+    set_highlight_fields 'libvirt.domains.name'
+    set_search_display_key :link
+    set_highlight_fields :hostname, :switch, :macaddress, :productname
+
+    settings :analysis => {
+        :analyzer => {
+          :hostname => {
+            "tokenizer"    => "lowercase",
+            "pattern"      => "(\\W)(?=\\w)|(?<=\\w)(?=\\W)|(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)",
+            "type"         => "pattern" }
+        }
+      } do
+      mapping do
+        indexes :id,          :index => :not_analyzed
+        indexes :link,        :as => 'to_link', :index => :not_analyzed
+        indexes :hostname,    :boost => 100, :analyzer => 'hostname'
+        indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
+        indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
+        indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
+        indexes :productname, :as => "facts['productname']", :boost => 10
+        indexes :location,    :as => 'location.common_name', :boost => 10
+      end
+      indexes :facts,       :boost => 1
+      indexes :libvirt, :as => 'libvirt_data', :type => 'object'
+    end
+
+    def self.find_domain(domain)
+      search("libvirt.domains.name:\"#{domain}\"")
+    end
+
+    # it would be nice if hstore could parse the json in libvirt_data
+    # but unfortunately we have to sum hypervisor stats in code
+    def self.resources_by_location
+      Optopus::Location.all.inject({}) do |location_resources, location|
+        resources = resources_for_location(location)
+        location_resources[location.common_name] = resources unless resources.nil?
+        location_resources
+      end
+    end
+
+    def self.resources_for_location(location)
+      resources = {
+        :node_free_memory  => 0,
+        :node_total_memory => 0,
+        :node_total_cpus   => 0,
+        :node_running_cpus => 0,
+      }
+      resources = location.nodes.where(:type => 'Optopus::Hypervisor').where("properties ? 'libvirt_data'").inject(resources) do |resources, hypervisor|
+        resources.keys.inject(resources) do |resources, key|
+          resources[key] += hypervisor.libvirt_data[key.to_s] unless hypervisor.libvirt_data[key.to_s].nil?
+          resources
+        end
+      end
+
+      # return nil if we didn't find any resources
+      (resources.values.inject(0) { |n, v| n+=v } == 0) ? nil : resources
+    end
+
+    # capacity search expects range to be a hash of field => range_values
+    #   example:
+    #     { 'libvirt.free_disk' => { :gt => 100 },
+    #       'libvirt.blah' => { :gt => 200 } }
+    def self.capacity_search(ranges, location=nil)
+      raise 'capacity_search expects hash' unless ranges.kind_of?(Hash)
+      search(:size => 2000) do
+        query do
+          boolean do
+            must { term :location, location } if location
+            ranges.each do |field, value|
+              must { range field, value }
+            end
+          end
+        end
+      end
+    end
+
+    def libvirt_data
+      begin
+        JSON.parse(properties['libvirt_data'])
+      rescue Exception => e
+        # silently return nil if we fail to parse json
+        nil
+      end
+    end
+
+    # Libvirt data is assumed to be added via custom mcollective agent which has:
+    # 'domains' => [
+    #   { 'name' => hostname_of_server }
+    # ]
+    def libvirt_data=(value)
+      raise 'libvirt data must be supplied as a hash' unless value.is_a?(Hash)
+      properties['libvirt_data'] = value.to_json
+    end
+
+    def domains
+      return [] unless libvirt_data.include?('domains')
+      libvirt_data['domains'].inject([]) do |domains, domain_data|
+        domains << Domain.new(domain_data)
       end
     end
   end

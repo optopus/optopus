@@ -24,6 +24,13 @@ module Optopus
       model_data[model] << values
     end
 
+    # return only the model that matches the passed in type
+    def self.type(type)
+      list.each do |model|
+        return model if model.to_s.demodulize.underscore == type
+      end
+    end
+
     def self.list
       @models ||= []
     end

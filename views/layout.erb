@@ -7,17 +7,24 @@
     <link rel="stylesheet" href="/bootstrap/css/bootstrap-responsive.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/rickshaw/rickshaw.css">
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="/bootstrap/js/bootstrap-scrollspy.js"></script>
-    <script src="/bootstrap/js/bootstrap-modal.js"></script>
-    <script src="/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
     <script src="/rickshaw/d3.min.js"></script>
     <script src="/rickshaw/d3.layout.min.js"></script>
     <script src="/rickshaw/rickshaw.js"></script>
     <script src="/js/libs/jquery.hotkeys.js"></script>
     <script>
+      function load_util(path) {
+        $.get(path, function(data) {
+          $('#utils').html(data);
+          $('#utils').modal('show');
+        });
+      }
       $('.subnav').scrollspy();
       $('.dropdown-toggle').dropdown();
+      $('#utils').modal();
       $(function () {
         $('#search-query').focus(function() {
           $(this).select();
@@ -68,6 +75,14 @@
                 <button type="submit" class="btn"><i class="icon-search"></i></button>
               </form>
             </ul>
+            <ul class="nav pull-right">
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Utilities<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#" onclick="load_util('/util/hypervisor_planner/form')">Hypervisor Planner</a></li>
+                </ul>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -78,4 +93,5 @@
       <%= yield %>
     </div>
   </body>
+  <div id="utils" class="modal hide"></div>
 </html>

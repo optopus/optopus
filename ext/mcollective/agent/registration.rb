@@ -31,6 +31,7 @@ module MCollective
               :virtual             => facts['is_virtual'],
               :facts               => facts,
             }
+            optopus_data[:libvirt] = req['libvirt'] if req.include?('libvirt')
             Log.instance.debug("posting to optopus: #{optopus_data.inspect}")
             request.body = optopus_data.to_json
             request['Content-Type'] = 'application/json'

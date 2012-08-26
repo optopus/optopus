@@ -5,6 +5,10 @@ module Optopus
     include AttributesToLiquidMethodsMapper
     serialize :properties, ActiveRecord::Coders::Hstore
 
+    set_search_options :default_operator => 'AND', :fields => [:event_message, :event_type]
+    set_highlight_fields :event_message, :event_type
+    set_search_display_key :event_message
+
     mapping do
       indexes :id, :index => :not_analyzed
       indexes :event_message, :as => "rendered_message", :boost => 10
@@ -21,6 +25,21 @@ module Optopus
 
     def type=(value)
       properties['event_type'] = value
+    end
+
+    # return the largest time unit as a string since this
+    # event has been created.
+    def time_ago
+      num = Time.now.to_i - created_at.to_i
+      return "#{num} seconds ago" if num < 60
+      num = num / 60
+      return "#{num} minutes ago" if num < 60
+      num = num / 60
+      return "#{num} hours ago" if num < 24
+      num = num / 24
+      return "#{num} days ago" if num < 365
+      num = num / 365
+      return "#{num} years ago"
     end
 
     # TODO: split references out into their own hstore column to avoid collision
