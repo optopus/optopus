@@ -37,7 +37,7 @@ module Optopus
         indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
         indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
         indexes :productname, :as => "facts['productname']", :boost => 10
-        indexes :location,    :as => 'location.common_name', :boost => 10
+        indexes :location,    :as => 'location_name', :boost => 10
       end
       indexes :facts,       :boost => 1
     end
@@ -50,8 +50,13 @@ module Optopus
       where(:active => false)
     end
 
+    # A wrapper method for indexing the location name of a node
+    def location_name
+      location ? location.common_name : nil
+    end
+
     def location
-      virtual ? Optopus::Location.where(:common_name => facts['location']).first : device.location
+      device ? device.location : Optopus::Location.where(:common_name => facts['location']).first
     end
 
     def to_link
