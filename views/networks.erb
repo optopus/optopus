@@ -1,0 +1,33 @@
+<script>
+  $('#networks').addClass('active');
+</script>
+
+<div class="row-fluid">
+  <% if is_admin? %>
+    <div class="span2">
+      <%= erb :networks_admin_menu %>
+    </div>
+  <% end %>
+  <div class="span10">
+    <header class="jumbotron subhead">
+      <h1>Networks</h1>
+      <p class="lead">Subnets we know about.</p>
+    </header>
+    <table class="table table-condensed table-bordered table-striped">
+      <thead>
+        <tr>
+          <th class="span2">CIDR</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @networks.each do |network| %>
+          <tr>
+            <td><%= network.to_link %></td>
+            <td><%= network.description.human_empty %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
