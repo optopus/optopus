@@ -4,6 +4,11 @@ require 'rspec/core/rake_task'
 
 Dir.glob("#{File.expand_path(Optopus::App.root)}/rake/*.rake") { |r| import r }
 
+# Import rake tasks from plugins
+Optopus::Plugins.paths.each do |plugin_path|
+  Dir.glob(File.join(plugin_path, '*', 'rake', '*.rake')) { |r| import r }
+end
+
 namespace :db do
   task :environment do
     require 'active_record'
