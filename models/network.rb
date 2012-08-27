@@ -4,6 +4,7 @@ module Optopus
     has_many :addresses
 
     before_save :assign_addresses
+    before_destroy :remove_network_id_from_addresses
 
     private
 
@@ -13,6 +14,12 @@ module Optopus
       Optopus::Address.where(:network_id => nil).where('ip_address << ?', self.address.to_cidr).each do |address|
         self.addresses << address
       end
+    end
+
+    # Make sure that we unset network_id for all addresses associated
+    # with this network before we destroy it
+    def remove_network_id_from_addresses
+      self.addresses.update_all('network_id = NULL')
     end
   end
 end

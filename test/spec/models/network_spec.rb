@@ -24,6 +24,16 @@ describe Optopus::Network, '#new' do
   end
 end
 
+describe Optopus::Network, '#destroy' do
+  it 'nulls out address associations to this network' do
+    address = Optopus::Address.create!(:ip_address => '10.12.10.3')
+    network = Optopus::Network.create!(:address => '10.12.10.0/24')
+    network.destroy
+    address.reload
+    address.network_id.should be_nil
+  end
+end
+
 describe Optopus::Address, '#new' do
   before(:all) do
     @valid_address = '10.1.1.2'
