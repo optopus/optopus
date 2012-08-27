@@ -19,7 +19,8 @@ module Optopus
     def validate_address_in_network
       if self.network
         if possible_networks.find_by_id(self.network.id).nil?
-          raise "#{self.ip_address.to_s} is not part of #{self.network.address.to_cidr}"
+          errors.add(:network)
+          raise ActiveRecord::RecordInvalid.new(self), "#{self.ip_address.to_s} is not part of #{self.network.address.to_cidr}"
         end
       end
     end
