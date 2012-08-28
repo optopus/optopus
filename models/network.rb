@@ -1,7 +1,10 @@
 module Optopus
   class Network < Optopus::Model
-    validates :address, :presence => true
+    validates :address, :location, :presence => true
+    validates_associated :location
+
     has_many :addresses
+    belongs_to :location
 
     before_save :assign_addresses
     before_destroy :remove_network_id_from_addresses
