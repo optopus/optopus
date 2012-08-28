@@ -86,7 +86,8 @@ module Optopus
       end
 
       def subnav_from_locations
-        @subnav = locations.inject(Array.new) do |subnav, location|
+        @subnav ||= Array.new
+        @subnav += locations.inject(Array.new) do |subnav, location|
           subnav << { :id => html_id(location.common_name), :name => location.common_name.upcase }
         end
       end
