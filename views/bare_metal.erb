@@ -30,7 +30,7 @@
             <td>
               <ul class="unstyled">
                 <% device.nodes.each do |node| %>
-                  <li><%= node.to_link %></li>
+                  <li><%= display_node_with_badges(node) %></li>
                 <% end %>
               </ul>
             </td>

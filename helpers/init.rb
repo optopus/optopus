@@ -105,6 +105,13 @@ module Optopus
         end
       end
 
+      # Used to append badges to node links, example being to show nodes as dead
+      def display_node_with_badges(node)
+        link = node.to_link
+        link += ' <span class="badge badge-important">dead</span>' unless node.active
+        link
+      end
+
       # returns an unstyled list from an array. attemps to turn the item into a link or a string
       def display_unstyled_list_from_array(array)
         list = '<ul class="unstyled">'
