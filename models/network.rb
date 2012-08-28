@@ -13,6 +13,14 @@ module Optopus
       "<a href=\"/network/#{self.id}\">#{self.address.to_cidr}</a>"
     end
 
+    def available_ips
+      address.usable_ips - used_ips
+    end
+
+    def used_ips
+      addresses.map { |a| a.ip_address.to_s }
+    end
+
     private
 
     # Associate addresses that are contained in this network, but
