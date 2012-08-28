@@ -30,7 +30,7 @@
             <td>
               <ul class="unstyled">
                 <% device.nodes.each do |node| %>
-                  <li><%= node.hostname %></li>
+                  <li><%= node.to_link %></li>
                 <% end %>
               </ul>
             </td>
