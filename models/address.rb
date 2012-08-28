@@ -2,7 +2,7 @@ module Optopus
   class Address < Optopus::Model
     validates :ip_address, :presence => true
     belongs_to :network
-    has_one :node
+    belongs_to :node
 
     before_save :assign_network
     before_save :validate_address_in_network
