@@ -32,6 +32,7 @@ module Optopus
     # event has been created.
     def time_ago
       num = Time.now.to_i - created_at.to_i
+      return "just now" if num < 10
       return "#{num} seconds ago" if num < 60
       num = num / 60
       return "#{num} minutes ago" if num < 60
