@@ -13,21 +13,34 @@
       <h1>Networks</h1>
       <p class="lead">Subnets we know about.</p>
     </header>
-    <table class="table table-condensed table-bordered table-striped">
-      <thead>
-        <tr>
-          <th class="span2">CIDR</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @networks.each do |network| %>
-          <tr>
-            <td><%= network.to_link %></td>
-            <td><%= network.description.human_empty %></td>
-          </tr>
+    <% locations.each do |location| %>
+      <section id="<%= html_id(location.common_name) %>">
+        <div class="page-header">
+          <h3><%= location.common_name.upcase %> <small><%= location.city.downcase %>, <%= location.state.downcase %></small></h3>
+        </div>
+        <% if location.networks.size > 0 %>
+          <table class="table table-condensed table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width: 10%">CIDR</th>
+                <th style="width: 80%">Description</th>
+                <th style="width: 10%">VLAN ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% location.networks.each do |network| %>
+                <tr>
+                  <td><%= network.to_link %></td>
+                  <td><%= network.description.human_empty %></td>
+                  <td><%= network.vlan_id.to_s.human_empty %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="muted"><em>No known subnets.</em></p>
         <% end %>
-      </tbody>
-    </table>
+      </section>
+    <% end %>
   </div>
 </div>

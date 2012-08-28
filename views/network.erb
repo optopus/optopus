@@ -1,0 +1,7 @@
+<% if @network %>
+  <ul>
+    <% @network.addresses.each do |address| %>
+      <li><%= address.ip_address.to_s %></li>
+    <% end %>
+  </ul>
+<% end %>
