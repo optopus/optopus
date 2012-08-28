@@ -146,5 +146,17 @@ module Optopus
         body({ :server_error => e.to_s })
       end
     end
+
+    get '/api/network/:id/next_ip' do
+      begin
+        network = Optopus::Network.find_by_id(params[:id])
+        raise "no network with id #{params[:id]}" if network.nil?
+        body({ :next_ip => network.available_ips.first }.to_json)
+      rescue Exception => e
+        status 404
+        body({ :user_error => e.to_s }.to_json)
+      end
+    end
+
   end
 end

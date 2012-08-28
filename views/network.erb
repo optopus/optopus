@@ -1,7 +1,57 @@
+<script>
+  $('#allocate-ip').modal();
+  function ip_allocator() {
+    $('#allocate-ip').modal('show');
+  }
+</script>
+
 <% if @network %>
-  <ul>
-    <% @network.addresses.each do |address| %>
-      <li><%= address.ip_address.to_s %></li>
-    <% end %>
-  </ul>
+  <div class="row-fluid">
+    <div class="span2">
+      <ul class="nav nav-list">
+        <li class="nav-header">Network Actions</li>
+        <li><a href="#" onclick="ip_allocator();"><i class="icon-plus"></i>Allocate new address</a></li>
+      </ul>
+    </div>
+
+    <div class="span10">
+      <header class="jumbotron subhead">
+        <h1>Network <%= @network.address.to_cidr %></h1>
+        <p class="lead"><%= @network.description %></p>
+      </header>
+
+      <% if @network.addresses.size > 0 %>
+        <table class="table table-condensed table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>IP Address</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @network.addresses.each do |address| %>
+              <tr>
+                <td><%= address.ip_address.to_s %></td>
+                <td>--</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="muted"><em>No addresses have been allocated.</em></p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="modal hide" id="allocate-ip">
+    <form class="form-horizontal" method="post" action="/network/<%= @network.id %>/allocate">
+      <input type="hidden" name="_method" value="put">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Allocate an IP address</h3>
+      </div>
+
+    </form>
+  </div>
 <% end %>
