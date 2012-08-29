@@ -2,6 +2,7 @@ module Optopus
   class Network < Optopus::Model
     validates :address, :location, :presence => true
     validates_associated :location
+    liquid_methods :to_link
 
     has_many :addresses
     belongs_to :location

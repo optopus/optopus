@@ -38,6 +38,7 @@ module Optopus
         )
         network.location = location
         network.save!
+        register_event "{{ references.user.to_link }} created network #{network.address.to_cidr}", :type => 'network', :references => [ network ]
       rescue Exception => e
         handle_error(e)
       end
@@ -82,6 +83,7 @@ module Optopus
         @network.vlan_id = vlan_id unless vlan_id.blank?
         @network.description = description unless description.blank?
         @network.save!
+        register_event "{{ references.user.to_link }} updated network #{@network.address.to_cidr}", :type => 'network', :references => [ @network ]
       rescue Exception => e
         handle_error(e)
       end
@@ -101,6 +103,7 @@ module Optopus
         network_from_params
         raise 'Network does not exist!' if @network.nil?
         @network.destroy
+        register_event "{{ references.user.to_link }} deleted network #{@network.address.to_cidr}", :type => 'network'
       rescue Exception => e
         handle_error(e)
       end
@@ -117,6 +120,7 @@ module Optopus
           :ip_address => params['ip-address'],
           :description => params['ip-description']
         )
+        register_event "{{ references.user.to_link }} allocated #{address.ip_address.to_s}", :type => 'network', :references => [ network, address ]
       rescue Exception => e
         handle_error(e)
       end
