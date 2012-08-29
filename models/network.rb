@@ -35,6 +35,12 @@ module Optopus
       Optopus::Address.where(:network_id => nil).where('ip_address << ?', self.address.to_cidr).each do |address|
         self.addresses << address
       end
+
+      # if we changed our cidr address, go through and update
+      # addresses that are no longer part of this network
+      if self.address_changed?
+        self.addresses.where('NOT ip_address << ?', self.address.to_cidr).update_all('network_id = NULL')
+      end
     end
 
     # Make sure that we unset network_id for all addresses associated

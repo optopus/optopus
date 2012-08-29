@@ -42,8 +42,20 @@ describe Optopus::Network, '#destroy' do
 end
 
 describe Optopus::Network, '#save' do
-  # TODO: test that when we change the subnet or network address
-  # that we remove previously assigned addresses!
+  before(:all) do
+    @valid_network = '10.100.1.0/23'
+    @valid_location = Optopus::Location.create!(:common_name => 'network_test_save', :city => 'test', :state => 'test')
+    @valid_options = { :address => @valid_network, :location => @valid_location }
+    @network = Optopus::Network.create!(@valid_options)
+  end
+
+  it 'removes ip address associations when we change the network address' do
+    address = @network.addresses.create!(:ip_address => '10.100.1.2')
+    @network.address = '10.200.1.0/24'
+    @network.save!
+    @network.reload
+    @network.addresses.should be_empty
+  end
 end
 
 describe Optopus::Address, '#new' do
