@@ -22,6 +22,7 @@ require 'tire'
 require 'tire_monkey_patches'
 require 'liquid'
 require 'postgres_ext'
+require 'postgres_ext_monkey_patches.rb'
 
 module Optopus
   class App < Sinatra::Base
