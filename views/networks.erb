@@ -1,7 +1,3 @@
-<script>
-  $('#networks').addClass('active');
-</script>
-
 <div class="row-fluid">
   <% if is_admin? %>
     <div class="span2">
@@ -48,9 +44,10 @@
             <thead>
               <tr>
                 <th style="width: 10%">CIDR</th>
-                <th style="width: 70%">Description</th>
+                <th style="width: 55%">Description</th>
                 <th style="width: 10%">VLAN ID</th>
                 <th style="width: 10%">Usage</th>
+                <th style="width: 15%">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -60,6 +57,10 @@
                   <td><%= network.description.human_empty %></td>
                   <td><%= network.vlan_id.to_s.human_empty %></td>
                   <td><%= network.usage %>%</td>
+                  <td>
+                    <button onclick="load_util('/network/<%= network.id %>/edit');" class="btn btn-mini"><i class="icon-pencil"></i> Edit</button>
+                    <button onclick="load_util('/network/<%= network.id %>/delete');" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i> Delete</button>
+                  </td>
                 </tr>
               <% end %>
             </tbody>
@@ -71,3 +72,7 @@
     <% end %>
   </div>
 </div>
+
+<script>
+  $('#networks').addClass('active');
+</script>

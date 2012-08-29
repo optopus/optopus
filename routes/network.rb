@@ -52,6 +52,50 @@ module Optopus
       erb :network
     end
 
+    # Simple edit form that is loaded into a modal
+    get '/network/:id/edit' do
+      network_from_params
+      erb :edit_network
+    end
+
+    post '/network/:id/edit' do
+      begin
+        network_from_params
+        raise 'Network does not exist!' if @network.nil?
+        description = params['network-description']
+        netmask = params['network-bits']
+        location_id = params['network-location-id']
+        network_address = params['network-address']
+        vlan_id = params['network-vlan-id']
+
+        location = Optopus::Location.find_by_id(location_id)
+        raise 'Invalid location!' if location.nil?
+        @network.location = location
+
+        if !netmask.blank? && !network_address.blank?
+          cidr = "#{network_address}/#{netmask}"
+          if @network.address.to_cidr != cidr
+            @network.address = cidr
+          end
+        end
+
+        @network.vlan_id = vlan_id unless vlan_id.blank?
+        @network.description = description unless description.blank?
+        @network.save!
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      flash[:success] = "Successfully updated #{@network.address.to_cidr}!"
+      redirect back
+    end
+
+    # Simple delete form that is loaded into a modal
+    get '/network/:id/delete' do
+      network_from_params
+      erb :delete_network
+    end
+
     put '/network/:id/allocate' do
       begin
         validate_param_presence 'ip-address'

@@ -1,0 +1,58 @@
+<% if @network %>
+  <form method="post" action="/network/<%= @network.id %>/edit" class="form-horizontal">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>Edit network <%= @network.address.to_cidr %></h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="control-group">
+        <label class="control-label" for="network-description">Description</label>
+        <div class="controls">
+          <input id="network-description" name="network-description" placeholder="ex: optopus-network" value="<%= @network.description %>">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="network-address">Network Address</label>
+        <div class="controls">
+          <input id="network-address" name="network-address" placeholder="10.1.10.0" value="<%= @network.address.to_s %>">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="network-bits">Network Bits</label>
+        <div class="controls">
+          <select name="network-bits" id="network-bits">
+            <% (1..32).each do |i| %>
+              <option <%= (@network.address.netmask.to_i == i) ? 'selected' : nil %>><%= i %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="network-vlan-id">VLAN ID</label>
+        <div class="controls">
+          <input id="network-vlan-id" name="network-vlan-id" placeholder="100" value="<%= @network.vlan_id %>">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="network-location-name">Location</label>
+        <div class="controls">
+          <select name="network-location-id" id="network-location-name">
+            <% locations.each do |location| %>
+              <option value="<%= location.id %>" <%= (@network.location_id == location.id) ? 'selected' : nil %>><%= location.common_name %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+      <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+  </form>
+<% end %>

@@ -41,6 +41,11 @@ describe Optopus::Network, '#destroy' do
   end
 end
 
+describe Optopus::Network, '#save' do
+  # TODO: test that when we change the subnet or network address
+  # that we remove previously assigned addresses!
+end
+
 describe Optopus::Address, '#new' do
   before(:all) do
     @valid_address = '10.1.1.2'
