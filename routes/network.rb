@@ -1,6 +1,10 @@
 module Optopus
   class App
     get '/networks' do
+      @lonely_addresses = Optopus::Address.lonely
+      unless @lonely_addresses.empty?
+        @subnav = [ { :id => 'lonely-addresses', :name => 'Lonely Addresses' } ]
+      end
       subnav_from_locations
       erb :networks
     end

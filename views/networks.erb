@@ -13,6 +13,31 @@
       <h1>Networks</h1>
       <p class="lead">Subnets we know about.</p>
     </header>
+    <% unless @lonely_addresses.empty? %>
+      <section id="lonely-addresses">
+        <div class="page-header">
+          <h3>Lonely addresses</h3>
+          <small>IP addresses with no network association</small>
+        </div>
+
+        <table class="table table-condensed table-bordered table-striped">
+          <thead>
+            <tr>
+              <th style="width: 10%">IP Address</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @lonely_addresses.each do |address| %>
+              <tr>
+                <td><%= address.ip_address.to_s %></td>
+                <td><%= address.display.human_empty %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </section>
+    <% end %>
     <% locations.each do |location| %>
       <section id="<%= html_id(location.common_name) %>">
         <div class="page-header">
