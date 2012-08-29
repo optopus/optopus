@@ -21,6 +21,12 @@ module Optopus
       addresses.map { |a| a.ip_address.to_s }
     end
 
+    # Return the usage percentage of this network
+    def usage
+      possible_ips = available_ips.size + used_ips.size
+      sprintf "%.2f", (used_ips.size.to_f / possible_ips.to_f) * 100
+    end
+
     private
 
     # Associate addresses that are contained in this network, but
