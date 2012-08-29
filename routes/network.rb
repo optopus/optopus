@@ -53,12 +53,12 @@ module Optopus
     end
 
     # Simple edit form that is loaded into a modal
-    get '/network/:id/edit' do
+    get '/network/:id/edit', :auth => :admin do
       network_from_params
       erb :edit_network
     end
 
-    post '/network/:id/edit' do
+    post '/network/:id/edit', :auth => :admin do
       begin
         network_from_params
         raise 'Network does not exist!' if @network.nil?

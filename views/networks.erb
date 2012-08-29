@@ -47,7 +47,7 @@
                 <th style="width: 55%">Description</th>
                 <th style="width: 10%">VLAN ID</th>
                 <th style="width: 10%">Usage</th>
-                <th style="width: 15%">Actions</th>
+                <% if is_admin? %><th style="width: 15%">Actions</th><% end %>
               </tr>
             </thead>
             <tbody>
@@ -57,10 +57,12 @@
                   <td><%= network.description.human_empty %></td>
                   <td><%= network.vlan_id.to_s.human_empty %></td>
                   <td><%= network.usage %>%</td>
-                  <td>
-                    <button onclick="load_util('/network/<%= network.id %>/edit');" class="btn btn-mini"><i class="icon-pencil"></i> Edit</button>
-                    <button onclick="load_util('/network/<%= network.id %>/delete');" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i> Delete</button>
-                  </td>
+                  <% if is_admin? %>
+                    <td>
+                      <button onclick="load_util('/network/<%= network.id %>/edit');" class="btn btn-mini"><i class="icon-pencil"></i> Edit</button>
+                      <button onclick="load_util('/network/<%= network.id %>/delete');" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i> Delete</button>
+                    </td>
+                  <% end %>
                 </tr>
               <% end %>
             </tbody>
