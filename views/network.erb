@@ -1,7 +1,11 @@
 <script>
   $('#allocate-ip').modal();
   function ip_allocator() {
-    $('#allocate-ip').modal('show');
+    $.get('/api/network/<%= @network.id %>/next_ip', function(data) {
+      $('#ip-address-display').html(data.next_ip);
+      $('#ip-address').val(data.next_ip);
+      $('#allocate-ip').modal('show');
+    });
   }
 </script>
 
@@ -24,7 +28,7 @@
         <table class="table table-condensed table-bordered table-striped">
           <thead>
             <tr>
-              <th>IP Address</th>
+              <th style="width: 10%">IP Address</th>
               <th>Description</th>
             </tr>
           </thead>
@@ -32,7 +36,7 @@
             <% @network.addresses.each do |address| %>
               <tr>
                 <td><%= address.ip_address.to_s %></td>
-                <td>--</td>
+                <td><%= address.description.human_empty %></td>
               </tr>
             <% end %>
           </tbody>
@@ -50,6 +54,28 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>Allocate an IP address</h3>
+      </div>
+
+      <div class="modal-body">
+        <div class="control-group">
+          <label class="control-label" for="ip-description">Description</label>
+          <div class="controls">
+            <input id="ip-description" name="ip-description" placeholder="why do you need this?">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">IP Address</label>
+          <div class="controls">
+            <input type="hidden" name="ip-address" id="ip-address">
+            <p id="ip-address-display" style="margin-top: 5px"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Allocate</button>
       </div>
 
     </form>

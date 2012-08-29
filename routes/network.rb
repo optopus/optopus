@@ -46,5 +46,23 @@ module Optopus
       end
       erb :network
     end
+
+    put '/network/:id/allocate' do
+      begin
+        validate_param_presence 'ip-address'
+        network = Optopus::Network.find_by_id(params[:id])
+        raise 'invalid network!' if network.nil?
+        address = network.addresses.create!(
+          :ip_address => params['ip-address'],
+          :description => params['ip-description']
+        )
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      status 201
+      flash[:success] = "Successfully allocated #{address.ip_address.to_s}!"
+      redirect back
+    end
   end
 end
