@@ -91,9 +91,21 @@ module Optopus
     end
 
     # Simple delete form that is loaded into a modal
-    get '/network/:id/delete' do
+    get '/network/:id/delete', :auth => :admin do
       network_from_params
       erb :delete_network
+    end
+
+    delete '/network/:id', :auth => :admin do
+      begin
+        network_from_params
+        raise 'Network does not exist!' if @network.nil?
+        @network.destroy
+      rescue Exception => e
+        handle_error(e)
+      end
+      flash[:success] = "Successfully deleted #{@network.address.to_cidr}!"
+      redirect back
     end
 
     put '/network/:id/allocate' do
