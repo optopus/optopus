@@ -17,6 +17,12 @@ module Optopus
       @possible_networks ||= Optopus::Network.where('address >> ?', self.ip_address.to_cidr)
     end
 
+    # Display either an associated node's hostname or
+    # the IP's description
+    def display
+      node ? node.hostname : description
+    end
+
     private
 
     # Don't allow an address to be associated with a network
