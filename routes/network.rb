@@ -1,5 +1,14 @@
 module Optopus
   class App
+
+    def network_from_params
+      @network = Optopus::Network.find_by_id(params[:id])
+      if @network.nil?
+        status 404
+        flash[:error] = "Network with id #{params[:id]} does not exist!"
+      end
+    end
+
     get '/networks' do
       @lonely_addresses = Optopus::Address.lonely
       unless @lonely_addresses.empty?
@@ -39,11 +48,7 @@ module Optopus
     end
 
     get '/network/:id' do
-      @network = Optopus::Network.find_by_id(params[:id])
-      if @network.nil?
-        status 404
-        flash[:error] = "Network with id #{params[:id]} does not exist!"
-      end
+      network_from_params
       erb :network
     end
 
