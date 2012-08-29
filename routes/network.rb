@@ -18,7 +18,7 @@ module Optopus
       erb :networks
     end
 
-    put '/network' do
+    put '/network', :auth => :admin do
       begin
         validate_param_presence 'network-address', 'network-bits', 'network-location-id'
         unless params['network-bits'].to_i.between?(1, 32)
