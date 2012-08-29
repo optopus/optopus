@@ -48,8 +48,9 @@
             <thead>
               <tr>
                 <th style="width: 10%">CIDR</th>
-                <th style="width: 80%">Description</th>
+                <th style="width: 70%">Description</th>
                 <th style="width: 10%">VLAN ID</th>
+                <th style="width: 10%">Usage</th>
               </tr>
             </thead>
             <tbody>
@@ -58,6 +59,7 @@
                   <td><%= network.to_link %></td>
                   <td><%= network.description.human_empty %></td>
                   <td><%= network.vlan_id.to_s.human_empty %></td>
+                  <td><%= network.usage %>%</td>
                 </tr>
               <% end %>
             </tbody>
