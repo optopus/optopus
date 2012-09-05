@@ -131,6 +131,27 @@
           <%= erb partial[:template] %>
         </section>
       <% end %>
+      <section id="facts">
+        <div class="page-header">
+          <h3>Facts</h3>
+        </div>
+        <table class="table table-condensed table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @node.facts.keys.sort { |a,b| a <=> b }.each do |key| %>
+              <tr>
+                <td><%= key %></td>
+                <td><%= @node.facts[key] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </section>
     </div>
   </div>
 <% end %>

@@ -18,6 +18,7 @@ module Optopus
     get '/node/:id' do
       @subnav = [ { :id => 'general', :name => 'General' } ]
       @subnav += node_partials.inject([]) { |s,p| s << { :id => html_id(p[:template].to_s), :name => p[:display] }; s }
+      @subnav << { :id => 'facts', :name => 'Facts' }
       @node = Optopus::Node.where(:id => params[:id]).first
       flash[:error] = "This node does not exist." if @node.nil?
       erb :node
