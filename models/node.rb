@@ -95,11 +95,11 @@ module Optopus
       if self.facts && self.facts['interfaces']
         fact_interfaces = self.facts['interfaces'].split(',')
         fact_interfaces.each do |name|
-          interface = self.interfaces.where(:name => name).first || self.interfaces.create!(:name => name)
+          interface = self.interfaces.where(:name => name).first || self.interfaces.new(:name => name)
           # Find out if we have a fact which contains the ipaddress for this interface
           # TODO: abstract this away so it is less facter specific
           if ip = self.facts["ipaddress_#{name}"]
-            address = Optopus::Address.where(:ip_address => ip).first || Optopus::Address.create!(:ip_address => ip)
+            address = Optopus::Address.where(:ip_address => ip).first || Optopus::Address.new(:ip_address => ip)
             if interface.address != address
               # Clean up addresses that are no longer in use
               interface.address.destroy unless interface.address.nil?
