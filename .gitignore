@@ -3,3 +3,4 @@
 *.yaml
 vendor/
 .bundle
+Gemfile.lock
