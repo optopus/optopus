@@ -63,6 +63,7 @@ module Optopus
       rescue Exception => e
         status 400
         logger.error "Received invalid data: #{e}"
+        logger.error e.backtrace.join("\t\n")
         body({ :user_error => e.to_s }.to_json)
       end
     end
