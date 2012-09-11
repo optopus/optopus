@@ -105,7 +105,6 @@ module Optopus
               interface.address.destroy unless interface.address.nil?
               interface.address = address
             end
-            interface.save!
           end
         end
 
