@@ -36,7 +36,7 @@
             <% @network.addresses.each do |address| %>
               <tr>
                 <td><%= address.ip_address.to_s %></td>
-                <td><%= address.description.human_empty %></td>
+                <td><%= address.display.human_empty %></td>
               </tr>
             <% end %>
           </tbody>
