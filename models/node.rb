@@ -11,7 +11,7 @@ module Optopus
     before_save :assign_device
     belongs_to :device
     after_create :register_create_event
-    has_many :addresses
+    has_many :interfaces
 
     serialize :facts, ActiveRecord::Coders::Hstore
     serialize :properties, ActiveRecord::Coders::Hstore

@@ -6,6 +6,7 @@ require_relative 'role'
 require_relative 'event'
 require_relative 'address'
 require_relative 'network'
+require_relative 'interface'
 
 # ensure any data registered by plugins exists
 Optopus::Models.list.each do |model|
