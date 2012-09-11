@@ -287,4 +287,33 @@ module Optopus
       end
     end
   end
+
+  class NetworkNode < Node
+    set_search_options :default_operator => 'AND', :fields => [:hostname, :macaddress, :productname, 'facts.*']
+    set_highlight_fields :hostname, :switch, :macaddress, :productname
+    set_search_display_key :link
+
+    settings :analysis => {
+        :analyzer => {
+          :hostname => {
+            "tokenizer"    => "lowercase",
+            "pattern"      => "(\\W)(?=\\w)|(?<=\\w)(?=\\W)|(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)",
+            "type"         => "pattern" }
+        }
+      } do
+      mapping do
+        indexes :id,          :index => :not_analyzed
+        indexes :link,        :as => 'to_link', :index => :not_analyzed
+        indexes :hostname,    :boost => 100, :analyzer => 'hostname'
+        indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
+        indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
+        indexes :productname, :as => "facts['productname']", :boost => 10
+        indexes :location,    :as => 'location_name', :boost => 10
+      end
+      indexes :facts,       :boost => 1
+    end
+
+    private
+
+  end
 end

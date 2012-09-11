@@ -8,6 +8,7 @@ module Optopus
         hostname = data.delete('hostname')
         serial_number = data.delete('serial_number')
         primary_mac_address = data.delete('primary_mac_address')
+        type = data.delete('type')
         facts = data.delete('facts')
         libvirt = data.delete('libvirt')
         virtual = data.delete('virtual')
@@ -40,6 +41,17 @@ module Optopus
             node = Optopus::Node.find_by_id(node.id)
           end
           node.libvirt_data = libvirt
+        elsif type
+          case type
+          when 'network_node'
+            unless node.kind_of?(Optopus::NetworkNode)
+              node.type = 'Optopus::NetworkNode'
+              node.save!
+              node = Optopus::Node.find_by_id(node.id)
+            end
+          else
+            # Silently ignore invalid types for now
+          end
         end
         node.save!
         logger.info "Successful node registration via API: #{node.hostname}"
