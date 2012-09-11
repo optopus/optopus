@@ -76,3 +76,38 @@ describe Optopus::Node, '#facts' do
     node.id.should == @node.id
   end
 end
+
+describe Optopus::Node, '#save' do
+  before(:all) do
+    @valid_interfaces = [ 'em1', 'eth0', 'eth1', 'lo0', 'ge-0/0/1', 'GigabitEthernet1' ]
+    @node = Optopus::Node.create!(
+      :hostname => 'interface_fact_test',
+      :serial_number => 'interface_fact_test',
+      :primary_mac_address => '01:02:04:44:04:06',
+      :virtual => true
+    )
+    @valid_ip_address = '172.16.200.20'
+  end
+
+  it 'creates new interfaces based off the interfaces key of facts' do
+    @node.facts['interfaces'] = @valid_interfaces.join(',')
+    @node.save!
+    @node.reload
+    @node.interfaces.map { |i| i.name }.sort.should == @valid_interfaces.sort
+  end
+
+  it 'destroys interfaces that are no longer part of the interfaces key of facts' do
+    new_interfaces = @valid_interfaces - @valid_interfaces.last(2)
+    @node.facts['interfaces'] = new_interfaces.join(',')
+    @node.save!
+    @node.reload
+    @node.interfaces.map { |i| i.name }.sort.should == new_interfaces.sort
+  end
+
+  it 'creates an ipaddress when facts["ipaddress_eth0"] is present' do
+    @node.facts['ipaddress_eth0'] = @valid_ip_address
+    @node.save!
+    @node.reload
+    @node.interfaces.where(:name => 'eth0').first.address.ip_address.should == @valid_ip_address
+  end
+end

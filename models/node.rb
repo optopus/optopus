@@ -8,7 +8,7 @@ module Optopus
     validates :virtual, :inclusion => { :in => [true, false] }
     validates_uniqueness_of :hostname
     before_validation :downcase_primary_mac_address
-    before_save :assign_device
+    before_save :assign_device, :map_facts_to_interfaces
     belongs_to :device
     after_create :register_create_event
     has_many :interfaces
@@ -86,6 +86,34 @@ module Optopus
 
     def downcase_primary_mac_address
       self.primary_mac_address = self.primary_mac_address.downcase unless self.primary_mac_address.nil?
+    end
+
+    # When facts['interfaces'] gets updated, ensure interface models exist
+    # and are associated to this node. facts['interfaces'] are expected to be
+    # a comma separated list of interfaces for a node.
+    def map_facts_to_interfaces
+      if self.facts && self.facts['interfaces']
+        fact_interfaces = self.facts['interfaces'].split(',')
+        fact_interfaces.each do |name|
+          interface = self.interfaces.where(:name => name).first || self.interfaces.create!(:name => name)
+          # Find out if we have a fact which contains the ipaddress for this interface
+          # TODO: abstract this away so it is less facter specific
+          if ip = self.facts["ipaddress_#{name}"]
+            address = Optopus::Address.where(:ip_address => ip).first || Optopus::Address.create!(:ip_address => ip)
+            if interface.address != address
+              # Clean up addresses that are no longer in use
+              interface.address.destroy unless interface.address.nil?
+              interface.address = address
+            end
+            interface.save!
+          end
+        end
+
+        # Remove any interfaces that are no longer part of facts['interface']
+        self.interfaces.reject { |i| fact_interfaces.include?(i.name) }.each do |old_interface|
+          old_interface.destroy
+        end
+      end
     end
 
     def assign_device
