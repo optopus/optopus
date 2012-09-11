@@ -35,13 +35,13 @@ module Optopus
         erb :pdns_index
       end
 
-      get '/pdns/domain/:id' do
+      get '/pdns/domain/:id', :auth => :user do
         @records = pdns_client.records(params[:id])
         @domain = pdns_client.domain_from_id(params[:id])['name']
         erb :pdns_domain
       end
 
-      post '/pdns/domain/:id' do
+      post '/pdns/domain/:id', :auth => :user do
         begin
           validate_param_presence 'content', 'name', 'type', 'record-id'
           dns_hostname = pdns_client.update_record(
@@ -61,7 +61,7 @@ module Optopus
         redirect back
       end
 
-      put '/pdns/domain/:id' do
+      put '/pdns/domain/:id', :auth => :user do
         begin
           validate_param_presence 'content', 'name', 'type', 'ttl'
           name = "#{params['name']}.#{pdns_client.domain_from_id(params[:id])['name']}"
@@ -81,7 +81,7 @@ module Optopus
         redirect back
       end
 
-      delete '/pdns/record/:id' do
+      delete '/pdns/record/:id', :auth => :user do
         dns_hostname = pdns_client.delete_record(params[:id])
         register_event "{{ references.user.to_link }} deleted dns record for #{dns_hostname}", :type => 'dns_deleted'
         redirect back
