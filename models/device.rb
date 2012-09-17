@@ -21,6 +21,8 @@ module Optopus
     mapping do
       indexes :id,          :index => :not_analyzed
       indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
+      indexes :updated_at
+      indexes :created_at
       indexes :serial_number
     end
 

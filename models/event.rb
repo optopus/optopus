@@ -13,6 +13,7 @@ module Optopus
       indexes :id, :index => :not_analyzed
       indexes :event_message, :as => "rendered_message", :boost => 10
       indexes :event_type, :as => 'type', :boost => 20
+      indexes :updated_at
       indexes :created_at
     end
 

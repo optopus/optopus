@@ -38,6 +38,8 @@ module Optopus
         indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
         indexes :productname, :as => "facts['productname']", :boost => 10
         indexes :location,    :as => 'location_name', :boost => 10
+        indexes :updated_at
+        indexes :created_at
       end
       indexes :facts,       :boost => 1
     end
@@ -206,6 +208,8 @@ module Optopus
         indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
         indexes :productname, :as => "facts['productname']", :boost => 10
         indexes :location,    :as => 'location.common_name', :boost => 10
+        indexes :updated_at
+        indexes :created_at
       end
       indexes :facts,       :boost => 1
       indexes :libvirt, :as => 'libvirt_data', :type => 'object'
@@ -308,6 +312,8 @@ module Optopus
         indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
         indexes :productname, :as => "facts['productname']", :boost => 10
         indexes :location,    :as => 'location_name', :boost => 10
+        indexes :updated_at
+        indexes :created_at
       end
       indexes :facts,       :boost => 1
     end
