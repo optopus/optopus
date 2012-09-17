@@ -2,6 +2,8 @@ module Optopus
   module Search
     def self.query(string, options={})
       raise 'Options must be a hash' unless options.kind_of?(Hash)
+      # We assume that sort_options is { 'field' => '(asc,desc)' }
+      sort_options = options.delete(:sort)
       query_string = make_valid_query_string(string)
       filter_options = options.delete(:filter)
       types = options.delete(:types)
@@ -18,6 +20,13 @@ module Optopus
         result_set = model.search(:size => max_result_size) do
           query do
             string query_string, search_options
+          end
+          if sort_options
+            sort do
+              sort_options.each do |field, sort_type|
+                by field, sort_type
+              end
+            end
           end
           highlight *highlight_fields if highlight_fields
           filter *filter_options if filter_options
