@@ -13,11 +13,7 @@
   <!-- <%= result[:type] %> -->
   <ul class="unstyled">
     <% result[:result_set].each do |item| %>
-      <% if @timestamps %>
-        <li><%= item.updated_at %>: <%= item.to_hash[result[:display_key]] %></li>
-      <% else %>
-        <li><%= item.to_hash[result[:display_key]] %></li>
-      <% end %>
+      <li><%= display_search_result(item, result[:display_key]) %></li>
     <% end %>
   </ul>
 <% end %>

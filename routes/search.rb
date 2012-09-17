@@ -1,11 +1,30 @@
 module Optopus
   class App
+    helpers do
+      def display_search_result(result, display_key)
+        display = nil
+        if @timestamp_method && !@timestamp_method.blank?
+          timestamp = result.send(@timestamp_method.to_sym)
+          unless timestamp.nil?
+            timestamp = Time.parse(timestamp)
+            display = "#{timestamp.strftime("%D %R")} : #{result.to_hash[display_key]}"
+          end
+        end
+
+        display = "#{result.to_hash[display_key]}" if display.nil?
+        display
+      end
+    end
+
     get '/search' do
       begin
         validate_param_presence 'query'
         @search_query = params['query']
-        if params.include?('with-timestamps') && params['with-timestamps'] == 'true'
-          @timestamps = true
+        @timestamp_method = params['with-timestamps']
+
+        # Allow users to show a timestamp by specifying with-timestamps=:column
+        if params.include?('with-timestamps') && !params['with-timestamps'].empty?
+          @timestamp_method == params['with-timestamps'].to_sym
         end
 
         # Allow users to sort by passing URL parameters matching sort_(field_name)
