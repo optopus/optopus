@@ -91,6 +91,10 @@ module Optopus
         device.brand = params.delete('brand')
         device.switch_name = params.delete('switch_name')
         device.switch_port = params.delete('switch_port')
+
+        # Since this device is registering via our hardware image,
+        # assume it is not provisioned.
+        device.provisioned = false
         device.save!
         status 202
       rescue ParamError => e
