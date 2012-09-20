@@ -26,6 +26,10 @@ module Optopus
       indexes :serial_number
     end
 
+    def location_name
+      location ? location.common_name : nil
+    end
+
     private
 
     def register_create_event

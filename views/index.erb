@@ -155,7 +155,7 @@
       <table class='table table-condensed table-striped'>
         <% @devices_to_be_provisioned.each do |device| -%>
           <tr>
-            <td><a href="/devices/<%= device.id %>"><%= device.serial_number %></a></td>
+            <td><%= device.serial_number %></td>
           </tr>
         <% end -%>
       </table>

@@ -1,11 +1,30 @@
 <div class="page-header">
   <h1>New Devices</h1>
-  <p class="lead">The following have been added in the last week.</p>
+  <p class="lead">The following have not been provisioned yet.</p>
 </div>
 <table class="table table-condensed table-striped">
+  <thead>
+    <tr>
+      <th>Brand</th>
+      <th>Model</th>
+      <th>Serial</th>
+      <th>MAC</th>
+      <th>BMC IP</th>
+      <th>Connectivity</th>
+      <th>Location</th>
+    </tr>
+  </thead>
   <tbody>
     <% @devices.each do |device| %>
-      <tr><td><%= device.hostname %></td></tr>
+      <tr>
+        <td><%= device.brand.human_empty %></td>
+        <td><%= device.model.human_empty %></td>
+        <td><%= device.serial_number.human_empty %></td>
+        <td><%= device.primary_mac_address.human_empty %></td>
+        <td><%= device.bmc_ip_address.human_empty %></td>
+        <td><%= device.switch_name.human_empty %> : <%= device.switch_port.human_empty %></td>
+        <td><%= device.location_name.human_empty %></td>
+      </tr>
     <% end %>
   </tbody>
 </table>
