@@ -71,14 +71,17 @@ module Optopus
     post '/api/device/register' do
       begin
         validate_param_presence 'serial_number', 'primary_mac_address', 'location_name'
-        device = Optopus::Device.where(:primary_mac_address => params['primary_mac_address']).where(:serial_number => params['serial_number']).first
+        primary_mac_address = params.delete('primary_mac_address').downcase
+        serial_number = params.delete('serial_number').downcase
+        location_name = params.delete('location_name').downcase
+        device = Optopus::Device.where(:primary_mac_address => primary_mac_address, :serial_number => serial_number).first
         if device.nil?
-          device = Optopus::Device.new(:serial_number => params['serial_number'], :primary_mac_address => params['primary_mac_address'])
+          device = Optopus::Device.new(:serial_number => serial_number, :primary_mac_address => primary_mac_address)
           logger.info "New device found: #{device.serial_number} #{device.primary_mac_address}"
         end
-        location = Optopus::Location.where(:common_name => params['location_name']).first
+        location = Optopus::Location.where(:common_name => location_name).first
         if location.nil?
-          location = Optopus::Location.new(:common_name => params['location_name'], :city => 'unknown', :state => 'unknown')
+          location = Optopus::Location.new(:common_name => location_name, :city => 'unknown', :state => 'unknown')
           logger.info "New location found: #{location.common_name}"
         end
         device.location = location
