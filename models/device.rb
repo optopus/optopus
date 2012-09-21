@@ -7,7 +7,7 @@ module Optopus
     validates :serial_number, :primary_mac_address, :location, :presence => true
     validates_uniqueness_of :primary_mac_address
     validates_associated :location
-    before_validation :downcase_primary_mac_address
+    before_validation :normalize_attributes
     before_save :check_provisioned_status
     after_create :register_create_event
 
@@ -40,8 +40,9 @@ module Optopus
       event.save!
     end
 
-    def downcase_primary_mac_address
-      self.primary_mac_address = self.primary_mac_address.downcase unless self.primary_mac_address.nil?
+    def normalize_attributes
+      self.primary_mac_address = self.primary_mac_address.downcase.strip unless self.primary_mac_address.nil?
+      self.serial_number = self.serial_number.downcase.strip unless self.serial_number.nil?
     end
 
     def check_provisioned_status

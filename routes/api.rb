@@ -17,9 +17,6 @@ module Optopus
         raise "No primary_mac_address supplied." if primary_mac_address.nil? || primary_mac_address.empty?
         raise "No hostname supplied." if hostname.nil? || hostname.empty?
         raise "No virtual supplied." unless virtual.kind_of?(TrueClass) || virtual.kind_of?(FalseClass)
-        # Normalize our data
-        serial_number = serial_number.downcase
-        primary_mac_address = primary_mac_address.downcase
         if not virtual
           raise "No serial_number supplied." if serial_number.nil? || serial_number.empty?
         end
@@ -74,9 +71,9 @@ module Optopus
     post '/api/device/register' do
       begin
         validate_param_presence 'serial_number', 'primary_mac_address', 'location_name'
-        primary_mac_address = params.delete('primary_mac_address').downcase
-        serial_number = params.delete('serial_number').downcase
-        location_name = params.delete('location_name').downcase
+        primary_mac_address = params.delete('primary_mac_address').downcase.strip
+        serial_number = params.delete('serial_number').downcase.strip
+        location_name = params.delete('location_name').downcase.strip
         device = Optopus::Device.where(:primary_mac_address => primary_mac_address, :serial_number => serial_number).first
         if device.nil?
           device = Optopus::Device.new(:serial_number => serial_number, :primary_mac_address => primary_mac_address)

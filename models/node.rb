@@ -7,7 +7,7 @@ module Optopus
     validates :hostname, :primary_mac_address, :presence => true
     validates :virtual, :inclusion => { :in => [true, false] }
     validates_uniqueness_of :hostname
-    before_validation :downcase_primary_mac_address
+    before_validation :normalize_attributes
     before_save :assign_device, :map_facts_to_interfaces
     belongs_to :device
     belongs_to :pod
@@ -87,8 +87,9 @@ module Optopus
       event.save!
     end
 
-    def downcase_primary_mac_address
-      self.primary_mac_address = self.primary_mac_address.downcase unless self.primary_mac_address.nil?
+    def normalize_attributes
+      self.primary_mac_address = self.primary_mac_address.downcase.strip unless self.primary_mac_address.nil?
+      self.serial_number = self.serial_number.downcase.strip unless self.serial_number.nil?
     end
 
     # When facts['interfaces'] gets updated, ensure interface models exist
