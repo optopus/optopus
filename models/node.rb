@@ -124,7 +124,7 @@ module Optopus
       else
         # when we are working with physical nodes, we should associate them with a device
         # we will attempt to do that by checking for matching primary_mac_address and serial_number
-        self.device = Device.where(:serial_number => self.serial_number).where(:primary_mac_address => self.primary_mac_address).first
+        self.device = Device.where(:serial_number => self.serial_number.downcase).where(:primary_mac_address => self.primary_mac_address.downcase).first
 
         unless self.facts.nil?
           if self.device.nil?

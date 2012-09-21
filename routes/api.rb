@@ -17,6 +17,9 @@ module Optopus
         raise "No primary_mac_address supplied." if primary_mac_address.nil? || primary_mac_address.empty?
         raise "No hostname supplied." if hostname.nil? || hostname.empty?
         raise "No virtual supplied." unless virtual.kind_of?(TrueClass) || virtual.kind_of?(FalseClass)
+        # Normalize our data
+        serial_number = serial_number.downcase
+        primary_mac_address = primary_mac_address.downcase
         if not virtual
           raise "No serial_number supplied." if serial_number.nil? || serial_number.empty?
         end
