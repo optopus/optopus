@@ -7,6 +7,7 @@ module Optopus
 
     has_many :devices
     has_many :networks
+    has_many :pods
 
     def nodes
       Optopus::Node.where("facts -> 'location' = '#{self.common_name}'")

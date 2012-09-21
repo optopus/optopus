@@ -10,6 +10,7 @@ module Optopus
     before_validation :downcase_primary_mac_address
     before_save :assign_device, :map_facts_to_interfaces
     belongs_to :device
+    belongs_to :pod
     after_create :register_create_event
     has_many :interfaces
 
