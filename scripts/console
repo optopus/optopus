@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+# TODO: make this just check if the installed bundle has pry or not
+console = (ENV['RACK_ENV'] == 'production') ? 'irb' : 'pry'
+system "bundle exec #{console} -r #{File.join(File.dirname(__FILE__), '..', 'app.rb')}"

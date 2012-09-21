@@ -20,6 +20,7 @@ group :test, :development do
   gem 'rspec'
   gem 'random-word'
   gem 'shotgun'
+  gem 'pry'
 end
 
 group :plugins do
