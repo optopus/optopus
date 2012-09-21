@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), '..', 'spec_helper')
 
-describe Optopus::InterfaceConnection, '#create' do
+describe Optopus::InterfaceConnection do
   before(:all) do
     @node = Optopus::Node.create!(
       :hostname => 'test_interface_conection',
@@ -23,13 +23,23 @@ describe Optopus::InterfaceConnection, '#create' do
   end
 
   it 'creates successfully with a target_interface_id and source_interface_id' do
-    Optopus::InterfaceConnection.create!(:source_interface => @interface, :target_interface => @interface2)
+    @interface.connections.create!(:target_interface_id => @interface2.id)
+  end
+
+  it 'created the reverse connection successfully' do
+    @interface2.reload
+    @interface2.connections.where(:target_interface_id => @interface.id).first.should be
   end
 
   it 'fails to create a duplicate target_interface with scope source_interface' do
     expect { @interface.connections.create!(:target_interface => @interface2) }.to raise_error(ActiveRecord::RecordInvalid)
   end
-end
 
-describe Optopus::InterfaceConnection, '#save' do
+  it 'destroys reverse connection when being destroyed' do
+    connection = @interface.connections.first
+    connection.destroy
+    @interface2.reload
+    @interface2.connections.first.should be_nil
+  end
+
 end
