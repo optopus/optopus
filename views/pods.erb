@@ -24,7 +24,7 @@
             </tr>
           </thead>
           <tbody>
-            <% location.pods.each do |pod| %>
+            <% location.pods.order(:name).each do |pod| %>
               <tr>
                 <td><%= pod.to_link %></td>
                 <td><%= pod.nodes.count %></td>
