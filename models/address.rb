@@ -20,7 +20,7 @@ module Optopus
     # Display either an associated node's hostname or
     # the IP's description
     def display
-      self.interface ? self.interface.node.to_link : description
+      self.interface ? (self.interface.node ? self.interface.node.to_link : description) : description
     end
 
     private
