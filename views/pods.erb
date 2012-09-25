@@ -26,7 +26,7 @@
           <tbody>
             <% location.pods.each do |pod| %>
               <tr>
-                <td><%= pod.name %></td>
+                <td><%= pod.to_link %></td>
                 <td><%= pod.nodes.count %></td>
                 <td><button onclick="load_util('/admin/pods/<%= pod.id %>/edit')" class="btn btn-mini"><i class="icon-pencil"></i> Edit</button> <button onclick="load_util('/admin/pods/<%= pod.id %>/delete')" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i> Delete</button></td>
               </tr>
