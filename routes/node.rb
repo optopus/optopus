@@ -1,5 +1,11 @@
 module Optopus
   class App
+    helpers do
+      def display_pod_link(node)
+        node.pod ? node.pod.to_link : node.pod.human_empty
+      end
+    end
+
     get '/nodes' do
       subnav_from_locations
       erb :nodes
