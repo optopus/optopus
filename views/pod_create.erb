@@ -1,0 +1,37 @@
+<form class="form-horizontal" method="post" action="/admin/pod">
+  <input type="hidden" name="_method" value="put">
+
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Create a new pod</h3>
+  </div>
+
+  <div class="modal-body">
+
+    <!-- Name input -->
+    <div class="control-group">
+      <label class="control-label" for="pod-name">Name</label>
+      <div class="controls">
+        <input id="pod-name" name="pod-name" placeholder="ex: rack8-top">
+      </div>
+    </div>
+
+    <!-- Location selector -->
+    <div class="control-group">
+      <label class="control-label" for="pod-location-name">Location</label>
+      <div class="controls">
+        <select name="pod-location-id" id="pod-location-name">
+          <% locations.each do |location| %>
+            <option value="<%= location.id %>"><%= location.common_name %></option>
+          <% end %>
+        </select>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+    <button type="submit" class="btn btn-primary">Create</button>
+  </div>
+</form>

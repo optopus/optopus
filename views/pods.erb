@@ -1,0 +1,39 @@
+<div class="row-fluid">
+  <div class="span2">
+    <ul class="nav nav-list">
+      <li class="nav-header">Pod Actions</li>
+      <li><a href="#" onclick="load_util('/admin/pod/create')"><i class="icon-plus"></i>Create new pod</a></li>
+    </ul>
+  </div>
+  <div class="span10">
+    <header class="jumbotron subhead">
+      <h1>Pods</h1>
+      <p class="lead">Pods are sections of racks with independent power and networking.</p>
+    </header>
+    <% locations.each do |location| %>
+      <section id="<%= html_id(location.common_name) %>">
+        <div class="page-header">
+          <h3><%= location.common_name.upcase %> <small><%= location.city.downcase %>, <%= location.state.downcase %></small></h3>
+        </div>
+        <table class="table table-striped table-bordered table-condensed">
+          <thead>
+            <tr>
+              <th style="width: 80%">Name</th>
+              <th>Total Nodes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% location.pods.each do |pod| %>
+              <tr>
+                <td><%= pod.name %></td>
+                <td><%= pod.nodes.count %></td>
+                <td><button onclick="load_util('/admin/pods/<%= pod.id %>/edit')" class="btn btn-mini"><i class="icon-pencil"></i> Edit</button> <button onclick="load_util('/admin/pods/<%= pod.id %>/delete')" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i> Delete</button></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </section>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<% if @pod %>
+  <form method="post" action="/admin/pod/<%= @pod.id %>/edit" class="form-horizontal">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>Edit pod <%= @pod.name %> in <%= @pod.location.common_name %></h3>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Name input -->
+      <div class="control-group">
+        <label class="control-label" for="pod-name">Name</label>
+        <div class="controls">
+          <input id="pod-name" name="pod-name" placeholder="ex: rack8-top" value="<%= @pod.name %>">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+      <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+  </form>
+<% end %>
