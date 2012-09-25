@@ -36,6 +36,24 @@ module Optopus
       end
     end
 
+    # assign a node to a pod
+    post '/node/:id/pod', :auth => :admin do
+      node = Optopus::Node.where(:id => params[:id]).first
+      begin
+        raise "Node '#{params[:id]}' does not exists." if node.nil?
+        validate_param_presence 'pod-id'
+        pod = node.possible_pods.find_by_id(params['pod-id'])
+        raise 'invalid pod ID for this node' if pod.nil?
+        node.pod = pod
+        node.save!
+        flash[:success] = "Assigned #{node.hostname} to the pod #{pod.name} successfully!"
+        register_event "{{ references.user.to_link }} assigned #{node.hostname} to the pod #{pod.name}", :type => 'pod'
+        redirect back
+      rescue Exception => e
+        handle_error(e)
+      end
+    end
+
     # mark node as dead
     post '/node/:id/inactive', :auth => :admin do
       node = Optopus::Node.where(:id => params[:id]).first

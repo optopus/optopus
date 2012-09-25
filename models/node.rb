@@ -82,6 +82,10 @@ module Optopus
       Optopus::Hypervisor.search("libvirt.domains.name:\"#{self.hostname}\"", :load => true)
     end
 
+    def possible_pods
+      location ? location.pods : Array.new
+    end
+
     private
 
     def register_create_event

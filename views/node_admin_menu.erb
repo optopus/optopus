@@ -7,7 +7,35 @@
   <li class="nav-header">Node Actions</li>
   <li><a href="#" onclick="$('#delete-confirmation').modal('show')"><i class="icon-trash"></i>Delete node</a></li>
   <li><a href="#" onclick="$('#dead-confirmation').modal('show')"><i class="icon-off"></i>Mark node as dead</a></li>
+  <li><a href="#" onclick="$('#assign-pod').modal('show')"><i class="icon-wrench"></i>Assign a pod</a></li>
 </ul>
+
+<div id="assign-pod" class="modal hide">
+  <form method="post" action="/node/<%= @node.id %>/pod">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Choose a pod for <%= @node.hostname %></h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="control-group">
+        <label class="control-label" for="pod-name">Pod</label>
+        <div class="controls">
+          <select name="pod-id" id="pod-name">
+            <% @node.possible_pods.each do |pod| %>
+              <option value="<%= pod.id %>"><%= pod.name %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <input class="btn btn-primary" type="submit" value="Assign">
+      <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    </div>
+  </form>
+</div>
 
 <div id="delete-confirmation" class="modal hide">
   <div class="modal-header">
