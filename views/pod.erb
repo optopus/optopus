@@ -1,68 +1,80 @@
 <% if @pod %>
-  <header class="jumbotron subhead">
-    <h1><%= @pod.name %> in <%= @pod.location.common_name %></h1>
-    <p class="lead">This pod has <%= @pod.nodes.count %> nodes.</p>
-  </header>
-
-  <% if @pod.hypervisors.size > 0 %>
-    <section id="hypervisor-resources">
-      <div class="page-header">
-        <h3>Hypervisor Resources</h3>
+  <div class="row-fluid">
+    <% if is_admin? %>
+      <div class="span2">
+        <ul class="nav nav-list">
+          <li class="nav-header">Pod Actions</li>
+          <li><a href="#" onclick="load_util('/admin/pods/<%= @pod.id %>/edit')"><i class="icon-pencil"></i>Modify this pod</a></li>
+        </ul>
       </div>
-      <table class="table table-condensed">
-        <tr>
-          <td style="width: 150px">CPU Utilization (<%= @pod.hypervisor_utilization[:cpu] %>)</td>
-          <td>
-            <div class="progress <%= progress_style(@pod.hypervisor_utilization[:cpu]) %>">
-              <div class="bar" style="width: <%= @pod.hypervisor_utilization[:cpu] %>%"></div>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 150px">Memory Utilization (<%= @pod.hypervisor_utilization[:memory] %>)</td>
-          <td>
-            <div class="progress <%= progress_style(@pod.hypervisor_utilization[:memory]) %>">
-              <div class="bar" style="width: <%= @pod.hypervisor_utilization[:memory] %>%"></div>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 150px">Disk Utilization (<%= @pod.hypervisor_utilization[:disk] %>)</td>
-          <td>
-            <div class="progress <%= progress_style(@pod.hypervisor_utilization[:disk]) %>">
-              <div class="bar" style="width: <%= @pod.hypervisor_utilization[:disk] %>%"></div>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </section>
-  <% end %>
+    <% end %>
+    <div class="span10">
+      <header class="jumbotron subhead">
+        <h1><%= @pod.name %> in <%= @pod.location.common_name %></h1>
+        <p class="lead">This pod has <%= @pod.nodes.count %> nodes.</p>
+      </header>
 
-  <% if @pod.network_nodes.size > 0 %>
-    <section id="network-nodes">
-      <div class="page-header">
-        <h3>Network Nodes</h3>
-      </div>
+      <% if @pod.hypervisors.size > 0 %>
+        <section id="hypervisor-resources">
+          <div class="page-header">
+            <h3>Hypervisor Resources</h3>
+          </div>
+          <table class="table table-condensed">
+            <tr>
+              <td style="width: 150px">CPU Utilization (<%= @pod.hypervisor_utilization[:cpu] %>)</td>
+              <td>
+                <div class="progress <%= progress_style(@pod.hypervisor_utilization[:cpu]) %>">
+                  <div class="bar" style="width: <%= @pod.hypervisor_utilization[:cpu] %>%"></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 150px">Memory Utilization (<%= @pod.hypervisor_utilization[:memory] %>)</td>
+              <td>
+                <div class="progress <%= progress_style(@pod.hypervisor_utilization[:memory]) %>">
+                  <div class="bar" style="width: <%= @pod.hypervisor_utilization[:memory] %>%"></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 150px">Disk Utilization (<%= @pod.hypervisor_utilization[:disk] %>)</td>
+              <td>
+                <div class="progress <%= progress_style(@pod.hypervisor_utilization[:disk]) %>">
+                  <div class="bar" style="width: <%= @pod.hypervisor_utilization[:disk] %>%"></div>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </section>
+      <% end %>
 
-      <ul class="unstyled">
-        <% @pod.network_nodes.order(:hostname).each do |node| %>
-          <li><%= node.to_link %></li>
-        <% end %>
-      </ul>
-    </section>
-  <% end %>
+      <% if @pod.network_nodes.size > 0 %>
+        <section id="network-nodes">
+          <div class="page-header">
+            <h3>Network Nodes</h3>
+          </div>
 
-  <% if @pod.regular_nodes.size > 0 %>
-    <section id="nodes">
-      <div class="page-header">
-        <h3>Nodes</h3>
-      </div>
+          <ul class="unstyled">
+            <% @pod.network_nodes.order(:hostname).each do |node| %>
+              <li><%= node.to_link %></li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
 
-      <ul class="unstyled">
-        <% @pod.regular_nodes.order(:hostname).each do |node| %>
-          <li><%= node.to_link %></li>
-        <% end %>
-      </ul>
-    </section>
-  <% end %>
+      <% if @pod.regular_nodes.size > 0 %>
+        <section id="nodes">
+          <div class="page-header">
+            <h3>Nodes</h3>
+          </div>
+
+          <ul class="unstyled">
+            <% @pod.regular_nodes.order(:hostname).each do |node| %>
+              <li><%= node.to_link %></li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+    </div>
+  </div>
 <% end %>
