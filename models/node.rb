@@ -18,7 +18,7 @@ module Optopus
     serialize :properties, ActiveRecord::Coders::Hstore
     liquid_methods :to_link
 
-    set_search_options :default_operator => 'AND', :fields => [:hostname, :switch, :macaddress, :productname, 'facts.*']
+    set_search_options :default_operator => 'AND', :fields => [:hostname, :switch, :macaddress, :productname, 'facts.*', :pod]
     set_highlight_fields :hostname, :switch, :macaddress, :productname
     set_search_display_key :link
 
@@ -39,6 +39,7 @@ module Optopus
         indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
         indexes :productname, :as => "facts['productname']", :boost => 10
         indexes :location,    :as => 'location_name', :boost => 10
+        indexes :pod,         :as => 'pod_name', :boost => 10
         indexes :updated_at
         indexes :created_at
       end
@@ -56,6 +57,10 @@ module Optopus
     # A wrapper method for indexing the location name of a node
     def location_name
       location ? location.common_name : nil
+    end
+
+    def pod_name
+      pod ? pod.name : nil
     end
 
     def location
@@ -188,7 +193,7 @@ module Optopus
       end
     end
 
-    set_search_options :default_operator => 'AND', :fields => ['libvirt.domains.name', :hostname, :switch, :macaddress, :productname, 'facts.*']
+    set_search_options :default_operator => 'AND', :fields => ['libvirt.domains.name', :hostname, :switch, :macaddress, :productname, 'facts.*', :pod]
     set_highlight_fields 'libvirt.domains.name'
     set_search_display_key :link
     set_highlight_fields :hostname, :switch, :macaddress, :productname
@@ -210,6 +215,7 @@ module Optopus
         indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
         indexes :productname, :as => "facts['productname']", :boost => 10
         indexes :location,    :as => 'location.common_name', :boost => 10
+        indexes :pod,         :as => 'pod_name', :boost => 10
         indexes :updated_at
         indexes :created_at
       end
@@ -294,7 +300,7 @@ module Optopus
   end
 
   class NetworkNode < Node
-    set_search_options :default_operator => 'AND', :fields => [:hostname, :macaddress, :productname, 'facts.*']
+    set_search_options :default_operator => 'AND', :fields => [:hostname, :macaddress, :productname, 'facts.*', :pod]
     set_highlight_fields :hostname, :switch, :macaddress, :productname
     set_search_display_key :link
 
@@ -314,6 +320,7 @@ module Optopus
         indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
         indexes :productname, :as => "facts['productname']", :boost => 10
         indexes :location,    :as => 'location_name', :boost => 10
+        indexes :pod,         :as => 'pod_name', :boost => 10
         indexes :updated_at
         indexes :created_at
       end
