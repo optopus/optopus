@@ -8,14 +8,16 @@ module Optopus
     validates_associated :node
     validates_uniqueness_of :name, :scope => :node_id
 
-    before_destroy :remove_interface_connections
+    before_destroy :destroy_interface_connections, :destroy_address
 
     private
 
-    def remove_interface_connections
-      self.connections.each do |connection|
-        connection.destroy
-      end
+    def destroy_interface_connections
+      self.connections.destroy_all
+    end
+
+    def destroy_address
+      self.address.destroy if self.address
     end
   end
 end
