@@ -8,6 +8,7 @@ module Optopus
     validates :virtual, :inclusion => { :in => [true, false] }
     validates_uniqueness_of :hostname
     before_validation :normalize_attributes
+    before_destroy :destroy_interfaces
     before_save :assign_device, :map_facts_to_interfaces
     belongs_to :device
     belongs_to :pod
@@ -89,6 +90,10 @@ module Optopus
     end
 
     private
+
+    def destroy_interfaces
+      self.interfaces.destroy_all
+    end
 
     def register_create_event
       event = Optopus::Event.new
