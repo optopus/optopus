@@ -14,6 +14,7 @@ module Optopus
     belongs_to :pod
     after_create :register_create_event
     has_many :interfaces
+    has_and_belongs_to_many :node_groups
 
     serialize :facts, ActiveRecord::Coders::Hstore
     serialize :properties, ActiveRecord::Coders::Hstore

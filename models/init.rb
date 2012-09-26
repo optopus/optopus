@@ -9,6 +9,7 @@ require_relative 'network'
 require_relative 'interface'
 require_relative 'interface_connection'
 require_relative 'pod'
+require_relative 'node_group'
 
 # ensure any data registered by plugins exists
 Optopus::Models.list.each do |model|
