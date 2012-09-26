@@ -21,7 +21,7 @@
         </tr>
       </thead>
       <tbody>
-        <% location.nodes.order(:pod_id, :hostname).each do |node| %>
+        <% location.nodes.order_by_pod_name.each do |node| %>
           <tr>
             <td><a href="/node/<%= node.id %>"><%= node.hostname %></a></td>
             <td><%= node.created_at.strftime("%D %R") %></td>

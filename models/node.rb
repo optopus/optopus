@@ -22,6 +22,8 @@ module Optopus
     set_highlight_fields :hostname, :switch, :macaddress, :productname
     set_search_display_key :link
 
+    scope :order_by_pod_name, :joins => 'LEFT JOIN pods on pods.id = nodes.pod_id', :order => 'pods.name, nodes.hostname'
+
     settings :analysis => {
         :analyzer => {
           :hostname => {
