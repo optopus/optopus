@@ -49,6 +49,10 @@ module Optopus
     end
 
     get '/network/:id' do
+      @subnav = [
+        { :id => 'allocated', :name => 'Allocated Addresses' },
+        { :id => 'free', :name => 'Free Addresses' },
+      ]
       network_from_params
       erb :network
     end

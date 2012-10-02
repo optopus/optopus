@@ -1,11 +1,17 @@
 <script>
   $('#allocate-ip').modal();
-  function ip_allocator() {
-    $.get('/api/network/<%= @network.id %>/next_ip', function(data) {
-      $('#ip-address-display').html(data.next_ip);
-      $('#ip-address').val(data.next_ip);
+  function ip_allocator(address) {
+    if (typeof address === 'undefined') {
+      $.get('/api/network/<%= @network.id %>/next_ip', function(data) {
+        $('#ip-address-display').html(data.next_ip);
+        $('#ip-address').val(data.next_ip);
+        $('#allocate-ip').modal('show');
+      });
+    } else {
+      $('#ip-address-display').html(address);
+      $('#ip-address').val(address);
       $('#allocate-ip').modal('show');
-    });
+    }
   }
 </script>
 
@@ -24,26 +30,57 @@
         <p class="lead"><%= @network.description %></p>
       </header>
 
-      <% if @network.addresses.size > 0 %>
-        <table class="table table-condensed table-bordered table-striped">
-          <thead>
-            <tr>
-              <th style="width: 10%">IP Address</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @network.addresses.each do |address| %>
+      <section id="allocated">
+        <div class="page-header">
+          <h3>Allocated Addresses</h3>
+        </div>
+        <% if @network.addresses.size > 0 %>
+          <table class="table table-condensed table-bordered table-striped">
+            <thead>
               <tr>
-                <td><%= address.ip_address.to_s %></td>
-                <td><%= address.display.human_empty %></td>
+                <th style="width: 10%">IP Address</th>
+                <th>Description</th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-      <% else %>
-        <p class="muted"><em>No addresses have been allocated.</em></p>
-      <% end %>
+            </thead>
+            <tbody>
+              <% @network.addresses.each do |address| %>
+                <tr>
+                  <td><%= address.ip_address.to_s %></td>
+                  <td><%= address.display.human_empty %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="muted"><em>No addresses have been allocated.</em></p>
+        <% end %>
+      </section>
+
+      <section id="free">
+        <div class="page-header">
+          <h3>Free Addresses</h3>
+        </div>
+        <% if @network.available_ips.size > 0 %>
+          <table class="table table-condensed table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width: 10%">IP Address</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @network.available_ips.each do |ip| %>
+                <tr>
+                  <td><%= ip %></td>
+                  <td><button class="btn btn-mini btn-info" onclick="ip_allocator('<%= ip %>');">Allocate</button></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="muted"><em>No available addresses.</em></p>
+        <% end %>
+      </section>
     </div>
   </div>
 
