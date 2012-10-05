@@ -52,7 +52,7 @@ module Optopus
     def self.make_valid_query_string(string)
       query_string = Array.new
       string.split.each do |query_part|
-        if query_part.match(/(hostname|switch|macaddress|productname|facts\..*|event_type|event_message):(.*)/)
+        if query_part.match(/(location|hostname|switch|macaddress|productname|facts\..*|event_type|event_message):(.*)/)
           query_string << "#{$1}:#{elasticsearch_escape($2)}"
         else
           query_string << elasticsearch_escape(query_part)

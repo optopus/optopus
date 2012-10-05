@@ -178,5 +178,25 @@ module Optopus
       end
     end
 
+    get '/api/search' do
+      begin
+        validate_param_presence 'string'
+        options = Hash.new
+        if params.include?('types')
+          options[:types] = params['types'].split(',')
+        end
+        results = []
+        Optopus::Search.query(params['string'], options).each do |result|
+          result[:result_set].each do |item|
+            results << item
+          end
+        end
+        body({ :results => results }.to_json)
+      rescue Exception => e
+        status 400
+        body({ :user_error => e.to_s }.to_json)
+      end
+    end
+
   end
 end
