@@ -11,32 +11,26 @@ module PDNS
       raise 'Missing mysql username' if @mysql_username.nil?
       raise 'Missing mysql password' if @mysql_password.nil?
       raise 'Missing mysql database' if @mysql_database.nil?
-
-      @mysql_client = Mysql2::Client.new(:host => @mysql_hostname, :username => @mysql_username, :password => @mysql_password, :database => @mysql_database)
     end
 
     def domains
       domains = Array.new
       if @restrict_domains.nil?
-        @mysql_client.query("SELECT id, name FROM domains ORDER BY name").each do |row|
-          domains << row
-        end
+        domains += mysql_query("SELECT id, name FROM domains ORDER BY name").to_a
       else
         @restrict_domains.each do |restriction|
-          @mysql_client.query("SELECT id, name FROM domains WHERE name LIKE '#{escape(restriction)}'").each do |row|
-            domains << row
-          end
+          domains += mysql_query("SELECT id, name FROM domains WHERE name LIKE '#{escape(restriction)}'").to_a
         end
       end
       domains
     end
 
     def domain_from_id(id)
-      @mysql_client.query("SELECT name FROM domains WHERE id=#{escape(id.to_s)}").first
+      mysql_query("SELECT name from domains WHERE id=#{escape(id.to_s)}").first
     end
 
     def record_from_id(id)
-      @mysql_client.query("SELECT * FROM records WHERE id=#{escape(id.to_s)}").first
+      mysql_query("SELECT * FROM records WHERE id=#{escape(id.to_s)}").first
     end
 
     def update_record(id, data={})
@@ -53,22 +47,23 @@ module PDNS
         record[key] = data.delete(key.to_sym) if data.include?(key.to_sym)
         update_string += "#{key}='#{escape(record[key].to_s)}', " unless record[key].nil?
       end
-      @mysql_client.query("UPDATE records SET #{update_string.chomp(', ')} WHERE id=#{id}")
+      mysql_query("UPDATE records SET #{update_string.chomp(', ')} WHERE id=#{id}")
       record['name']
     end
 
     def delete_record(id)
       name = record_from_id(id)['name']
-      @mysql_client.query("DELETE FROM records WHERE id=#{escape(id.to_s)}")
+      mysql_query("DELETE FROM records WHERE id=#{escape(id.to_s)}")
       name
     end
 
     def records(id=nil)
       if id.nil?
-        @mysql_client.query("SELECT * FROM records ORDER BY name").to_a
+        query = "SELECT * FROM records ORDER BY name"
       else
-        @mysql_client.query("SELECT * FROM records WHERE domain_id=#{escape(id)} ORDER BY name").to_a
+        query = "SELECT * FROM records WHERE domain_id=#{escape(id)} ORDER BY name"
       end
+      mysql_query(query)
     end
 
     def create_record(options={})
@@ -82,13 +77,26 @@ module PDNS
       raise 'Missing type' if type.nil?
       raise 'Missing content' if content.nil?
       raise 'Missing ttl' if ttl.nil?
-      @mysql_client.query("INSERT INTO records SET domain_id=#{escape(domain_id)}, name='#{escape(name)}', type='#{escape(type)}', content='#{escape(content)}', ttl=#{escape(ttl)}")
+      mysql_query("INSERT INTO records SET domain_id=#{escape(domain_id)}, name='#{escape(name)}', type='#{escape(type)}', content='#{escape(content)}', ttl=#{escape(ttl)}")
     end
 
     private
 
+    def mysql_query(string)
+      results = nil
+      mysql { |c| results = c.query(string) }
+      results
+    end
+
+    def mysql(&block)
+      connection_options = { :host => @mysql_hostname, :username => @mysql_username, :password => @mysql_password, :database => @mysql_database }
+      client = Mysql2::Client.new(connection_options)
+      yield client
+      client.close
+    end
+
     def escape(string)
-      @mysql_client.escape(string)
+      Mysql2::Client.escape(string)
     end
   end
 end
