@@ -20,7 +20,7 @@ module Optopus
     serialize :properties, ActiveRecord::Coders::Hstore
     liquid_methods :to_link
 
-    set_search_options :default_operator => 'AND', :fields => [:hostname, :switch, :macaddress, :productname, 'facts.*', :pod]
+    set_search_options :default_operator => 'AND', :fields => [:hostname, :switch, :macaddress, :productname, 'facts.*', :pod, :puppet_classes]
     set_highlight_fields :hostname, :switch, :macaddress, :productname
     set_search_display_key :link
 
@@ -219,7 +219,7 @@ module Optopus
       end
     end
 
-    set_search_options :default_operator => 'AND', :fields => ['libvirt.domains.name', :hostname, :switch, :macaddress, :productname, 'facts.*', :pod]
+    set_search_options :default_operator => 'AND', :fields => ['libvirt.domains.name', :hostname, :switch, :macaddress, :productname, 'facts.*', :pod, :puppet_classes]
     set_highlight_fields 'libvirt.domains.name'
     set_search_display_key :link
     set_highlight_fields :hostname, :switch, :macaddress, :productname
