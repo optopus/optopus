@@ -55,6 +55,7 @@ unless Optopus::App.production?
       'serialnumber' => n.serial_number,
       'macaddress' => n.primary_mac_address,
     }
+    n.puppet_classes = [ 'apache', 'mcollective::client' ]
     n.save!
   end
 end

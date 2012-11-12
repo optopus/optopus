@@ -35,20 +35,20 @@ module Optopus
         }
       } do
       mapping do
-        indexes :id,             :index => :not_analyzed
-        indexes :link,           :as => 'to_link', :index => :not_analyzed
-        indexes :hostname,       :boost => 100, :analyzer => 'hostname'
-        indexes :macaddress,     :as => 'primary_mac_address', :boost => 10
-        indexes :ipaddress,      :as => "facts['ipaddress']", :boost => 10
-        indexes :switch,         :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
-        indexes :productname,    :as => "facts['productname']", :boost => 10
-        indexes :location,       :as => 'location_name', :boost => 10
-        indexes :pod,            :as => 'pod_name', :boost => 10
-        indexes :puppet_classes, :as => 'puppet_classes', :boost => 10
+        indexes :id,          :index => :not_analyzed
+        indexes :link,        :as => 'to_link', :index => :not_analyzed
+        indexes :hostname,    :boost => 100, :analyzer => 'hostname'
+        indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
+        indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
+        indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
+        indexes :productname, :as => "facts['productname']", :boost => 10
+        indexes :location,    :as => 'location_name', :boost => 10
+        indexes :pod,         :as => 'pod_name', :boost => 10
         indexes :updated_at
         indexes :created_at
       end
-      indexes :facts,       :boost => 1
+      indexes :puppet_classes, :as => 'puppet_classes', :type => 'array'
+      indexes :facts,          :boost => 1
     end
 
     def self.active
@@ -233,21 +233,21 @@ module Optopus
         }
       } do
       mapping do
-        indexes :id,             :index => :not_analyzed
-        indexes :link,           :as => 'to_link', :index => :not_analyzed
-        indexes :hostname,       :boost => 100, :analyzer => 'hostname'
-        indexes :macaddress,     :as => 'primary_mac_address', :boost => 10
-        indexes :ipaddress,      :as => "facts['ipaddress']", :boost => 10
-        indexes :switch,         :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
-        indexes :productname,    :as => "facts['productname']", :boost => 10
-        indexes :location,       :as => 'location.common_name', :boost => 10
-        indexes :pod,            :as => 'pod_name', :boost => 10
-        indexes :puppet_classes, :as => 'puppet_classes', :boost => 10
+        indexes :id,          :index => :not_analyzed
+        indexes :link,        :as => 'to_link', :index => :not_analyzed
+        indexes :hostname,    :boost => 100, :analyzer => 'hostname'
+        indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
+        indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
+        indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
+        indexes :productname, :as => "facts['productname']", :boost => 10
+        indexes :location,    :as => 'location.common_name', :boost => 10
+        indexes :pod,         :as => 'pod_name', :boost => 10
         indexes :updated_at
         indexes :created_at
       end
-      indexes :facts,       :boost => 1
-      indexes :libvirt, :as => 'libvirt_data', :type => 'object'
+      indexes :puppet_classes, :as => 'puppet_classes', :type => 'array'
+      indexes :facts,          :boost => 1
+      indexes :libvirt,        :as => 'libvirt_data', :type => 'object'
     end
 
     def self.find_domain(domain)
