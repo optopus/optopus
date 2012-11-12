@@ -35,15 +35,16 @@ module Optopus
         }
       } do
       mapping do
-        indexes :id,          :index => :not_analyzed
-        indexes :link,        :as => 'to_link', :index => :not_analyzed
-        indexes :hostname,    :boost => 100, :analyzer => 'hostname'
-        indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
-        indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
-        indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
-        indexes :productname, :as => "facts['productname']", :boost => 10
-        indexes :location,    :as => 'location_name', :boost => 10
-        indexes :pod,         :as => 'pod_name', :boost => 10
+        indexes :id,             :index => :not_analyzed
+        indexes :link,           :as => 'to_link', :index => :not_analyzed
+        indexes :hostname,       :boost => 100, :analyzer => 'hostname'
+        indexes :macaddress,     :as => 'primary_mac_address', :boost => 10
+        indexes :ipaddress,      :as => "facts['ipaddress']", :boost => 10
+        indexes :switch,         :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
+        indexes :productname,    :as => "facts['productname']", :boost => 10
+        indexes :location,       :as => 'location_name', :boost => 10
+        indexes :pod,            :as => 'pod_name', :boost => 10
+        indexes :puppet_classes, :as => 'puppet_classes', :boost => 10
         indexes :updated_at
         indexes :created_at
       end
@@ -77,6 +78,19 @@ module Optopus
 
     def to_h
       { :hostname => hostname, :virtual => virtual, :primary_mac_address => primary_mac_address }
+    end
+
+    def puppet_classes
+      begin
+        JSON.parse(properties['puppet_classes'])
+      rescue Exception => e
+        nil
+      end
+    end
+
+    def puppet_classes=(value)
+      raise 'puppet_classes must be an array' unless value.kind_of?(Array)
+      properties['puppet_classes'] = value.to_json
     end
 
     # This uses tire search functionality to load up hypervisors
@@ -219,15 +233,16 @@ module Optopus
         }
       } do
       mapping do
-        indexes :id,          :index => :not_analyzed
-        indexes :link,        :as => 'to_link', :index => :not_analyzed
-        indexes :hostname,    :boost => 100, :analyzer => 'hostname'
-        indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
-        indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
-        indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
-        indexes :productname, :as => "facts['productname']", :boost => 10
-        indexes :location,    :as => 'location.common_name', :boost => 10
-        indexes :pod,         :as => 'pod_name', :boost => 10
+        indexes :id,             :index => :not_analyzed
+        indexes :link,           :as => 'to_link', :index => :not_analyzed
+        indexes :hostname,       :boost => 100, :analyzer => 'hostname'
+        indexes :macaddress,     :as => 'primary_mac_address', :boost => 10
+        indexes :ipaddress,      :as => "facts['ipaddress']", :boost => 10
+        indexes :switch,         :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
+        indexes :productname,    :as => "facts['productname']", :boost => 10
+        indexes :location,       :as => 'location.common_name', :boost => 10
+        indexes :pod,            :as => 'pod_name', :boost => 10
+        indexes :puppet_classes, :as => 'puppet_classes', :boost => 10
         indexes :updated_at
         indexes :created_at
       end
