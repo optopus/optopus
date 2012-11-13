@@ -36,10 +36,10 @@ module Optopus
     use Rack::Flash
 
     register Optopus::Auth
-    register do
-      def auth(role_name)
-        condition do
-          handle_unauthorized_access unless (role_name == :user) ? is_user? : is_authorized?(role_name)
+    set(:auth) do |*roles|
+      condition do
+        unless roles.any? { |role| (role == :user) ? is_user? : is_authorized?(role) }
+          handle_unauthorized_access
         end
       end
     end
