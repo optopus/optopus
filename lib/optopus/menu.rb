@@ -1,4 +1,14 @@
 module Optopus
+  module UtilityMenu
+    def self.register_section(section)
+      sections << section
+    end
+
+    def self.sections
+      @sections ||= Array.new
+    end
+  end
+
   module Menu
     def self.register_section(section)
       sections << section

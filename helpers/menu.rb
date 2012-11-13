@@ -7,6 +7,12 @@ module Optopus
           section if is_authorized?(section.required_role)
         end
       end
+
+      def utility_menu_sections
+        Optopus::UtilityMenu.sections.select do |section|
+          section if is_authorized?(section.required_role)
+        end
+      end
     end
   end
 end

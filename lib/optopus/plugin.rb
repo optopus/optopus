@@ -58,6 +58,10 @@ module Optopus
       Optopus::Menu.register_section(section)
     end
 
+    def register_utility_menu(section)
+      Optopus::UtilityMenu.register_section(section)
+    end
+
     def set(key, value)
       plugin_settings[key] = value
     end
