@@ -56,7 +56,7 @@ module Optopus
     end
 
     def self.inactive
-      where(:active => false)
+      where(:active => false).order('updated_at DESC')
     end
 
     # A wrapper method for indexing the location name of a node

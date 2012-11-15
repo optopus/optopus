@@ -6,7 +6,7 @@
   <tbody>
     <% @nodes.each do |node| %>
       <tr>
-        <td><a href="/node/<%= node.id %>"><%= node.hostname %></a></td>
+        <td><a href="/node/<%= node.id %>"><%= node.hostname %></a> last seen <%= node.updated_at.time_ago %></td>
         <% if is_admin? %>
           <td>
             <form method="post" action="/node/<%= node.id %>" class="form-inline" style="float: left; margin: 0 0 0 5px;"><input type="hidden" name="_method" value="delete"><button type="submit" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i>Delete</button></form>
