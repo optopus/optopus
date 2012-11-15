@@ -46,6 +46,7 @@ module Optopus
         indexes :pod,         :as => 'pod_name', :boost => 10
         indexes :updated_at
         indexes :created_at
+        indexes :active
       end
       indexes :puppet_classes, :as => 'puppet_classes', :type => 'array'
       indexes :facts,          :boost => 1
@@ -244,6 +245,7 @@ module Optopus
         indexes :pod,         :as => 'pod_name', :boost => 10
         indexes :updated_at
         indexes :created_at
+        indexes :active
       end
       indexes :puppet_classes, :as => 'puppet_classes', :type => 'array'
       indexes :facts,          :boost => 1
@@ -350,6 +352,7 @@ module Optopus
         indexes :pod,         :as => 'pod_name', :boost => 10
         indexes :updated_at
         indexes :created_at
+        indexes :active
       end
       indexes :facts,       :boost => 1
     end
