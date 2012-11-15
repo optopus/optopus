@@ -32,17 +32,7 @@ module Optopus
     # return the largest time unit as a string since this
     # event has been created.
     def time_ago
-      num = Time.now.to_i - created_at.to_i
-      return "just now" if num < 10
-      return "#{num} seconds ago" if num < 60
-      num = num / 60
-      return "#{num} minutes ago" if num < 60
-      num = num / 60
-      return "#{num} hours ago" if num < 24
-      num = num / 24
-      return "#{num} days ago" if num < 365
-      num = num / 365
-      return "#{num} years ago"
+      updated_at.time_ago
     end
 
     # TODO: split references out into their own hstore column to avoid collision
