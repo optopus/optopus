@@ -167,6 +167,15 @@ module Optopus
       end
     end
 
+    get '/api/network_nodes/active' do
+      begin
+        body(Optopus::NetworkNode.active.to_json)
+      rescue Exception => e
+        status 500
+        body({ :server_error => e.to_s })
+      end
+    end
+
     get '/api/network/:id/next_ip' do
       begin
         network = Optopus::Network.find_by_id(params[:id])
