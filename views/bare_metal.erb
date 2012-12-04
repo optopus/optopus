@@ -4,13 +4,14 @@
 <header class="jumbotron subhead">
   <h1>Bare Metal</h1>
   <p class="lead">All of your physical hardware will show up here as it registers.</p>
+  <form class="form-search">Filter devices: <input id="dt-filter-tables" type="text" class="input-medium" placeholder="hit t for filter"></p>
 </header>
 <% locations.each do |location| %>
   <section id="<%= html_id(location.common_name) %>">
     <div class="page-header">
       <h3><%= location.common_name.upcase %> <small><%= location.city.downcase %>, <%= location.state.downcase %></small></h3>
     </div>
-    <table class="table table-condensed table-bordered table-striped">
+    <table class="table table-condensed table-bordered table-striped table-sort-no-filter-input">
       <thead>
         <tr>
           <th>Brand</th>
