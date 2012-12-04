@@ -21,11 +21,11 @@ module Optopus
       erb :dead_nodes
     end
 
-    get '/node/:id' do
+    get '/node/:hostname' do
       @subnav = [ { :id => 'general', :name => 'General' } ]
       @subnav += node_partials.inject([]) { |s,p| s << { :id => html_id(p[:template].to_s), :name => p[:display] }; s }
       @subnav << { :id => 'facts', :name => 'Facts' }
-      @node = Optopus::Node.where(:id => params[:id]).first
+      @node = Optopus::Node.where(:hostname => params[:hostname]).first
       flash[:error] = "This node does not exist." if @node.nil?
       erb :node
     end

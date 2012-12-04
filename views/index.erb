@@ -124,7 +124,7 @@
       <table class='table table-condensed table-striped'>
         <% @inactive_nodes.each do |node| %>
           <tr>
-            <td><a href="/node/<%= node.id %>"><%= node.hostname %></a></td>
+            <td><%= node.to_link %></td>
             <% if is_admin? %>
               <td>
                 <form method="post" action="/node/<%= node.id %>" class="form-inline" style="float: left; margin: 0 0 0 5px;"><input type="hidden" name="_method" value="delete"><button type="submit" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i>Delete</button></form>
@@ -142,7 +142,7 @@
       <table class='table table-condensed table-striped'>
         <% @new_nodes.each do |node| %>
           <tr>
-            <td><a href="/node/<%= node.id %>"><%= node.hostname %></a></td>
+            <td><%= node.to_link %></td>
           </tr>
         <% end %>
       </table>

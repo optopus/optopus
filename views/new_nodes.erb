@@ -6,7 +6,7 @@
   <tbody>
     <% @nodes.each do |node| %>
       <tr>
-        <td><a href="/node/<%= node.id %>"><%= node.hostname %></a></td>
+        <td><%= node.to_link %></td>
       </tr>
     <% end %>
   </tbody>

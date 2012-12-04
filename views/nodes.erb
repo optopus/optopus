@@ -24,7 +24,7 @@
       <tbody>
         <% location.nodes.order_by_pod_name.each do |node| %>
           <tr>
-            <td><a href="/node/<%= node.id %>"><%= node.hostname %></a></td>
+            <td><%= node.to_link %></td>
             <td><%= node.created_at.strftime("%D %R") %></td>
             <td><%= (Time.now - node.updated_at).to_i / 60 %> minutes ago</td>
             <td><%= display_pod_link(node) %></td>

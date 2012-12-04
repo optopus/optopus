@@ -74,7 +74,7 @@ module Optopus
     end
 
     def to_link
-      "<a href=\"/node/#{id}\">#{hostname}</a>"
+      "<a href=\"/node/#{hostname}\">#{hostname}</a>"
     end
 
     def to_h
