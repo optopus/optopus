@@ -164,7 +164,7 @@ $(document).ready(function() {
     }
   } );
   $('.table-sort').dataTable( {
-    "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+    "sDom": "<'row'<f'span6'><'span6'>r>t<'row'<'span6'i><'span6'p>>",
     "sPaginationType": "bootstrap",
     "bPaginate": false,
     "oLanguage": {
@@ -172,9 +172,6 @@ $(document).ready(function() {
       "sSearch": "Filter records:"
     }
   } );
-} );
-
-$(document).ready(function() {
   $('.table-sort-paginate').dataTable( {
     "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
     "sPaginationType": "bootstrap",
