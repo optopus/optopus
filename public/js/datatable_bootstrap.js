@@ -158,6 +158,7 @@ $(document).ready(function() {
     "sDom": "<'row'<'span6'l><'span6'>r>t<'row'<'span6'i><'span6'p>>",
     "sPaginationType": "bootstrap",
     "bPaginate": false,
+    "bRetrieve": true,
     "oLanguage": {
       "sLengthMenu": "_MENU_ records per page",
       "sSearch": "Filter records:"
@@ -167,6 +168,7 @@ $(document).ready(function() {
     "sDom": "<'row'<f'span6'><'span6'>r>t<'row'<'span6'i><'span6'p>>",
     "sPaginationType": "bootstrap",
     "bPaginate": false,
+    "bRetrieve": true,
     "oLanguage": {
       "sLengthMenu": "_MENU_ records per page",
       "sSearch": "Filter records:"
@@ -176,6 +178,7 @@ $(document).ready(function() {
     "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
     "sPaginationType": "bootstrap",
     "bPaginate": true,
+    "bRetrieve": true,
     "oLanguage": {
       "sLengthMenu": "_MENU_ records per page",
       "sSearch": "Filter records:"
