@@ -144,9 +144,25 @@ if ( $.fn.DataTable.TableTools ) {
   } );
 }
 
+/* fnFilterAll Plugin */
+$.fn.dataTableExt.oApi.fnFilterAll = function(oSettings, sInput, iColumn, bRegex, bSmart) {
+    var settings = $.fn.dataTableSettings;
+    for ( var i=0 ; i<settings.length ; i++ ) {
+      settings[i].oInstance.fnFilter( sInput, iColumn, bRegex, bSmart);
+    }
+};
 
 /* Table initialisation */
 $(document).ready(function() {
+  $('.table-sort-no-filter-input').dataTable( {
+    "sDom": "<'row'<'span6'l><'span6'>r>t<'row'<'span6'i><'span6'p>>",
+    "sPaginationType": "bootstrap",
+    "bPaginate": false,
+    "oLanguage": {
+      "sLengthMenu": "_MENU_ records per page",
+      "sSearch": "Filter records:"
+    }
+  } );
   $('.table-sort').dataTable( {
     "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
     "sPaginationType": "bootstrap",
@@ -168,4 +184,8 @@ $(document).ready(function() {
       "sSearch": "Filter records:"
     }
   } );
+  $('#dt-filter-tables').keyup(function() {
+    $('.table-sort').dataTable().fnFilterAll(this.value);
+  } );
 } );
+

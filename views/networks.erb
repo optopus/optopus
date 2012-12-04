@@ -16,7 +16,7 @@
           <small>IP addresses with no network association</small>
         </div>
 
-        <table class="table table-condensed table-bordered table-striped">
+        <table class="table table-condensed table-bordered table-striped table-sort-paginate">
           <thead>
             <tr>
               <th style="width: 10%">IP Address</th>
@@ -40,7 +40,7 @@
           <h3><%= location.common_name.upcase %> <small><%= location.city.downcase %>, <%= location.state.downcase %></small></h3>
         </div>
         <% if location.networks.size > 0 %>
-          <table class="table table-condensed table-bordered table-striped">
+          <table class="table table-condensed table-bordered table-striped table-sort">
             <thead>
               <tr>
                 <th style="width: 10%">CIDR</th>
