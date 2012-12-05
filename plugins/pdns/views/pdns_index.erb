@@ -2,20 +2,20 @@
   $('#powerdns').addClass('active');
 </script>
 <div class="row">
-  <div class="span3">
-    <div class="well sidebar-nav">
-      <ul class="nav nav-list">
-        <li class="nav-header">Domains</li>
-        <% @domains.each do |domain| %>
-          <li><a href="/pdns/domain/<%= domain['id'] %>"><%= domain['name'] %></a></li>
-        <% end %>
-      </ul>
-    </div>
-  </div>
-  <div class="span9">
+  <div class="span12">
     <div class="hero-unit">
       <h1>Select a domain</h1>
       <p>Select a domain that you would like to modify records for</p>
     </div>
+    <table class="table table-striped table-condensed table-sort">
+      <thead>
+        <tr><th>Domains</th></tr>
+      </thead>
+      <tbody>
+        <% @domains.each do |domain| %>
+          <tr><td><a href="/pdns/domain/<%= domain['id'] %>"><%= domain['name'] %></a></td></tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>
