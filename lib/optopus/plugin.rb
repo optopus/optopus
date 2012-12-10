@@ -14,6 +14,7 @@ module Optopus
       base.set :name, base.name
       base.set :root, base.name.split('::').last.downcase
       base.set :views_path, File.join(base.plugin_settings[:plugin_path], 'views')
+      Optopus::Plugins.register_plugin(base)
     end
 
     def plugin(&block)

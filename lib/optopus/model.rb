@@ -36,7 +36,6 @@ module Optopus
       # ensure ActiveRecord::Base#inherited runs first
       super
 
-
       # register mixins added by plugins
       if register_mixins = Optopus::Models.mixins[subclass.to_s]
         register_mixins.each do |mixin|

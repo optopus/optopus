@@ -37,6 +37,29 @@ module Optopus
       paths
     end
 
+    def self.list
+      @plugins ||= []
+    end
+
+    # Only list plugins that have been registered
+    def self.list_registered
+      list.select { |p| Optopus::App.extensions.include?(p) }
+    end
+
+    def self.register_plugin(name)
+      list << name
+    end
+
+    # Attempt to find out which plugin created the supplied model
+    def self.find_plugin_for_model(model)
+      list.each do |plugin|
+        if model.caller_path.include?(plugin.plugin_settings[:plugin_path])
+          return plugin
+        end
+      end
+      nil
+    end
+
     def self.registered(app)
       app.set :plugin_navigation, Array.new
       app.set :optopus_plugins, Array.new
@@ -49,11 +72,16 @@ module Optopus
 
       Optopus::Plugin.constants.each do |const|
         next if const == 'DontCall'
+        next if const == 'Model'
         # Only load a plugin if we have a configuration for it
         config_key = const.to_s.demodulize.underscore
         if app.settings.respond_to?(:plugins) && app.settings.plugins.include?(config_key)
           puts "Loading plugin: #{const}"
-          app.register Optopus::Plugin.const_get(const)
+          plugin = Optopus::Plugin.const_get(const)
+          Optopus::Models.called_from_plugin(plugin).each do |model|
+            model.table_name_prefix = "plugin_#{model.plugin_name}_"
+          end
+          app.register plugin
         end
       end
     end

@@ -31,6 +31,21 @@ module Optopus
       end
     end
 
+    # Find models that were called from a directory or subdirectory
+    def self.called_from(dir)
+      return nil unless File.exists?(dir)
+      list.select do |model|
+        if model.respond_to?(:caller_path)
+          model.caller_path.include?(dir)
+        end
+      end
+    end
+
+    # Find models called from a plugins directory
+    def self.called_from_plugin(plugin)
+      called_from(plugin.plugin_settings[:plugin_path])
+    end
+
     def self.list
       @models ||= []
     end

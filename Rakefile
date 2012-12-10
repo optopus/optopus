@@ -31,10 +31,11 @@ namespace :db do
     task(:plugins => :environment) do
       ActiveRecord::Base.logger = Logger.new(STDOUT)
       ActiveRecord::Base.timestamped_migrations = true
-      ActiveRecord::Base.table_name_prefix = 'plugin_'
       ActiveRecord::Migration.verbose = true
-      Optopus::Plugins.paths.each do |plugins_path|
-        Dir.glob(File.join(plugins_path, '*', 'db', 'migrate')).each do |migrate_dir|
+      Optopus::Plugins.list_registered.each do |plugin|
+        migrate_dir = File.join(plugin.plugin_settings[:plugin_path], 'db', 'migrate')
+        if File.exists?(migrate_dir)
+          ActiveRecord::Base.table_name_prefix = "plugin_#{plugin.to_s.demodulize.underscore}_"
           ActiveRecord::Migrator.migrate(migrate_dir)
         end
       end
