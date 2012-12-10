@@ -1,3 +1,4 @@
+$: << File.expand_path(File.dirname(__FILE__) + '/lib')
 source "http://rubygems.org"
 
 gem 'sinatra'
@@ -24,13 +25,10 @@ group :test, :development do
 end
 
 group :plugins do
+  require 'optopus/plugins'
   # Install gems from each plugin
-  paths = File.join(File.expand_path(File.dirname(__FILE__)), 'plugins')
-  if ENV['PLUGIN_PATHS']
-    paths += ':' + ENV['PLUGIN_PATHS']
-  end
-  paths.split(':').each do |path|
-    Dir.glob(File.join(path, '**', 'Gemfile')) do |gemfile|
+  Optopus::Plugins.paths.each do |path|
+    Dir.glob(File.join(path, '*', 'Gemfile')) do |gemfile|
       eval(IO.read(gemfile), binding)
     end
   end
