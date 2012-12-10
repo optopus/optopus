@@ -27,16 +27,18 @@ namespace :db do
   end
 
   namespace :migrate do
-    desc 'Migrate the database for plugins'
+    desc 'Migrate the database for plugins, set PLUGIN fo specific plugins or VERSION for specific version'
     task(:plugins => :environment) do
       ActiveRecord::Base.logger = Logger.new(STDOUT)
       ActiveRecord::Base.timestamped_migrations = true
       ActiveRecord::Migration.verbose = true
       Optopus::Plugins.list_registered.each do |plugin|
-        migrate_dir = File.join(plugin.plugin_settings[:plugin_path], 'db', 'migrate')
-        if File.exists?(migrate_dir)
-          ActiveRecord::Base.table_name_prefix = "plugin_#{plugin.to_s.demodulize.underscore}_"
-          ActiveRecord::Migrator.migrate(migrate_dir)
+        if !ENV['PLUGIN'] || ENV['PLUGIN'] == plugin.to_s
+          migrate_dir = File.join(plugin.plugin_settings[:plugin_path], 'db', 'migrate')
+          if File.exists?(migrate_dir)
+            ActiveRecord::Base.table_name_prefix = "plugin_#{plugin.to_s.demodulize.underscore}_"
+            ActiveRecord::Migrator.migrate(migrate_dir, ENV['VERSION'] ? ENV['VERSION'].to_i : nil)
+          end
         end
       end
     end
