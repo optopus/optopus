@@ -45,7 +45,7 @@ module Optopus
               session[:oauth_token] = token.token
               session[:username] = user.username
               session[:user_id] = user.id
-            rescue OAuth2::Error => error
+            rescue ::OAuth2::Error => error
               logger.error "OAuth2::Error: #{error.description}"
             rescue Exception => error
               logger.error "Unexpected error: #{error}"
