@@ -26,9 +26,11 @@ module Optopus
         paths = File.join(Dir.pwd, 'plugins').to_a
         config_file = ENV['OPTOPUS_CONFIG_FILE'] || File.join(Dir.pwd, 'config', 'application.yaml')
         environment = ENV['RACK_ENV'] || 'development'
-        settings = YAML.load_file(config_file)[environment]
-        if settings.include?('plugins_path')
-          paths << settings['plugins_path']
+        if File.exists?(config_file)
+          settings = YAML.load_file(config_file)[environment]
+          if settings.include?('plugins_path')
+            paths << settings['plugins_path']
+          end
         end
       end
       if ENV['PLUGIN_PATHS']
