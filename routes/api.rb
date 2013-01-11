@@ -160,7 +160,22 @@ module Optopus
 
     get '/api/nodes/active' do
       begin
-        body(Optopus::Node.active.to_json)
+        results = []
+        Optopus::Node.active.each do |node|
+          data = {
+            :hostname => node.hostname,
+            :facts => node.facts,
+            :properties => node.properties,
+            :pod => node.pod ? node.pod.name : nil,
+            :virtual => node.virtual,
+          }
+          if node.virtual
+            hypervisor = node.find_hypervisor_host.first
+            data[:hypervisor] = hypervisor ? hypervisor.hostname : nil
+          end
+          results << data
+        end
+        body(results.to_json)
       rescue Exception => e
         status 500
         body({ :server_error => e.to_s })
