@@ -173,7 +173,7 @@ module Optopus
             hypervisor = node.find_hypervisor_host.first
             data[:hypervisor] = hypervisor ? hypervisor.hostname : nil
           end
-          results << data
+          results << { node.class.model_name.element => data }
         end
         body(results.to_json)
       rescue Exception => e
