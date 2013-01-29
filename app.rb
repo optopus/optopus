@@ -62,6 +62,10 @@ module Optopus
       def node_partials
         settings.partials[:node]
       end
+
+      def user_profile_partials
+        settings.partials[:user_profile]
+      end
     end
   end
 end
