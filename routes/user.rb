@@ -1,6 +1,9 @@
 module Optopus
   class App
     get '/user/:username' do
+      @subnav = [ { :id => 'general', :name => 'General' } ]
+      @subnav += user_profile_partials.inject([]) { |s,p| s << { :id => html_id(p[:template].to_s), :name => p[:display] }; s }
+      @subnav << { :id => 'events', :name => 'Events' }
       @show_user = Optopus::User.where(:username => params[:username]).first
       @admin_self = @user ? @show_user.id == @user.id : false
       erb :user

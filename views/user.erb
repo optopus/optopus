@@ -5,44 +5,58 @@
     </div>
   <% end %>
   <div class="<%= @admin_self ? 'span10' : 'span12' %>">
-    <h2><%= @show_user.display_name %></h2>
-    <table class="table table-condensed">
-      <tbody>
-        <tr>
-          <th>Username</th>
-          <td><%= @show_user.username %></td>
-        </tr>
-        <tr>
-          <th>Roles</th>
-          <td>
-            <ul class="unstyled">
-              <% @show_user.roles.each do |role| %>
-                <li><%= role.name %></li>
-              <% end %>
-            </ul>
-          </td>
-        </tr>
-      </tbody>
-    </table>
 
-    <h3>Events</h3>
-    <table class="table table-condensed table-striped">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Created</th>
-          <th>Message</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @show_user.events.each do |event| %>
+    <section id="general">
+      <header class="jumbotron subhead">
+        <h1><%= @show_user.display_name %></h1>
+      </header>
+      <table class="table table-condensed">
+        <tbody>
           <tr>
-            <td><%= event.id %></td>
-            <td><%= event.created_at.strftime("%D %R") %></td>
-            <td><%= event.rendered_message %></td>
+            <th>Username</th>
+            <td><%= @show_user.username %></td>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+          <tr>
+            <th>Roles</th>
+            <td>
+              <ul class="unstyled">
+                <% @show_user.roles.each do |role| %>
+                  <li><%= role.name %></li>
+                <% end %>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <% user_profile_partials.each do |partial| %>
+      <!-- <%= partial[:template] %> -->
+      <section id="<%= html_id(partial[:template].to_s) %>">
+        <%= erb partial[:template] %>
+      </section>
+    <% end %>
+
+    <section id="events">
+      <h3>Events</h3>
+      <table class="table table-condensed table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Created</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @show_user.events.each do |event| %>
+            <tr>
+              <td><%= event.id %></td>
+              <td><%= event.created_at.strftime("%D %R") %></td>
+              <td><%= event.rendered_message %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </section>
   </div>
 </div>
