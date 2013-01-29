@@ -48,6 +48,7 @@ module Optopus
         :locations => 'Optopus::Location',
         :nodes     => 'Optopus::Node',
         :roles     => 'Optopus::Role',
+        :users     => 'Optopus::User',
       }
       model = possible_models[model_type]
       raise "invalid model type, valid types: #{possible_models.keys.join(', ')}" if model.nil?
