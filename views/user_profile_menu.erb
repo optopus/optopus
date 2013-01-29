@@ -1,0 +1,37 @@
+<script>
+  $('.edit-user-modal').modal();
+
+  $(document).ready(function() {
+    $('.update-display-name').on('click', function(event) {
+      $('#update-display-name').modal('show');
+    });
+  });
+</script>
+
+<ul class="nav nav-list">
+  <li class="nav-header">Manage Profile</li>
+  <li><a href="#" class="update-display-name"><i class="icon icon-edit"></i> Update display name</a></li>
+</ul>
+
+<div id="update-display-name" class="modal hide edit-user-modal">
+  <form class="form form-horizontal" method="post" action="/user/<%= @user.username %>/edit">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Update your display name</h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="control-group">
+        <label class="control-label" for="display-name">Display Name</label>
+        <div class="controls">
+          <input id="display-name" name="display-name" placeholder="First Last" value="<%= @user.display_name %>">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <input class="btn btn-primary" type="submit" value="Save">
+      <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    </div>
+  </form>
+</div>
