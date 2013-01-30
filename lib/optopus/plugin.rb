@@ -11,7 +11,9 @@ module Optopus
 
     def self.extended(base)
       if Optopus::App.settings.plugins.include?(base.plugin_config_key)
-        base.plugin_settings.merge!(Optopus::App.settings.plugins[base.plugin_config_key])
+        if Optopus::App.settings.plugins[base.plugin_config_key].kind_of?(Hash)
+          base.plugin_settings.merge!(Optopus::App.settings.plugins[base.plugin_config_key])
+        end
       end
       base.set :plugin_path, File.dirname(caller[0])
       base.set :name, base.name
