@@ -38,7 +38,7 @@
     <% end %>
 
     <section id="events">
-      <h3>Events</h3>
+      <h3>Latest Events</h3>
       <table class="table table-condensed table-striped">
         <thead>
           <tr>
@@ -48,7 +48,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @show_user.events.each do |event| %>
+          <% @show_user.latest_events.each do |event| %>
             <tr>
               <td><%= event.id %></td>
               <td><%= event.created_at.strftime("%D %R") %></td>

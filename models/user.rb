@@ -20,6 +20,10 @@ module Optopus
       Optopus::Event.where("properties -> 'user_id' = '#{id}' or properties -> 'user_username' = '#{username}'").order('created_at DESC')
     end
 
+    def latest_events(latest=10)
+      events.limit(latest)
+    end
+
     def member_of?(role_id)
       roles.where(:id => role_id).first != nil
     end
