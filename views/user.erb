@@ -8,26 +8,10 @@
 
     <section id="general">
       <header class="jumbotron subhead">
-        <h1><img src="<%= @show_user.gravatar_url %>"> <%= @show_user.display_name %></h1>
+        <img class="pull-left" style="padding-right: 10px" src="<%= @show_user.gravatar_url %>">
+        <h1><%= @show_user.display_name %></h1>
+        <small class="muted"><%= @show_user.roles.map { |r| r.name }.join(', ') %></small>
       </header>
-      <table class="table table-condensed">
-        <tbody>
-          <tr>
-            <th>Username</th>
-            <td><%= @show_user.username %></td>
-          </tr>
-          <tr>
-            <th>Roles</th>
-            <td>
-              <ul class="unstyled">
-                <% @show_user.roles.each do |role| %>
-                  <li><%= role.name %></li>
-                <% end %>
-              </ul>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </section>
 
     <% user_profile_partials.each do |partial| %>
