@@ -11,6 +11,11 @@
 <ul class="nav nav-list">
   <li class="nav-header">Manage Profile</li>
   <li><a href="#" class="update-display-name"><i class="icon icon-edit"></i> Update display name</a></li>
+  <% profile_menu_sections.each do |section| %>
+    <% section.links.each do |link| %>
+      <li><a href="<%= link[:href] %>"><%= link[:display] %></a></li>
+    <% end %>
+  <% end %>
 </ul>
 
 <div id="update-display-name" class="modal hide edit-user-modal">

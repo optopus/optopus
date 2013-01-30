@@ -60,6 +60,10 @@ module Optopus
       Optopus::Menu.instance.register_section(section)
     end
 
+    def register_profile_menu(section)
+      Optopus::ProfileMenu.instance.register_section(section)
+    end
+
     def register_utility_menu(section)
       Optopus::UtilityMenu.instance.register_section(section)
     end
