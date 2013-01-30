@@ -10,6 +10,9 @@ module Optopus
     end
 
     def self.extended(base)
+      if Optopus::App.settings.plugins.include?(base.plugin_config_key)
+        base.plugin_settings.merge!(Optopus::App.settings.plugins[base.plugin_config_key])
+      end
       base.set :plugin_path, File.dirname(caller[0])
       base.set :name, base.name
       base.set :root, base.name.split('::').last.downcase
@@ -70,6 +73,10 @@ module Optopus
 
     def set(key, value)
       plugin_settings[key] = value
+    end
+
+    def plugin_config_key
+      self.to_s.demodulize.underscore
     end
 
     def plugin_settings
