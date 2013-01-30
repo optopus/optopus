@@ -1,6 +1,10 @@
+require 'gravtastic'
+
 module Optopus
   class User < Optopus::Model
     include AttributesToLiquidMethodsMapper
+    include Gravtastic
+    is_gravtastic
     validates :username, :display_name, :presence => true
     validates_uniqueness_of :username
     serialize :properties, ActiveRecord::Coders::Hstore
@@ -14,6 +18,10 @@ module Optopus
 
     def to_h
       { :username => username, :display_name => display_name }
+    end
+
+    def email
+      properties['email']
     end
 
     def events

@@ -8,6 +8,7 @@ gem 'unicorn'
 gem "rack-flash3", "~> 1.0.1"
 gem 'sinatra-contrib'
 gem 'oauth2'
+gem 'gravtastic'
 gem 'activerecord'
 gem 'sinatra-session'
 gem 'sanitize'
