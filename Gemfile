@@ -17,6 +17,8 @@ gem 'activerecord-postgresql-adapter'
 gem 'tire'
 gem 'liquid'
 gem 'postgres_ext'
+gem 'will_paginate', '~> 3.0.0'
+gem 'will_paginate-bootstrap'
 
 group :test, :development do
   gem 'rspec'

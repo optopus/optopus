@@ -24,11 +24,16 @@ require 'tire_monkey_patches'
 require 'liquid'
 require 'postgres_ext'
 require 'postgres_ext_monkey_patches.rb'
+require 'will_paginate'
+require 'will_paginate/active_record'
+require 'will_paginate-bootstrap'
+require 'will_paginate-bootstrap_monkey_patches'
 
 module Optopus
   class App < Sinatra::Base
     register Sinatra::ConfigFile
     register Sinatra::Session
+    register WillPaginate::Sinatra
     config_file ENV['OPTOPUS_CONFIG_FILE'] || File.expand_path(File.dirname(__FILE__) + '/config/application.yaml')
     set :root, File.dirname(__FILE__)
     enable :logging
