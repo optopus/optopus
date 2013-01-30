@@ -1,6 +1,11 @@
+require 'sanitize'
 module Optopus
   class Model < ActiveRecord::Base
     self.abstract_class = true
+
+    def clean_text(text)
+      Sanitize.clean(text)
+    end
 
     def self.search_options
       @search_options ||= Hash.new
