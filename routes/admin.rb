@@ -3,7 +3,7 @@ module Optopus
     admin_menu = Optopus::Menu::Section.new(:name => 'admin_menu', :required_role => 'admin')
     admin_menu.add_link :display => 'Users', :href => '/admin/users'
     admin_menu.add_link :display => 'Pods', :href => '/admin/pods'
-    Optopus::Menu.register_section(admin_menu)
+    Optopus::Menu.instance.register_section(admin_menu)
 
     def pod_from_params
       @pod = Optopus::Pod.find_by_id(params[:id])

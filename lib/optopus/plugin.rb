@@ -57,11 +57,11 @@ module Optopus
 
     # allow plugins to register new menu sections
     def register_menu(section)
-      Optopus::Menu.register_section(section)
+      Optopus::Menu.instance.register_section(section)
     end
 
     def register_utility_menu(section)
-      Optopus::UtilityMenu.register_section(section)
+      Optopus::UtilityMenu.instance.register_section(section)
     end
 
     def set(key, value)

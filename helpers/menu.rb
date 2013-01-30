@@ -3,7 +3,7 @@ module Optopus
     helpers do
       # return menu sections relevant to current user only
       def menu_sections
-        Optopus::Menu.sections.select do |section|
+        Optopus::Menu.instance.sections.select do |section|
           if section.required_role.any? { |r| is_authorized?(r) }
             section
           end
@@ -11,11 +11,15 @@ module Optopus
       end
 
       def utility_menu_sections
-        Optopus::UtilityMenu.sections.select do |section|
+        Optopus::UtilityMenu.instance.sections.select do |section|
           if section.required_role.any? { |r| is_authorized?(r) }
             section
           end
         end
+      end
+
+      def profile_menu_sections
+        Optopus::ProfileMenu.instance.sections
       end
     end
   end

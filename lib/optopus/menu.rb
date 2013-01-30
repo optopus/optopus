@@ -1,40 +1,37 @@
+require 'singleton'
+
 module Optopus
-  module UtilityMenu
-    def self.register_section(section)
+  class BaseMenu
+    include Singleton
+    def register_section(section)
       sections << section
     end
 
-    def self.sections
+    def sections
       @sections ||= Array.new
     end
   end
 
-  module Menu
-    def self.register_section(section)
-      sections << section
+  class ProfileMenu < BaseMenu ; end
+  class UtilityMenu < BaseMenu ; end
+  class Menu < BaseMenu ; end
+
+  class Menu::Section
+    attr_accessor :name, :required_role
+    def initialize(options={})
+      @name = options.delete(:name)
+      @required_role = options.delete(:required_role)
+      @options = options
     end
 
-    def self.sections
-      @sections ||= Array.new
+    def add_link(link={})
+      raise 'Missing display option' unless link.include?(:display)
+      raise 'Missing href option' unless link.include?(:href)
+      links << link
     end
 
-    class Section
-      attr_accessor :name, :required_role
-      def initialize(options={})
-        @name = options.delete(:name)
-        @required_role = options.delete(:required_role)
-        @options = options
-      end
-
-      def add_link(link={})
-        raise 'Missing display option' unless link.include?(:display)
-        raise 'Missing href option' unless link.include?(:href)
-        links << link
-      end
-
-      def links
-        @links ||= Array.new
-      end
+    def links
+      @links ||= Array.new
     end
   end
 
