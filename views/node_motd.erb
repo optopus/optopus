@@ -1,0 +1,8 @@
+<% if !@node.node_comments.empty? %>Node Comments From Optopus:<%@node.node_comments.each do |comment| %>
+======================================================================
+<%= comment.created_at %>
+
+<%= comment.comment %>
+======================================================================
+  <% end %>
+<% end %>

@@ -30,6 +30,11 @@ module Optopus
       erb :node
     end
 
+    get '/node/:hostname/fetch-motd' do
+      @node = Optopus::Node.where(:hostname => params[:hostname]).first
+      erb :node_motd, :layout => false
+    end
+
     get '/node/:id/comments' do
       @node = Optopus::Node.where(:id => params[:id]).first
       erb :comments
