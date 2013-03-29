@@ -14,6 +14,7 @@ module Optopus
     belongs_to :pod
     after_create :register_create_event
     has_many :interfaces
+    has_and_belongs_to_many :node_comments
     has_and_belongs_to_many :node_groups
 
     serialize :facts, ActiveRecord::Coders::Hstore
@@ -72,6 +73,11 @@ module Optopus
     def location
       device ? device.location : Optopus::Location.where(:common_name => facts['location']).first
     end
+
+    #def comments
+    #  STDOUT.write node_comments
+    #  node_comments ? node_comments : "this sucks"
+    #end
 
     def to_link
       "<a href=\"/node/#{hostname}\">#{hostname}</a>"

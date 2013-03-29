@@ -1,0 +1,25 @@
+<h3>Comments for <%= @node.hostname %></h3>
+    <table class="table table-striped table-bordered ">
+      <thead>
+        <tr>
+          <th style="width: 10%"></th>
+          <th style="width: 25%">Date</th>
+          <th style="width: 65%">Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+<% @node.node_comments.each do |comment| %>
+        <tr>
+          <td><form method="post" action="/node/<%= @node.id %>/comment/delete/<%= comment.id %>" class="form-inline" style="float: left; margin: 0 0 0 5px;"><input type="hidden" name="_method" value="delete"><button type="submit" class="btn btn-mini btn-danger">Delete</button></form></td>
+          <td><%= comment.created_at %></td>
+          <td><%= comment.comment %></td>
+        </tr>
+<% end %>
+      </tbody>
+    </table>
+<form class="form-search" method="post" action="/node/<%= @node.id %>/comment/add">
+  <fieldset>
+    <input type="text" class="input-medium search-query" placeholder="Add Comment..." name='commenttext' />
+    <button type="submit" class="btn">Add</button>
+  </fieldsetd>
+</form>

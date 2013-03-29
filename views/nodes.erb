@@ -24,7 +24,7 @@
       <tbody>
         <% location.nodes.order_by_pod_name.each do |node| %>
           <tr>
-            <td><%= node.to_link %></td>
+            <td><a class='btn btn-mini' style='float:right' href='#' onclick=<%= "'load_util(\"/node/#{node.id}/addcomment\");'"%>><i class='icon-plus'></i> </a> <%= node.to_link %><%= !node.node_comments.empty? ? "<a class='btn btn-mini' style='float:right' href='#' onclick='load_util(\"/node/#{node.id}/comments\");'><i class='icon-comment'></i> </a>" : "" %></td>
             <td><%= node.created_at.strftime("%D %R") %></td>
             <td><%= (Time.now - node.updated_at).to_i / 60 %> minutes ago</td>
             <td><%= display_pod_link(node) %></td>

@@ -30,6 +30,37 @@ module Optopus
       erb :node
     end
 
+    get '/node/:id/comments' do
+      @node = Optopus::Node.where(:id => params[:id]).first
+      erb :comments
+    end
+
+    get '/node/:id/addcomment' do
+      @node = Optopus::Node.where(:id => params[:id]).first
+      erb :addcomment
+    end
+
+    post '/node/:id/comment/add' do
+      begin
+      node = Optopus::Node.where(:id => params[:id]).first
+        commenttext = params[:commenttext]
+        node.node_comments.create!({:comment => commenttext})
+        redirect back
+      rescue Exception => e 
+        handle_error(e)
+      end
+    end
+
+    delete '/node/:id/comment/delete/:commentid' do
+      begin
+        node = Optopus::Node.where(:id => params[:id]).first
+        node.node_comments.where(:id => params[:commentid]).first.destroy
+        redirect back
+      rescue Exception => e 
+        handle_error(e)
+      end
+    end
+
     delete '/node/:id', :auth => :admin do
       node = Optopus::Node.where(:id => params[:id]).first
       begin
