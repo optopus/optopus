@@ -5,6 +5,23 @@ module Optopus
     module PDNS
       extend Optopus::Plugin
 
+      module PDNSNodeObserver
+        #Setup quasi-callbacks
+        def self.included(base)
+          base.after_create :create_pdns_entry
+          base.after_save :update_pdns_entry
+          base.after_destroy :delete_pdns_entry
+        end
+        def create_pdns_entry(node)
+          STDOUT.write "TODO: create pdns entry"
+        end
+        def update_pdns_entry(node)
+          STDOUT.write "TODO: update pdns entry"
+        end
+        def delete_pdns_entry(node)
+          STDOUT.write "TODO: delete pdns entry"
+        end
+      end
       helpers do
         def pdns_client
           return @pdns_client if @pdns_client
@@ -23,6 +40,7 @@ module Optopus
 
       plugin do
         nav_link :display => 'PowerDNS', :route => '/pdns'
+        register_mixin :nodes, Optopus::Plugin::PDNS::PDNSNodeObserver
       end
 
       # TODO: the below causes redirect loop
