@@ -29,17 +29,29 @@ module PDNS
       mysql_query("SELECT name from domains WHERE id=#{escape(id.to_s)}").first
     end
 
+    def domain_from_name(name)
+      mysql_query("SELECT * from domains WHERE name='#{escape(name.to_s)}'").first
+    end
+
     def record_from_id(id)
       mysql_query("SELECT * FROM records WHERE id=#{escape(id.to_s)}").first
+    end
+
+    def record_from_hostname(hostname,type="A") 
+      mysql_query("SELECT * FROM records WHERE name='#{escape(hostname.to_s)}' and type='#{type}'").first
+    end
+
+    def record_from_content(ipaddress,type="A") 
+      mysql_query("SELECT * FROM records WHERE content='#{escape(ipaddress.to_s)}' and type='#{type}'").first
     end
 
     def update_record(id, data={})
       # TODO: clean this up..
       record = record_from_id(id)
       record.delete('id')
-      domain = domain_from_id(data[:domain_id])
-      raise 'Invalid domain_id' if domain.nil?
       if data.include?(:short_name)
+        domain = domain_from_id(data[:domain_id])
+        raise 'Invalid domain_id' if domain.nil?
         record['name'] = data[:short_name] + '.' + domain['name']
       end
       update_string = ''

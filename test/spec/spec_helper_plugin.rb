@@ -18,9 +18,6 @@ def app
   Optopus::App
 end
 
-# Once app is loaded, disable any custom observers, allowing us to run specific plugin tests
-ActiveRecord::Base.observers.disable :all
-
 # Seems to run tests more than once if we do RSpec.configure more than once
 unless RSpec.configuration.color_enabled == true
   RSpec.configure do |config|

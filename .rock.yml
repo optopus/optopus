@@ -4,3 +4,5 @@ runtime: ruby18
 run: bundle exec shotgun -p ${HTTP_PORT-9393}
 run_web: exec unicorn -l ${HTTP_HOST-127.0.0.1}:${HTTP_PORT-8080} -c ${UNICORN_CONFIG-config/unicorn.rb}
 test: echo true
+tests: bundle exec rake test ${ROCK_ARGS}
+plugin_tests: bundle exec rake testplugins ${ROCK_ARGS}

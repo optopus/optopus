@@ -5,20 +5,104 @@ module Optopus
     module PDNS
       extend Optopus::Plugin
 
+      class NodeObserver < ActiveRecord::Observer
+        observe Optopus::Node
+
+        def after_save(node)
+          hostname_array = node.hostname.split(".",2)
+          pdns_client = Optopus::Plugin::PDNS.pdns_client
+
+          ip_record = pdns_client.record_from_content(node.facts['ipaddress'])
+          hostname_record = pdns_client.record_from_hostname(node.hostname)
+
+          ## determine if ip of node already exists & if hostname matches
+          ## - if ip/hostname doesnt match, raise error/warning & email
+          if ip_record.nil? && hostname_record.nil?
+            #log.info("ip and hostname for #{node.hostname} do not exist in pdns, create A record")
+            domain = pdns_client.domain_from_name(node.facts['domain'])
+            if !domain.nil?
+              pdns_client.create_record(
+                :domain_id => "#{domain['id']}",
+                :name      => "#{node.hostname}",
+                :type      => "A",
+                :content   => "#{node.facts['ipaddress']}",
+                :ttl       => "600"
+              )
+              ## create PTR record while we're at it
+              update_or_create_ptr(node)
+            else
+              #log.warn("ip and hostname for #{node.hostname} do not exist in pdns, neither does domain in domains table")
+              event = Optopus::Event.new
+              event.message = "The node '#{node.hostname}' does not belong to a domain in PDNS"
+              event.type = 'dns_update_failed'
+              event.properties['node_id'] = node.id
+              event.save!
+            end
+          elsif ip_record && hostname_record.nil?
+            #log.warn("ip exists in records table, hostname '#{node.hostname}' do not exist, emailing error")
+            event = Optopus::Event.new
+            event.message = "The node '#{node.hostname}' has an ip of '#{node.facts['ipaddress']}, which already exists in the records table. dns update failed"
+            event.type = 'dns_update_failed'
+            event.properties['node_id'] = node.id
+            event.save!
+          elsif hostname_record
+            if !hostname_record['content'].eql? node.facts['ipaddress']
+              old_ip = hostname_record['content']
+              new_ip = node.facts['ipaddress']
+              pdns_client.update_record(hostname_record['id'],:content => node.facts['ipaddress'])
+              update_or_create_ptr(node)
+              event = Optopus::Event.new
+              event.message = "Automatic DNS update: updated A record dns of #{node.hostname} from #{old_ip} to #{new_ip}" 
+              event.type = 'dns_update'
+              event.properties['node_id'] = node.id
+              event.save!
+            end
+          end
+        end
+
+        def update_or_create_ptr(node)
+          pdns_client = Optopus::Plugin::PDNS.pdns_client
+          reverse = node.facts['ipaddress'].split(".",4).reverse.join('.') + ".in-addr.arpa"
+          ptr_record = pdns_client.record_from_content(node.hostname,"PTR")
+          if ptr_record.nil?
+            ## no ptr found, go ahead and create it.
+            ## TODO:
+            ## - we should do something like::  select * from domains where name rlike '^(33\.)?(2\.)?(1\.)?10.in-addr.arpa$';
+            ## - this method would match more reverse lookup zones in the hopes to find the most specific one
+            ## - for now we assume class A reverse address spece
+            reverse_domain = node.facts['ipaddress'].split(".",4)[0] + ".in-addr.arpa"
+            domain = pdns_client.domain_from_name(reverse_domain)
+            pdns_client.create_record(
+              :domain_id => "#{domain['id']}",
+              :name      => "#{reverse}",
+              :type      => "PTR",
+              :content   => "#{node.hostname}",
+              :ttl       => "600"
+            )
+          else
+            pdns_client.update_record(ptr_record['id'], :name => reverse)
+          end
+        end
+      end
+
       helpers do
         def pdns_client
-          return @pdns_client if @pdns_client
-          pdns_settings = {
-            :mysql_hostname => settings.plugins['pdns']['mysql']['hostname'],
-            :mysql_username => settings.plugins['pdns']['mysql']['username'],
-            :mysql_password => settings.plugins['pdns']['mysql']['password'],
-            :mysql_database => settings.plugins['pdns']['mysql']['database'],
-          }
-          unless is_admin?
-            pdns_settings[:restirct_domains] = settings.plugins['pdns']['mysql']['restrict_domains']
-          end
-          @pdns_client = ::PDNS::Client.new(pdns_settings)
+          return Optopus::Plugin::PDNS.pdns_client(is_admin?)
         end
+      end
+
+      def self.pdns_client(admin=false)
+        return @pdns_client if @pdns_client
+        pdns_settings = {
+          :mysql_hostname => plugin_settings['mysql']['hostname'],
+          :mysql_username => plugin_settings['mysql']['username'],
+          :mysql_password => plugin_settings['mysql']['password'],
+          :mysql_database => plugin_settings['mysql']['database'],
+        }
+        unless admin
+          pdns_settings[:restrict_domains] = plugin_settings['mysql']['restrict_domains']
+        end
+        @pdns_client = ::PDNS::Client.new(pdns_settings)
       end
 
       plugin do
@@ -96,6 +180,7 @@ module Optopus
 
       def self.registered(app)
         raise 'Missing PDNS plugin configuration' unless app.settings.respond_to?(:plugins) && app.settings.plugins.include?('pdns')
+        ActiveRecord::Base.add_observer Optopus::Plugin::PDNS::NodeObserver.instance
         super(app)
       end
     end
