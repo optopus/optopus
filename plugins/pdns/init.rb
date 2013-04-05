@@ -10,7 +10,6 @@ module Optopus
 
         def after_save(node)
           hostname_array = node.hostname.split(".",2)
-          p hostname_array
           pdns_client = Optopus::Plugin::PDNS.pdns_client
 
           ip_record = pdns_client.record_from_content(node.facts['ipaddress'])
