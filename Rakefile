@@ -59,6 +59,10 @@ RSpec::Core::RakeTask.new do |spec|
   spec.pattern = './test/spec{,/*/**}/*_spec.rb'
 end
 
+RSpec::Core::RakeTask.new(:specplugins) do |specplugin|
+  specplugin.pattern = './plugins/*/test/spec{,/*/**}/*_spec.rb'
+end
+
 task :test do
   require './test/spec/spec_helper'
   Optopus::Node.destroy_all
@@ -71,4 +75,18 @@ task :test do
   Optopus::Address.destroy_all
   Rake::Task['db:migrate'].invoke
   Rake::Task['spec'].invoke
+end
+
+task :testplugins do
+  require './test/spec/spec_helper_plugin'
+  Optopus::Node.destroy_all
+  Optopus::Device.destroy_all
+  Optopus::Location.destroy_all
+  Optopus::User.destroy_all
+  Optopus::Role.destroy_all
+  Optopus::Event.destroy_all
+  Optopus::Network.destroy_all
+  Optopus::Address.destroy_all
+  Rake::Task['db:migrate'].invoke
+  Rake::Task['specplugins'].invoke
 end

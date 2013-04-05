@@ -50,12 +50,16 @@ module Optopus
       end
     end
 
-    register Optopus::Plugins
-
     db_config_file = ENV['OPTOPUS_DATABASE_CONFIG_FILE'] || File.join(File.dirname(__FILE__), 'config', 'databases.yaml')
     db_config = YAML::load(File.open(db_config_file))[Optopus::App.environment.to_s]
     ActiveRecord::Base.establish_connection(db_config)
     Tire::Configuration.url settings.elasticsearch[:url]
+
+    require_relative 'models/init'
+    require_relative 'helpers/init'
+    require_relative 'routes/init'
+
+    register Optopus::Plugins
 
     # Override the default find_template method so that we search through each plugins views_path
     set :views, settings.optopus_plugins.inject([]) { |v, p| v << p[:views_path] if p.include?(:views_path) } << 'views'
@@ -75,6 +79,3 @@ module Optopus
   end
 end
 
-require_relative 'models/init'
-require_relative 'helpers/init'
-require_relative 'routes/init'
