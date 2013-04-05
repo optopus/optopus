@@ -92,16 +92,6 @@ module PDNS
       mysql_query("INSERT INTO records SET domain_id=#{escape(domain_id)}, name='#{escape(name)}', type='#{escape(type)}', content='#{escape(content)}', ttl=#{escape(ttl)}")
     end
 
-    def initialize_test_data()
-      mysql_query("truncate records")
-      mysql_query("truncate domains")
-      mysql_query("truncate zones")
-      mysql_query("insert into domains set name = '10.in-addr.arpa', type = 'NATIVE';")
-      mysql_query("insert into domains set name = 'da01.com', type = 'NATIVE';")
-      mysql_query("insert into zones set domain_id = (select id from domains where name = '10.in-addr.arpa' limit 1), owner = 1, zone_templ_id = 1")
-      mysql_query("insert into zones set domain_id = (select id from domains where name = 'da01.com' limit 1), owner = 1, zone_templ_id = 1")
-    end
-
     private
 
     def mysql_query(string)

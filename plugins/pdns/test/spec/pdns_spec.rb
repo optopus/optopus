@@ -2,12 +2,25 @@ require File.join(File.dirname(__FILE__), '..','..','..','..','test','spec','spe
 
 describe Optopus::Plugin::PDNS, '#node_listener' do
   before(:all) do
+    @client = Mysql2::Client.new({ 
+      :host     => Optopus::Plugin::PDNS.plugin_settings['mysql']['hostname'],
+      :username => Optopus::Plugin::PDNS.plugin_settings['mysql']['username'],
+      :password => Optopus::Plugin::PDNS.plugin_settings['mysql']['password'],
+      :database => Optopus::Plugin::PDNS.plugin_settings['mysql']['database']
+    })
+    @arp_domain = "10.in-addr.arpa"
+    @domain = "da01.com"
+    @client.query("insert into domains set name = '#{@arp_domain}', type = 'NATIVE';")
+    @client.query("insert into domains set name = '#{@domain}', type = 'NATIVE';")
+    @client.query("insert into zones set domain_id = (select id from domains where name = '#{@arp_domain}' limit 1), owner = 1, zone_templ_id = 1")
+    @client.query("insert into zones set domain_id = (select id from domains where name = '#{@domain}' limit 1), owner = 1, zone_templ_id = 1")
+
     facts = { 
       "ipaddress"    => "10.10.100.100", 
-      "fqdn"         => "testhost.da01.com",
+      "fqdn"         => "testhost.#{@domain}",
       "serialnumber" => "not specified",
       "macaddress"   => "11:22:33:44:55:66",
-      "domain"       => "da01.com"
+      "domain"       => "#{@domain}"
     }
     @node = Optopus::Node.create(
       :hostname => facts['fqdn'],
@@ -17,7 +30,6 @@ describe Optopus::Plugin::PDNS, '#node_listener' do
     )
     @node.serial_number = facts['serialnumber'].downcase.strip unless facts['serialnumber'].nil?
     @node.primary_mac_address = facts['macaddress'].downcase.strip
-    Optopus::Plugin::PDNS.pdns_client.initialize_test_data
   end
 
   it 'should create both an A and PTR record when hostname and ipaddress do not exist in PDNS' do 
@@ -39,10 +51,10 @@ describe Optopus::Plugin::PDNS, '#node_listener' do
   it "should not insert A records when ip address of node already exists in pdns, and will log event" do
     facts = { 
       "ipaddress"    => "10.10.200.200", 
-      "fqdn"         => "failing.da01.com",
+      "fqdn"         => "failing.#{@domain}",
       "serialnumber" => "not specified",
       "macaddress"   => "11:22:33:44:55:77",
-      "domain"       => "da01.com"
+      "domain"       => "#{@domain}"
     }
     node = Optopus::Node.create(
       :hostname => facts['fqdn'],
@@ -80,4 +92,9 @@ describe Optopus::Plugin::PDNS, '#node_listener' do
     Optopus::Event.where("properties -> 'node_id' = '#{node.id}' and properties -> 'event_type' = 'dns_update_failed'").first['message'].should == "The node '#{node.hostname}' does not belong to a domain in PDNS"
   end
 
+  after(:all) do
+    @client.query("delete from records where domain_id in (select id from domains where name in ('#{@domain}','#{@arp_domain}'))")
+    @client.query("delete from domains where name in ('#{@domain}','#{@arp_domain}')")
+    @client.close
+  end
 end

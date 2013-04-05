@@ -57,8 +57,6 @@ module Optopus
               event.properties['node_id'] = node.id
               event.save!
             end
-          else
-            STDOUT.write "what condition gets us here\n"
           end
         end
 
