@@ -16,7 +16,7 @@ module Optopus
           hostname_record = pdns_client.record_from_hostname(node.hostname)
 
           ## force admins to manually create/update dns for anything with a tunnel device
-          if node.facts['interfaces'].include?(",tun")
+          if node.facts['interfaces'].include?("tun")
             return
 
           ## determine if ip of node already exists & if hostname matches
