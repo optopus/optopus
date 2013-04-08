@@ -15,6 +15,12 @@ module Optopus
           ip_record = pdns_client.record_from_content(node.facts['ipaddress'])
           hostname_record = pdns_client.record_from_hostname(node.hostname)
 
+          ## if a device has a tunnel interface (tun), we dont want to automatically
+          ##  insert/update pdns records.  That should be done manually based on the
+          ##  network admin's suggestions
+          if node.facts['interfaces'].include?(",tun")
+            return
+
           ## determine if ip of node already exists & if hostname matches
           ## - if ip/hostname doesnt match, raise error/warning & email
           if ip_record.nil? && hostname_record.nil?
