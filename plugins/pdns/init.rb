@@ -18,6 +18,7 @@ module Optopus
           ## force admins to manually create/update dns for anything with a tunnel device
           if node.facts['interfaces'].include?("tun")
             return
+          end
 
           ## determine if ip of node already exists & if hostname matches
           ## - if ip/hostname doesnt match, raise error/warning & email
