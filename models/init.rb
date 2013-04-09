@@ -11,13 +11,3 @@ require_relative 'interface_connection'
 require_relative 'pod'
 require_relative 'node_group'
 require_relative 'node_comments'
-
-# ensure any data registered by plugins exists
-Optopus::Models.list.each do |model|
-  if register_data = Optopus::Models.model_data[model.to_s]
-    register_data.each do |values|
-      obj = model.where(values).first || model.new(values)
-      obj.save!
-    end
-  end
-end

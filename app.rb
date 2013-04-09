@@ -61,6 +61,16 @@ module Optopus
 
     register Optopus::Plugins
 
+    # ensure any data registered by plugins exists
+    Optopus::Models.list.each do |model|
+      if register_data = Optopus::Models.model_data[model.to_s]
+        register_data.each do |values|
+          obj = model.where(values).first || model.new(values)
+          obj.save!
+        end
+      end
+    end
+
     # Override the default find_template method so that we search through each plugins views_path
     set :views, settings.optopus_plugins.inject([]) { |v, p| v << p[:views_path] if p.include?(:views_path) } << 'views'
     helpers do
