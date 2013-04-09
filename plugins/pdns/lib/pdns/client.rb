@@ -93,6 +93,7 @@ module PDNS
     def delete_domain(id)
       name = domain_from_id(id)['name']
       mysql_query("DELETE FROM domains WHERE id=#{escape(id.to_s)}")
+      mysql_query("DELETE FROM zones WHERE domain_id=#{escape(id.to_s)}")
       name
     end
 
