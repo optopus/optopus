@@ -97,7 +97,6 @@ module Optopus
       end
 
       def self.pdns_client(admin=false)
-        return @pdns_client if @pdns_client
         pdns_settings = {
           :mysql_hostname => plugin_settings['mysql']['hostname'],
           :mysql_username => plugin_settings['mysql']['username'],
