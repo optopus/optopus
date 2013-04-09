@@ -1,5 +1,7 @@
 require 'mysql2'
 module PDNS
+  class DuplicateDomain < Exception ; end
+
   class Client
     def initialize(options={})
       @mysql_hostname = options.delete(:mysql_hostname)
@@ -76,6 +78,22 @@ module PDNS
         query = "SELECT * FROM records WHERE domain_id=#{escape(id)} ORDER BY name"
       end
       mysql_query(query)
+    end
+
+    def create_domain(name)
+      if domains.any? { |d| d['name'] == name }
+        raise DuplicateDomain, 'domain name taken!'
+      end
+      mysql_query("INSERT INTO domains SET name='#{escape(name)}', type='NATIVE'")
+      domain = domain_from_name(name)
+      mysql_query("INSERT INTO zones SET domain_id=#{domain['id']}, owner=1, zone_templ_id=1")
+      domain
+    end
+
+    def delete_domain(id)
+      name = domain_from_id(id)['name']
+      mysql_query("DELETE FROM domains WHERE id=#{escape(id.to_s)}")
+      name
     end
 
     def create_record(options={})
