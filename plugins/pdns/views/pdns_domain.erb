@@ -13,36 +13,48 @@
     });
   }
 </script>
-<div class="hero-unit">
-  <h2><%= @domain %></h2>
-  <p>Modify some records</p>
-  <p><a class="btn btn-primary btn-large" data-toggle="modal" href="#add-record">Add record</a></p>
+<div class="row-fluid">
+  <div class="span2">
+    <ul class="nav nav-list">
+      <li class="nav-header">PDNS Domain Actions</li>
+      <li><a data-toggle="modal" href="#add-record"><i class="icon-plus"></i> Add a new record</a></li>
+      <% if is_admin? || is_authorized?(:dns_admin) %>
+        <li><a data-toggle="modal" href="#delete-domain"><i class="icon-trash"></i> Delete this domain</a></li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="span10">
+    <header class="jumbotron subhead">
+      <h1><%= @domain['name'] %></h1>
+      <p class="lead">Modify some records</p>
+    </header>
+    <table class="table table-bordered table-striped table-condensed table-sort">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Content</th>
+          <th>TTL</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @records.each do |record| %>
+          <tr>
+            <td><%= record['name'] %></td>
+            <td><%= record['type'] %></td>
+            <td><%= record['content'] %></td>
+            <td><%= record['ttl'] %></td>
+            <td>
+              <button style="float: left" class="btn btn-mini" onclick="modify_record('<%= record['id'] %>');">Modify</button>
+              <form method="post" action="/pdns/record/<%= record['id'] %>" class="form-inline" style="float: left; margin: 0 0 0 5px;"><input type="hidden" name="_method" value="delete"><button type="submit" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i>Delete</button></form>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
-<table class="table table-bordered table-striped table-condensed table-sort">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Content</th>
-      <th>TTL</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @records.each do |record| %>
-      <tr>
-        <td><%= record['name'] %></td>
-        <td><%= record['type'] %></td>
-        <td><%= record['content'] %></td>
-        <td><%= record['ttl'] %></td>
-        <td>
-          <button style="float: left" class="btn btn-mini" onclick="modify_record('<%= record['id'] %>');">Modify</button>
-          <form method="post" action="/pdns/record/<%= record['id'] %>" class="form-inline" style="float: left; margin: 0 0 0 5px;"><input type="hidden" name="_method" value="delete"><button type="submit" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i>Delete</button></form>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
 
 <div class="modal hide" id="modify-record">
   <div class="modal-header">
@@ -56,7 +68,7 @@
         <div class="control-group">
           <label class="control-label" for="modify-record-name">Name</label>
           <div class="controls">
-            <input type="text" class="span1" id="modify-record-name" name="name"> .<%= @domain %>
+            <input type="text" class="span1" id="modify-record-name" name="name"> .<%= @domain['name'] %>
           </div>
         </div>
         <div class="control-group">
@@ -97,7 +109,7 @@
 <div class="modal hide" id="add-record">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">x</button>
-    <h3>Add record to <%= @domain %></h3>
+    <h3>Add record to <%= @domain['name'] %></h3>
   </div>
   <div class="modal-body">
     <form class="form-horizontal" method="post">
@@ -106,7 +118,7 @@
         <div class="control-group">
           <label class="control-label" for="name">Name</label>
           <div class="controls">
-            <input type="text" class="span1" id="name" name="name"> .<%= @domain %>
+            <input type="text" class="span1" id="name" name="name"> .<%= @domain['name'] %>
           </div>
         </div>
         <div class="control-group">
@@ -138,6 +150,25 @@
           <button class="btn" data-dismiss="modal">Cancel</button>
         </div>
       </fieldset>
+    </form>
+  </div>
+</div>
+
+<div id="delete-domain" class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Delete Confirmation</h3>
+  </div>
+
+  <div class="modal-body">
+    <p>Please confirm that you would like to delete <em><%= @domain['name'] %></em>. This cannot be undone.</p>
+  </div>
+
+  <div class="modal-footer">
+    <form id="delete-domain" method="post" action="/pdns/domain/<%= @domain['id'] %>">
+      <input type="hidden" name="_method" value="delete">
+      <input class="btn btn-danger" type="submit" value="Delete">
+      <a href="#" class="btn" data-dismiss="modal">Cancel</a>
     </form>
   </div>
 </div>

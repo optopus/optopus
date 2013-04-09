@@ -126,8 +126,36 @@ module Optopus
 
       get '/pdns/domain/:id', :auth => :user do
         @records = pdns_client.records(params[:id])
-        @domain = pdns_client.domain_from_id(params[:id])['name']
+        @domain = pdns_client.domain_from_id(params[:id])
+        @domain['id'] = params[:id]
         erb :pdns_domain
+      end
+
+      put '/pdns/domain', :auth => [:dns_admin, :admin] do
+        begin
+          validate_param_presence 'name'
+          pdns_client.create_domain(params['name'])
+          flash[:success] = "Successfully created a domain for #{params['name']}!"
+          register_event "{{ references.user.to_link }} created dns domain #{params['name']}", :type => 'dns_domain_create'
+        rescue Exception => e
+          status 400
+          flash[:error] = e.to_s
+        end
+        redirect back
+      end
+
+      delete '/pdns/domain/:id', :auth => [:dns_admin, :admin] do
+        begin
+          domain = pdns_client.domain_from_id(params[:id])
+          pdns_client.delete_domain(params[:id])
+          flash[:success] = "Successfully deleted the domain '#{domain['name']}'!"
+          register_event "{{ references.user.to_link }} deleted dns domain #{domain['name']}", :type => 'dns_domain_delete'
+          redirect '/pdns'
+        rescue Exception => e
+          status 400
+          flash[:error] = e.to_s
+          redirect back
+        end
       end
 
       post '/pdns/domain/:id', :auth => :user do
