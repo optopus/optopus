@@ -92,7 +92,7 @@ module Optopus
 
       helpers do
         def pdns_client
-          return Optopus::Plugin::PDNS.pdns_client(is_admin?)
+          return Optopus::Plugin::PDNS.pdns_client(is_admin? || is_authorized?('dns_admin'))
         end
       end
 
@@ -111,6 +111,7 @@ module Optopus
 
       plugin do
         nav_link :display => 'PowerDNS', :route => '/pdns'
+        register_role 'dns_admin'
       end
 
       # TODO: the below causes redirect loop
