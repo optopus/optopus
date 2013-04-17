@@ -37,30 +37,30 @@ module Optopus
               update_or_create_ptr(node)
             else
               #log.warn("ip and hostname for #{node.hostname} do not exist in pdns, neither does domain in domains table")
-              event = Optopus::Event.new
-              event.message = "The node '#{node.hostname}' does not belong to a domain in PDNS"
-              event.type = 'dns_update_failed'
-              event.properties['node_id'] = node.id
-              event.save!
+              #event = Optopus::Event.new
+              #event.message = "The node '#{node.hostname}' does not belong to a domain in PDNS"
+              #event.type = 'dns_update_failed'
+              #event.properties['node_id'] = node.id
+              #event.save!
             end
           elsif ip_record && hostname_record.nil?
             #log.warn("ip exists in records table, hostname '#{node.hostname}' do not exist, emailing error")
-            event = Optopus::Event.new
-            event.message = "The node '#{node.hostname}' has an ip of '#{node.facts['ipaddress']}, which already exists in the records table. dns update failed"
-            event.type = 'dns_update_failed'
-            event.properties['node_id'] = node.id
-            event.save!
+            #event = Optopus::Event.new
+            #event.message = "The node '#{node.hostname}' has an ip of '#{node.facts['ipaddress']}, which already exists in the records table. dns update failed"
+            #event.type = 'dns_update_failed'
+            #event.properties['node_id'] = node.id
+            #event.save!
           elsif hostname_record
             if !hostname_record['content'].eql? node.facts['ipaddress']
               old_ip = hostname_record['content']
               new_ip = node.facts['ipaddress']
               pdns_client.update_record(hostname_record['id'],:content => node.facts['ipaddress'])
               update_or_create_ptr(node)
-              event = Optopus::Event.new
-              event.message = "Automatic DNS update: updated A record dns of #{node.hostname} from #{old_ip} to #{new_ip}" 
-              event.type = 'dns_update'
-              event.properties['node_id'] = node.id
-              event.save!
+              #event = Optopus::Event.new
+              #event.message = "Automatic DNS update: updated A record dns of #{node.hostname} from #{old_ip} to #{new_ip}" 
+              #event.type = 'dns_update'
+              #event.properties['node_id'] = node.id
+              #event.save!
             end
           end
         end
