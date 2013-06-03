@@ -62,11 +62,17 @@ module Optopus
     register Optopus::Plugins
 
     # ensure any data registered by plugins exists
+    # and that any mixins are included
     Optopus::Models.list.each do |model|
       if register_data = Optopus::Models.model_data[model.to_s]
         register_data.each do |values|
           obj = model.where(values).first || model.new(values)
           obj.save!
+        end
+      end
+      if register_mixins = Optopus::Models.mixins[model.to_s]
+        register_mixins.each do |mixin|
+          model.send(:include, mixin)
         end
       end
     end
