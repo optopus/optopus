@@ -64,7 +64,7 @@ module Optopus
             end
           end
 
-          if node.facts.include("bmc_ip_address")?
+          if node.facts.include?("bmc_ip_address")
             oob_ip_record = pdns_client.record_from_content(node.facts['bmc_ip_address'])
             oob_hostname_record = pdns_client.record_from_hostname("oob" + node.hostname)
             domain = pdns_client.domain_from_name(node.facts['domain'])
