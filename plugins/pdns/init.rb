@@ -63,6 +63,21 @@ module Optopus
               #event.save!
             end
           end
+
+          if node.facts.include("bmc_ip_address")
+            oob_ip_record = pdns_client.record_from_content(node.facts['bmc_ip_address'])
+            oob_hostname_record = pdns_client.record_from_hostname("oob" + node.hostname)
+            domain = pdns_client.domain_from_name(node.facts['domain'])
+            if oob_hostname_record.nil? && oob_ip_record.nil? && !domain.nil?
+              pdns_client.create_record(
+                :domain_id => "#{domain['id']}",
+                :name      => "oob#{node.hostname}",
+                :type      => "A",
+                :content   => "#{node.facts['bmc_ip_address']}",
+                :ttl       => "600"
+              )
+            end
+          end
         end
 
         def update_or_create_ptr(node)
