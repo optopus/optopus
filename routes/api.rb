@@ -222,5 +222,30 @@ module Optopus
       end
     end
 
+    get '/api/hypervisor_planner' do
+      begin
+        validate_param_presence 'cpus', 'ram', 'disk', 'location'
+        raise 'CPUs must be higher than 0!' unless params['cpus'].to_i > 0
+        raise 'RAM must be higher than 0!' unless params['ram'].to_i > 0
+        raise 'Disk space must be higher than 0!' unless params['disk'].to_i > 0
+        raise 'Location must be specified!' unless params['location'].to_s != 'Any'
+
+        cpus = params['cpus'].to_i
+        memory = params['ram'].to_i * 1024**3
+        disk = params['disk'].to_i * 1024**3
+        location = params['location']
+
+        ranges = {
+          'libvirt.free_disk' => { :gt => disk },
+          'libvirt.node_free_cpus' => { :gt => cpus },
+          'libvirt.node_free_memory' => { :gt => memory },
+        }
+
+        capable_hypervisors = Optopus::Hypervisor.capacity_search(ranges, location).sort { |a,b| a.hostname <=> b.hostname }
+                
+        body(capable_hypervisors.to_json)
+      end
+    end
+
   end
 end
