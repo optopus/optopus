@@ -1,0 +1,80 @@
+<% if @location %>
+  <div class="row-fluid">
+    <% if is_admin? %>
+      <div class="span2">
+        <ul class="nav nav-list">
+          <li class="nav-header">Location Actions</li>
+          <li><a href="#" onclick="load_util('/admin/location/<%= @location.id %>/edit')"><i class="icon-pencil"></i>Modify this location</a></li>
+        </ul>
+      </div>
+    <% end %>
+    <div class="span10">
+      <header class="jumbotron subhead">
+        <h1>Location <%= @location.common_name %></h1>
+        <p class="lead">This location has <%= @location.nodes.count %> nodes.</p>
+      </header>
+
+      <% if @location.hypervisors.size > 0 %>
+        <section id="hypervisor-resources">
+          <div class="page-header">
+            <h3>Hypervisor Resources</h3>
+          </div>
+          <table class="table table-condensed">
+            <tr>
+              <td style="width: 150px">CPU Utilization (<%= @location.hypervisor_utilization[:cpu] %>%)</td>
+              <td>
+                <div class="progress <%= progress_style(@location.hypervisor_utilization[:cpu]) %>">
+                  <div class="bar" style="width: <%= @location.hypervisor_utilization[:cpu] %>%"></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 150px">RAM Utilization (<%= @location.hypervisor_utilization[:memory] %>%)</td>
+              <td>
+                <div class="progress <%= progress_style(@location.hypervisor_utilization[:memory]) %>">
+                  <div class="bar" style="width: <%= @location.hypervisor_utilization[:memory] %>%"></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 150px">Disk Utilization (<%= @location.hypervisor_utilization[:disk] %>%)</td>
+              <td>
+                <div class="progress <%= progress_style(@location.hypervisor_utilization[:disk]) %>">
+                  <div class="bar" style="width: <%= @location.hypervisor_utilization[:disk] %>%"></div>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </section>
+      <% end %>
+
+      <% if @location.network_nodes.size > 0 %>
+        <section id="network-nodes">
+          <div class="page-header">
+            <h3>Network Nodes</h3>
+          </div>
+
+          <ul class="unstyled">
+            <% @location.network_nodes.order(:hostname).each do |node| %>
+              <li><%= node.to_link %></li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+
+      <% if @location.regular_nodes.size > 0 %>
+        <section id="nodes">
+          <div class="page-header">
+            <h3>Nodes</h3>
+          </div>
+
+          <ul class="unstyled">
+            <% @location.regular_nodes.order(:hostname).each do |node| %>
+              <li><%= node.to_link %></li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+    </div>
+  </div>
+<% end %>

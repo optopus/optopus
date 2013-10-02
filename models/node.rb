@@ -278,6 +278,8 @@ module Optopus
         :node_total_memory => 0,
         :node_total_cpus   => 0,
         :node_running_cpus => 0,
+        :free_disk         => 0,
+        :used_disk         => 0,
       }
       resources = location.nodes.where(:type => 'Optopus::Hypervisor').where("properties ? 'libvirt_data'").inject(resources) do |resources, hypervisor|
         resources.keys.inject(resources) do |resources, key|

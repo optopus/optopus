@@ -1,0 +1,54 @@
+<div class="row-fluid">
+  <div class="span2">
+    <ul class="nav nav-list">
+      <li class="nav-header">Location Actions</li>
+      <li><a href="#" onclick="load_util('/admin/location/create')"><i class="icon-plus"></i>Create new location</a></li>
+    </ul>
+  </div>
+  <div class="span10">
+    <header class="jumbotron subhead">
+      <h1>Locations</h1>
+      <p class="lead">Locations are separate datacenter "zones".</p>
+    </header>
+    <table class="table table-striped table-bordered table-condensed">
+      <thead>
+        <tr>
+          <th style="width: 50%">Name</th>
+          <th>Total Nodes</th>
+          <th>HV CPU Used</th>
+          <th>HV RAM Used</th>
+          <th>HV Disk Used</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% locations.each do |location| %>
+          <tr>
+            <td><%= location.to_link %></td>
+            <td><%= location.nodes.count %></td>
+            <% if location.hypervisors.size > 0 %>
+              <td>
+                <%= location.hypervisor_utilization[:cpu] %>%
+              </td>
+            <% else %>
+              <td colspan="3">
+                No hypervisors.
+              </td>
+            <% end %>
+            <% if location.hypervisors.size > 0 %>
+              <td>
+                <%= location.hypervisor_utilization[:memory] %>%
+              </td>
+            <% end %>
+            <% if location.hypervisors.size > 0 %>
+              <td>
+                <%= location.hypervisor_utilization[:disk] %>%
+              </td>
+            <% end %>
+            <td><button onclick="load_util('/admin/location/<%= location.id %>/edit')" class="btn btn-mini"><i class="icon-pencil"></i> Edit</button> <button onclick="load_util('/admin/location/<%= location.id %>/delete')" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i> Delete</button></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
