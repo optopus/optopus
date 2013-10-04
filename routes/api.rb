@@ -161,6 +161,17 @@ module Optopus
     get '/api/nodes/active' do
       begin
         results = []
+        hypervisors = Optopus::Hypervisor.search(:size => 1500) do
+          fields 'libvirt.domains.name', :hostname
+          query { string '*:*' }
+        end
+        node_lookup = {}
+        node_lookup = hypervisors.inject do |l, h|
+          h['libvirt.domains.name'].each do |domain|
+            l[domain] = h.hostname
+          end
+          l
+        end
         Optopus::Node.active.each do |node|
           data = {
             :hostname => node.hostname,
@@ -170,8 +181,7 @@ module Optopus
             :virtual => node.virtual,
           }
           if node.virtual
-            hypervisor = node.find_hypervisor_host.first
-            data[:hypervisor] = hypervisor ? hypervisor.hostname : nil
+            data[:hypervisor] = node_lookup[node.hostname]
           end
           results << { node.class.model_name.element => data }
         end
