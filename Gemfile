@@ -9,6 +9,7 @@ gem "sanitize", "2.0.3"
 gem 'sinatra', "1.3.3"
 gem 'erubis'
 gem 'json'
+gem 'yajl-ruby'
 gem 'unicorn'
 gem "rack-flash3", "~> 1.0.1"
 gem 'sinatra-contrib', '1.3.1'

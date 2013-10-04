@@ -172,7 +172,7 @@ module Optopus
           end
           l
         end
-        Optopus::Node.active.each do |node|
+        Optopus::Node.active.includes(:pod).each do |node|
           data = {
             :hostname => node.hostname,
             :facts => node.facts,

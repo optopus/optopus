@@ -1,5 +1,7 @@
 $: << File.expand_path(File.dirname(__FILE__) + '/lib')
 require 'rubygems'
+require 'yajl'
+require 'yajl/json_gem'
 require 'sinatra/base'
 require 'sinatra/config_file'
 require 'sinatra/reloader'
