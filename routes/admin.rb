@@ -3,6 +3,7 @@ module Optopus
     admin_menu = Optopus::Menu::Section.new(:name => 'admin_menu', :required_role => 'admin')
     admin_menu.add_link :display => 'Users', :href => '/admin/users'
     admin_menu.add_link :display => 'Pods', :href => '/admin/pods'
+    admin_menu.add_link :display => 'Locations', :href => '/admin/locations'
     Optopus::Menu.instance.register_section(admin_menu)
 
     def pod_from_params
@@ -10,6 +11,14 @@ module Optopus
       if @pod.nil?
         status 404
         flash[:error] = "Pod with id #{params[:id]} does not exist!"
+      end
+    end
+
+    def location_from_params
+      @location = Optopus::Location.find_by_id(params[:id])
+      if @location.nil?
+        status 404
+        flash[:error] = "location with id #{params[:id]} does not exist!"
       end
     end
 
@@ -129,5 +138,74 @@ module Optopus
         handle_error(e)
       end
     end
+
+    get '/admin/locations' do
+      erb :locations 
+    end
+
+    put '/admin/locations' do
+      begin
+        validate_param_presence 'location-name'
+        location = Optopus::Location.create!(:common_name => params['location-name'], :city => params['location-city'], :state => params['location-state'])
+        puts location.inspect
+        register_event "{{ references.user.to_link }} created location #{location.common_name}", :type => 'location'
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      status 201
+      flash[:success] = "Successfully created new location #{location.common_name}!"
+      redirect back
+    end
+
+    delete '/admin/location/:id' do
+      begin
+        location_from_params
+        raise 'Location does not exist!' if @location.nil?
+        @location.destroy
+        register_event "{{ references.user.to_link }} deleted location #{@location.common_name}", :type => 'location'
+      rescue Exception => e
+        handle_error(e)
+      end
+      flash[:success] = "Successfully deleted #{@location.common_name}!"
+      redirect back
+    end
+
+    get '/admin/location/create' do
+      erb :location_create
+    end
+
+    get '/admin/location/:id/edit' do
+      location_from_params
+      erb :location_edit
+    end
+
+    post '/admin/location/:id/edit' do
+      begin
+        location = Optopus::Location.find_by_id(params[:id])
+        puts location.inspect
+        raise 'Location does not exist!' if location.nil?
+
+        if params['location-name']
+          location.common_name = params['location-name']
+          location.city = params['location-city']
+          location.state = params['location-state']
+          location.save!
+          puts location.inspect
+          register_event "{{ references.user.to_link }} renamed location #{location.common_name} to #{params['location-name']}", :type => 'location'
+        end
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      flash[:success] = "Successfully updated #{location.common_name}!"
+      redirect back
+    end
+
+    get '/admin/location/:id/delete' do
+      location_from_params
+      erb :location_delete
+    end
+
   end
 end

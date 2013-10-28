@@ -1,0 +1,16 @@
+<% if @location %>
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Confirmation</h3>
+  </div>
+  <div class="modal-body">
+    <p>Please confirm that you would like to delete <em><%= @location.common_name %></em>. This cannot be undone.</p>
+  </div>
+  <div class="modal-footer">
+    <form id="delete-node" method="post" action="/admin/location/<%= @location.id %>">
+      <input type="hidden" name="_method" value="delete">
+      <input class="btn btn-danger" type="submit" value="Delete">
+      <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    </form>
+  </div>
+<% end %>

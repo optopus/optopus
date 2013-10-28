@@ -252,8 +252,32 @@ module Optopus
         }
 
         capable_hypervisors = Optopus::Hypervisor.capacity_search(ranges, location).sort { |a,b| a.hostname <=> b.hostname }
-                
+
         body(capable_hypervisors.to_json)
+      end
+    end
+
+    get '/api/location_utilization' do
+      begin
+        location_data = Optopus::Hypervisor.resources_by_location
+        keys = location_data.keys
+        keys << "all"
+
+        validate_param_presence 'location'
+        raise "Location not specified!" unless params['location']
+        raise "Unknown location!" unless params['location'].in? keys
+
+        keys.each do |key|
+          if key != 'all'
+            location_data[key][:node_total_memory] *= 1024
+          end
+        end
+
+        if params['location'] == 'all'
+          body(location_data.to_json)
+        else
+          body(location_data[params['location']].to_json)
+        end
       end
     end
 
