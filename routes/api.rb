@@ -270,6 +270,9 @@ module Optopus
         keys.each do |key|
           if key != 'all'
             location_data[key][:node_total_memory] *= 1024
+            location_data[key][:node_cpus_utilization] = (location_data[key][:node_running_cpus].to_f / location_data[key][:node_total_cpus].to_f) * 100
+            location_data[key][:node_memory_utilization] = (location_data[key][:node_free_memory].to_f / location_data[key][:node_total_memory].to_f) * 100
+            location_data[key][:node_disk_utilization] = (location_data[key][:used_disk].to_f / (location_data[key][:used_disk].to_f + location_data[key][:free_disk].to_f)) * 100
           end
         end
 
