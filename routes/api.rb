@@ -166,7 +166,7 @@ module Optopus
           query { string '*:*' }
         end
         node_lookup = {}
-        node_lookup = hypervisors.inject do |l, h|
+        node_lookup = hypervisors.inject({}) do |l, h|
           h['libvirt.domains.name'].each do |domain|
             l[domain] = h.hostname
           end
