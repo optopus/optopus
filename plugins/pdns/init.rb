@@ -1,9 +1,81 @@
 require 'optopus/plugin'
+require 'ipaddr'
+
 require_relative 'lib/pdns/client'
 module Optopus
   module Plugin
     module PDNS
       extend Optopus::Plugin
+
+      module DNSRecordUtils
+
+        def has_a_record?
+          !a_record.nil?
+        end
+
+        def has_correct_a_record?
+          record = a_record
+          record.nil? ? false : record['content'] == self.facts['ipaddress']
+        end
+
+        def has_ptr_record?
+          !ptr_record.nil?
+        end
+
+        def a_record
+          pdns_client.record_from_hostname(self.hostname)
+        end
+
+        def ptr_record
+          pdns_client.record_from_content(self.hostname, 'PTR')
+        end
+
+        def set_ptr_record!
+          ip = IPAddr.new(node.facts['ipaddress'])
+          record = ptr_record
+
+          if record.nil?
+            # TODO: this needs to be configurable, basically we take
+            # 117.2.8.10.in-addr.arpa and turn it into 10.in-addr.arpa as the reverse dns zone
+            domain = pdns_client.domain_from_name(ip.reverse.split('.').last(3).join('.'))
+            pdns_client.create_record(
+              :domain_id => domain['id'].to_s,
+              :name      => ip.reverse,
+              :type      => 'PTR',
+              :content   => node.hostname,
+              :ttl       => '600'
+            )
+          else
+            pdns_client.update_record(record['id'], :name => ip.reverse)
+          end
+          nil
+        end
+
+        def set_a_record!
+          record = a_record
+          if record.nil?
+            domain = pdns_client.domain_from_name(self.facts['domain'])
+            if domain
+              pdns_client.create_record(
+                :domain_id => domain['id'].to_s,
+                :name      => self.hostname,
+                :type      => 'A',
+                :content   => self.facts['ipaddress'],
+                :ttl       => '600'
+              )
+            end
+          else
+            pdns_client.update_record(record['id'], :content => self.facts['ipaddress'])
+          end
+          nil
+        end
+
+        private
+
+        def pdns_client
+          @pdns_client ||= Optopus::Plugin::PDNS.pdns_client
+        end
+      end
 
       class NodeObserver < ActiveRecord::Observer
         observe Optopus::Node
@@ -127,6 +199,7 @@ module Optopus
       plugin do
         nav_link :display => 'PowerDNS', :route => '/pdns'
         register_role 'dns_admin'
+        register_mixin :nodes, Optopus::Plugin::PDNS::DNSRecordUtils
       end
 
       # TODO: the below causes redirect loop
