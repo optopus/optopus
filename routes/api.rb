@@ -257,6 +257,20 @@ module Optopus
       end
     end
 
+    # This will find nodes that are dependent on the given node
+    get '/api/node/:name/children' do
+      begin
+        node = Optopus::Node.find_by_hostname(params[:name])
+        raise "No node named '#{params[:name]}'" if node.nil?
+        body({ :children => node.children.map {|n| n.hostname} }.to_json)
+      rescue Exception => e
+        logger.error e.to_s
+        logger.error e.backtrace.join("\n\t")
+        status 400
+        body({ :user_error => e.to_s }.to_json)
+      end
+    end
+
     get '/api/location_utilization' do
       begin
         location_data = Optopus::Hypervisor.resources_by_location

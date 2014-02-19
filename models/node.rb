@@ -111,6 +111,11 @@ module Optopus
       location ? location.pods : Array.new
     end
 
+    # If you're a standard node, you don't have any children
+    def children
+      Array.new
+    end
+
     private
 
     def destroy_interfaces
@@ -334,6 +339,10 @@ module Optopus
         domains << Domain.new(domain_data)
       end
     end
+
+    def children
+      domains.select {|d| !d.node.nil? }.map {|d| d.node }
+    end
   end
 
   class NetworkNode < Node
@@ -365,7 +374,16 @@ module Optopus
       indexes :facts,       :boost => 1
     end
 
-    private
+    def children
+      childs = []
+      return childs if pod.nil?
+      pod.nodes.each do |node|
+        next if node == self
+        childs << node
+        childs << node.children
+      end
+      childs.flatten
+    end
 
   end
 end
