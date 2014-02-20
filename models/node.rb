@@ -74,10 +74,16 @@ module Optopus
       device ? device.location : Optopus::Location.where(:common_name => facts['location']).first
     end
 
-    #def comments
-    #  STDOUT.write node_comments
-    #  node_comments ? node_comments : "this sucks"
-    #end
+    def similar_nodes
+      type = facts['server_type']
+      Optopus::Node.active.where("facts -> 'server_type' = '#{type}'")
+    end
+
+    # Return a hash of Optopus::Pod => [Optopus::Node] to see similar node distributions
+    def similar_node_distribution
+      hash = Hash.new {|h,k| h[k] = [] }
+      similar_nodes.inject(hash) {|h,d| h[d.pod] << d; h }
+    end
 
     def to_link
       "<a href=\"/node/#{hostname}\">#{hostname}</a>"
