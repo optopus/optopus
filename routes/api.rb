@@ -273,7 +273,13 @@ module Optopus
 
     # Simplified output of all nodes for use with monitoring configs
     get '/api/nodes/monitoring' do
-      Optopus::Node.select("hostname, virtual, facts->'env' as env").to_json
+      output = Hash.new
+      Optopus::Node.select("hostname, virtual, facts->'env' as env, facts->'monitoring' as monitoring").each do |node|
+        data = node.attributes.dup
+        data.delete('hostname')
+        output[node.hostname] = data
+      end
+      output.to_json
     end
 
     get '/api/location_utilization' do
