@@ -271,6 +271,11 @@ module Optopus
       end
     end
 
+    # Simplified output of all nodes for use with monitoring configs
+    get '/api/nodes/monitoring' do
+      Optopus::Node.select("hostname, virtual, facts->'env' as env").to_json
+    end
+
     get '/api/location_utilization' do
       begin
         location_data = Optopus::Hypervisor.resources_by_location
