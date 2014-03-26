@@ -2,11 +2,15 @@
   <header class="jumbotron subhead">
     <h1>Hypervisor Planner</h1>
     <p class="lead">Found <%= @capable_hypervisors.size %> capable hypervisors with <%= @capacity_search_string %>.</p>
+    <p>Similar VMs match <strong><%= @node_name %></strong></p>
   </header>
   <table class="table table-condensed table-striped table-bordered">
     <thead>
       <tr>
         <th>Hostname</th>
+        <% if @node_name.present? %>
+        <th>Similar VMs</th>
+        <% end %>
         <th>Available CPUs</th>
         <th>Available Memory</th>
         <th>Available Disk</th>
@@ -16,6 +20,11 @@
       <% @capable_hypervisors.each do |hypervisor| %>
         <tr>
           <td><%= hypervisor.link %></td>
+          <% if @node_name.present? %>
+          <td>
+            <%= hypervisor_domains_like_badge hypervisor, %r{#{@node_name}} %>
+          </td>
+          <% end %>
           <td><%= hypervisor.libvirt.node_free_cpus %></td>
           <td><%= hypervisor.libvirt.node_free_memory.to_i.bytes_to_gigabytes %> GB</td>
           <td><%= hypervisor.libvirt.free_disk.to_i.bytes_to_gigabytes %> GB</td>

@@ -142,6 +142,24 @@ module Optopus
           series << { :data => data, :name => event_type }
         end.to_json
       end
+
+      def hypervisor_domains_like(hypervisor, matcher)
+        hypervisor.libvirt.domains.map { |d| d.name }.grep( matcher )
+      end
+
+      def hypervisor_domains_like_badge(hypervisor, matcher)
+        count = hypervisor_domains_like(hypervisor, matcher).count
+        badge_class = case count
+                      when 0
+                        "badge-success"
+                      when 1
+                        "badge-warning"
+                      else
+                        "badge-important"
+                      end
+
+        "<span class='badge #{ badge_class }'>#{ count }</span>"
+      end
     end
   end
 end

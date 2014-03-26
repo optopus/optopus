@@ -35,8 +35,17 @@
       <input type="hidden" name="node-cpus" id="node-cpus-value" value="<%= hypervisor_planner_settings[:cpu_multiplier] %>">
       <input type="hidden" name="node-memory" id="node-memory-value" value="<%= hypervisor_planner_settings[:memory_multiplier] %>">
       <input type="hidden" name="node-disk" id="node-disk-value" value="<%= hypervisor_planner_settings[:disk_multiplier] %>">
+
+      <div class="control-group">
+        <label class="control-label" for="node-name">Name:</label>
+        <div class="controls">
+          <input type="text" name="node-name" id="node-name" value="" />
+        </div>
+      </div>
+
       <div class="control-group">
         <label class="control-label" for="node-cpus">CPU Cores:</label>
+
         <div class="controls">
           <div id="node-cpus" style="margin-top: 5px"><%= hypervisor_planner_settings[:cpu_multiplier] %> cores</div>
         </div>
@@ -74,6 +83,7 @@
           <div id="node-ratio" class="slider"></div>
         </div>
       </div>
+
     </div>
   </div>
 

@@ -74,16 +74,10 @@ module Optopus
       device ? device.location : Optopus::Location.where(:common_name => facts['location']).first
     end
 
-    def similar_nodes
-      type = facts['server_type']
-      Optopus::Node.active.where("facts -> 'server_type' = '#{type}'")
-    end
-
-    # Return a hash of Optopus::Pod => [Optopus::Node] to see similar node distributions
-    def similar_node_distribution
-      hash = Hash.new {|h,k| h[k] = [] }
-      similar_nodes.inject(hash) {|h,d| h[d.pod] << d; h }
-    end
+    #def comments
+    #  STDOUT.write node_comments
+    #  node_comments ? node_comments : "this sucks"
+    #end
 
     def to_link
       "<a href=\"/node/#{hostname}\">#{hostname}</a>"
@@ -115,11 +109,6 @@ module Optopus
 
     def possible_pods
       location ? location.pods : Array.new
-    end
-
-    # If you're a standard node, you don't have any children
-    def children
-      Array.new
     end
 
     private
@@ -269,6 +258,12 @@ module Optopus
       indexes :libvirt,        :as => 'libvirt_data', :type => 'object'
     end
 
+    # given a name, return a list of domains on this hypervisor that match this name.
+    # matcher can be a regex or a string.
+    def domains_like(matcher)
+      self.libvirt.domains.map { |d| d.name }.grep( matcher )
+    end
+
     def self.find_domain(domain)
       search("libvirt.domains.name:\"#{domain}\"")
     end
@@ -345,10 +340,6 @@ module Optopus
         domains << Domain.new(domain_data)
       end
     end
-
-    def children
-      domains.select {|d| !d.node.nil? }.map {|d| d.node }
-    end
   end
 
   class NetworkNode < Node
@@ -380,16 +371,7 @@ module Optopus
       indexes :facts,       :boost => 1
     end
 
-    def children
-      childs = []
-      return childs if pod.nil?
-      pod.nodes.each do |node|
-        next if node == self
-        childs << node
-        childs << node.children
-      end
-      childs.flatten
-    end
+    private
 
   end
 end
