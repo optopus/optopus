@@ -240,6 +240,13 @@ module Optopus
         raise 'Disk space must be higher than 0!' unless params['disk'].to_i > 0
         raise 'Location must be specified!' unless params['location'].to_s != 'Any'
 
+        node_name = params['name']
+
+        # parse the server_type out of the @node_name
+        # this is if the user puts in "prod-ftp01" it'll return "ftp"
+        n = node_name.match(/^(?:[^-]+-)?(.+?)(?:\d+)?$/)
+        node_name = n[1] if n
+
         cpus = params['cpus'].to_i
         memory = params['ram'].to_i * 1024**3
         disk = params['disk'].to_i * 1024**3
@@ -252,6 +259,18 @@ module Optopus
         }
 
         capable_hypervisors = Optopus::Hypervisor.capacity_search(ranges, location).sort { |a,b| a.hostname <=> b.hostname }
+
+        # inject the similar vms into the result
+        if node_name.present?
+          capable_hypervisors = capable_hypervisors.map do |h|
+            h = h.to_hash
+            similar_vms = hypervisor_domains_like(h, /#{node_name}/)
+            h['similar_vm_count'] = similar_vms.count
+            h['similar_vm_for'] = params['name']
+            h['similar_vms'] = similar_vms
+            h
+          end
+        end
 
         body(capable_hypervisors.to_json)
       end
