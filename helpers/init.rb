@@ -144,7 +144,7 @@ module Optopus
       end
 
       def hypervisor_domains_like(hypervisor, matcher)
-        hypervisor.libvirt.domains.map { |d| d.name }.grep( matcher )
+        hypervisor[:libvirt][:domains].map { |d| d.name }.grep( matcher )
       end
 
       def hypervisor_domains_like_badge(hypervisor, matcher)
