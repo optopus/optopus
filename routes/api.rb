@@ -265,9 +265,15 @@ module Optopus
           capable_hypervisors = capable_hypervisors.map do |h|
             h = h.to_hash
             similar_vms = hypervisor_domains_like(h, /#{node_name}/)
+            nodes_on_switch_count = Optopus::Search.query("switch:#{ h[:switch] } hostname:*#{ node_name }*", :types => 'node').first.try(:[], :result_set)
+            nodes_on_switch_count = nodes_on_switch_count.try(:count) || 0
+
             h['similar_vm_count'] = similar_vms.count
             h['similar_vm_for'] = params['name']
             h['similar_vms'] = similar_vms
+
+            h['similar_vm_on_switch_count'] = nodes_on_switch_count
+
             h
           end
         end
