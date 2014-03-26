@@ -4,7 +4,7 @@
     <p class="lead">Found <%= @capable_hypervisors.size %> capable hypervisors with <%= @capacity_search_string %>.</p>
     <p>Similar VMs match <strong><%= @node_name %></strong></p>
   </header>
-  <table class="table table-condensed table-striped table-bordered">
+  <table class="table table-condensed table-striped table-bordered hypervisor-planner table-sort-no-filter-input">
     <thead>
       <tr>
         <th>Hostname</th>
