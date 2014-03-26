@@ -258,12 +258,6 @@ module Optopus
       indexes :libvirt,        :as => 'libvirt_data', :type => 'object'
     end
 
-    # given a name, return a list of domains on this hypervisor that match this name.
-    # matcher can be a regex or a string.
-    def domains_like(matcher)
-      self.libvirt.domains.map { |d| d.name }.grep( matcher )
-    end
-
     def self.find_domain(domain)
       search("libvirt.domains.name:\"#{domain}\"")
     end
