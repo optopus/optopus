@@ -10,6 +10,7 @@
         <th>Hostname</th>
         <% if @node_name.present? %>
         <th>Similar VMs</th>
+        <th>Similar VMs on Switch</th>
         <% end %>
         <th>Available CPUs</th>
         <th>Available Memory</th>
@@ -21,9 +22,8 @@
         <tr>
           <td><%= hypervisor.link %></td>
           <% if @node_name.present? %>
-          <td>
-            <%= hypervisor_domains_like_badge hypervisor, %r{#{@node_name}} %>
-          </td>
+          <td><%= hypervisor_domains_like_badge hypervisor, %r{#{@node_name}} %></td>
+          <td><%= hypervisor_domains_on_switch_like_badge hypervisor, @node_name %></td>
           <% end %>
           <td><%= hypervisor.libvirt.node_free_cpus %></td>
           <td><%= hypervisor.libvirt.node_free_memory.to_i.bytes_to_gigabytes %> GB</td>

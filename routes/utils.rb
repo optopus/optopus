@@ -48,6 +48,7 @@ module Optopus
         @node_name = n[1] if n
 
         @capable_hypervisors = Optopus::Hypervisor.capacity_search(ranges, location).sort { |a,b| a.hostname <=> b.hostname }
+
         @capacity_search_string = "#{params['node-memory']} GB of memory, #{params['node-disk']} GB of disk, #{params['node-cpus']} and CPU cores in #{location ? location : 'any location'}"
       rescue Exception => e
         flash[:error] = e.to_s

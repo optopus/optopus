@@ -161,5 +161,23 @@ module Optopus
         "<span class='badge #{ badge_class }'>#{ count }</span>"
       end
     end
+
+    def hypervisor_domains_on_switch_like(hypervisor, node_name)
+      nodes_on_switch_count = Optopus::Search.query("switch:#{ hypervisor[:switch] } hostname:*#{ node_name }*", :types => 'node').first.try(:[], :result_set)
+      nodes_on_switch_count = nodes_on_switch_count.try(:count) || 0
+    end
+
+    def hypervisor_domains_on_switch_like_badge( hypervisor, node_name )
+      count = hypervisor_domains_on_switch_like( hypervisor, node_name )
+      badge_class = "badge-success"
+
+      if count > 10 && count < 15
+        badge_class = "badge-warning"
+      elsif count >= 15
+        badge_class = "badge-important"
+      end
+
+      "<span class='badge #{ badge_class }'>#{ count }</span>"
+    end
   end
 end
