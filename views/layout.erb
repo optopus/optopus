@@ -87,7 +87,7 @@
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Utilities<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="#" onclick="load_util('/util/hypervisor_planner/form')">Hypervisor Planner</a></li>
+                  <li><a href="#" onclick="load_util('/util/hypervisor_planner/form'); return false">Hypervisor Planner</a></li>
                   <% utility_menu_sections.each do |section| %>
                     <% section.links.each do |link| %>
                       <li><a href="<%= link[:href] %>"><%= link[:display] %></a></li>

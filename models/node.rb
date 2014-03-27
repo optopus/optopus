@@ -41,7 +41,7 @@ module Optopus
         indexes :hostname,    :boost => 100, :analyzer => 'hostname'
         indexes :macaddress,  :as => 'primary_mac_address', :boost => 10
         indexes :ipaddress,   :as => "facts['ipaddress']", :boost => 10
-        indexes :switch,      :as => "facts['lldp_em1_chassis_name']", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
+        indexes :switch,      :as => "switch", :boost => 10 # TODO: put this in the lldp plugin since most default systems wont have the lldp_* facts
         indexes :productname, :as => "facts['productname']", :boost => 10
         indexes :location,    :as => 'location_name', :boost => 10
         indexes :pod,         :as => 'pod_name', :boost => 10
@@ -51,6 +51,14 @@ module Optopus
       end
       indexes :puppet_classes, :as => 'puppet_classes', :type => 'array'
       indexes :facts,          :boost => 1
+    end
+
+    def switch
+      if virtual
+        pod && pod.network_nodes.first.try(:hostname)
+      else
+        facts['lldp_em1_chassis_name'] || facts['lldp_eth0_chassis_name']
+      end
     end
 
     def self.active

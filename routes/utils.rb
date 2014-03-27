@@ -1,3 +1,4 @@
+require 'pry'
 module Optopus
   class App
     helpers do
@@ -38,7 +39,16 @@ module Optopus
           'libvirt.node_free_memory' => { :gt => memory },
         }
 
+
+        @node_name = params['node-name']
+
+        # parse the server_type out of the @node_name
+        # this is if the user puts in "prod-ftp01" it'll return "ftp"
+        n = @node_name.match(/^(?:[^-]+-)?(.+?)(?:\d+)?$/)
+        @node_name = n[1] if n
+
         @capable_hypervisors = Optopus::Hypervisor.capacity_search(ranges, location).sort { |a,b| a.hostname <=> b.hostname }
+
         @capacity_search_string = "#{params['node-memory']} GB of memory, #{params['node-disk']} GB of disk, #{params['node-cpus']} and CPU cores in #{location ? location : 'any location'}"
       rescue Exception => e
         flash[:error] = e.to_s

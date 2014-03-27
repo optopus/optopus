@@ -142,6 +142,42 @@ module Optopus
           series << { :data => data, :name => event_type }
         end.to_json
       end
+
+      def hypervisor_domains_like(hypervisor, matcher)
+        hypervisor[:libvirt][:domains].map { |d| d.name }.grep( matcher )
+      end
+
+      def hypervisor_domains_like_badge(hypervisor, matcher)
+        count = hypervisor_domains_like(hypervisor, matcher).count
+        badge_class = case count
+                      when 0
+                        "badge-success"
+                      when 1
+                        "badge-warning"
+                      else
+                        "badge-important"
+                      end
+
+        "<span class='badge #{ badge_class }'>#{ count }</span>"
+      end
+    end
+
+    def hypervisor_domains_on_switch_like(hypervisor, node_name)
+      nodes_on_switch_count = Optopus::Search.query("switch:#{ hypervisor[:switch] } hostname:*#{ node_name }*", :types => 'node').first.try(:[], :result_set)
+      nodes_on_switch_count = nodes_on_switch_count.try(:count) || 0
+    end
+
+    def hypervisor_domains_on_switch_like_badge( hypervisor, node_name )
+      count = hypervisor_domains_on_switch_like( hypervisor, node_name )
+      badge_class = "badge-success"
+
+      if count > 10 && count < 15
+        badge_class = "badge-warning"
+      elsif count >= 15
+        badge_class = "badge-important"
+      end
+
+      "<span class='badge #{ badge_class }'>#{ count }</span>"
     end
   end
 end
