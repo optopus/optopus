@@ -42,10 +42,12 @@ module Optopus
 
         @node_name = params['node-name']
 
-        # parse the server_type out of the @node_name
-        # this is if the user puts in "prod-ftp01" it'll return "ftp"
-        n = @node_name.match(/^(?:[^-]+-)?(.+?)(?:\d+)?$/)
-        @node_name = n[1] if n
+        if @node_name.present?
+          # parse the server_type out of the @node_name
+          # this is if the user puts in "prod-ftp01" it'll return "ftp"
+          n = @node_name.match(/^(?:[^-]+-)?(.+?)(?:\d+)?$/)
+          @node_name = n[1] if n
+        end
 
         @capable_hypervisors = Optopus::Hypervisor.capacity_search(ranges, location).sort { |a,b| a.hostname <=> b.hostname }
 
