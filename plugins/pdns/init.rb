@@ -31,7 +31,7 @@ module Optopus
         end
 
         def set_ptr_record!
-          ip = IPAddr.new(node.facts['ipaddress'])
+          ip = IPAddr.new(self.facts['ipaddress'])
           record = ptr_record
 
           if record.nil?
@@ -42,7 +42,7 @@ module Optopus
               :domain_id => domain['id'].to_s,
               :name      => ip.reverse,
               :type      => 'PTR',
-              :content   => node.hostname,
+              :content   => self.hostname,
               :ttl       => '600'
             )
           else
