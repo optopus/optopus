@@ -1,6 +1,6 @@
 module Optopus
   class Address < Optopus::Model
-    validates :ip_address, :presence => true
+    validates :ip_address, :presence => true, :uniqueness => true
     belongs_to :network
     belongs_to :interface
 
