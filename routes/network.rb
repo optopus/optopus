@@ -50,6 +50,7 @@ module Optopus
 
     get '/network/:id' do
       network_from_params
+      @addresses = @network.addresses.paginate(:page => params[:page], :per_page => (params[:per_page] || 50))
       erb :network
     end
 

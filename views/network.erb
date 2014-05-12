@@ -32,7 +32,7 @@
         <div class="page-header">
           <h3>Allocated Addresses</h3>
         </div>
-        <% if @network.addresses.size > 0 %>
+        <% if @addresses.size > 0 %>
           <table class="table table-condensed table-bordered table-striped">
             <thead>
               <tr>
@@ -41,7 +41,7 @@
               </tr>
             </thead>
             <tbody>
-              <% @network.addresses.each do |address| %>
+              <% @addresses.each do |address| %>
                 <tr>
                   <td><%= address.ip_address.to_s %></td>
                   <td><%= address.display.human_empty %></td>
@@ -53,6 +53,8 @@
           <p class="muted"><em>No addresses have been allocated.</em></p>
         <% end %>
       </section>
+
+      <%= will_paginate @addresses, :renderer => BootstrapPagination::Sinatra %>
 
     </div>
   </div>
