@@ -15,19 +15,16 @@
 
 <% if @network %>
   <div class="row-fluid">
-    <div class="span2">
-      <ul class="nav nav-list">
-        <li class="nav-header">Network Actions</li>
-        <li><a href="#" onclick="ip_allocator();"><i class="icon-plus"></i>Allocate new address</a></li>
-      </ul>
-      <% if is_admin? %>
+    <% if is_admin? %>
+      <div class="span2">
         <ul class="nav nav-list">
-          <li class="nav-header">Admin Actions</li>
+          <li class="nav-header">Network Actions</li>
+          <li><a href="#" onclick="ip_allocator();"><i class="icon-plus"></i>Allocate new address</a></li>
           <li><a href="#" onclick="load_util('/network/<%= @network.id %>/edit');"><i class="icon-edit"></i>Edit network details</a></li>
           <li><a href="#" onclick="load_util('/network/<%= @network.id %>/delete');"><i class="icon-trash"></i>Delete network</a></li>
         </ul>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
 
     <div class="span10">
       <ul class="breadcrumb">
