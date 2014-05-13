@@ -12,6 +12,8 @@ module Optopus
 
     default_scope order(:address)
 
+    serialize :properties, ActiveRecord::Coders::Hstore
+
     def to_link
       "<a href=\"/network/#{self.id}\">#{self.address.to_cidr}</a>"
     end

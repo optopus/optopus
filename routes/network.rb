@@ -9,6 +9,14 @@ module Optopus
       end
     end
 
+    def address_from_params
+      @address = @network.addresses.find_by_ip_address(params[:ip])
+      if @address.nil?
+        status 404
+        flash[:error] = "Network with id #{params[:id]} does not have IP address #{params[:ip]}"
+      end
+    end
+
     get '/networks' do
       @lonely_addresses = Optopus::Address.lonely
       unless @lonely_addresses.empty?
@@ -109,7 +117,7 @@ module Optopus
         network_from_params
         raise 'Network does not exist!' if @network.nil?
         @network.destroy
-        register_event "{{ references.user.to_link }} deleted network #{@network.address.to_cidr}", :type => 'network'
+        register_event "{{ references.user.to_link }} deleted network #{@network.address.to_cidr}", :type => 'network', :references => [ @network ]
       rescue Exception => e
         handle_error(e)
       end
@@ -135,5 +143,62 @@ module Optopus
       flash[:success] = "Successfully allocated #{address.ip_address.to_s}!"
       redirect back
     end
+
+    get '/network/:id/address/:ip' do
+      begin
+        network_from_params
+        @address = @network.addresses.find_by_ip_address(params[:ip])
+        raise 'invalid IP for network!' if @address.nil?
+        erb :address
+      rescue Exception => e
+        status 404
+        flash[:error] = "#{params[:ip]} does not exist in network #{@network.id}"
+        redirect "/network/#{@network.id}"
+      end
+    end
+
+    post '/network/:id/address/:ip', :auth => :admin do
+      begin
+        network_from_params
+        address_from_params
+        raise 'Address does not exist!' if @address.nil?
+        description = params['address-description']
+        @address.description = description
+        @address.save!
+        register_event "{{ references.user.to_link }} updated address #{@address.ip_address}", :type => 'network', :references => [ @address ]
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      flash[:success] = "Successfully updated #{@network.address.to_cidr}!"
+      redirect back
+    end
+
+    delete '/network/:id/address/:ip', :auth => :admin do
+      begin
+        network_from_params
+        address_from_params
+        raise 'Address does not exist!' if @address.nil?
+        @address.destroy
+        register_event "{{ references.user.to_link }} deleted address #{@address.ip_address}", :type => 'network', :references => [ @address ]
+      rescue Exception => e
+        handle_error(e)
+      end
+      flash[:success] = "Successfully deleted #{@address.ip_address}!"
+      redirect "/network/#{@network.id}"
+    end
+
+    get '/network/:id/address/:ip/delete', :auth => :admin do
+      network_from_params
+      address_from_params
+      erb :delete_address
+    end
+
+    get '/network/:id/address/:ip/edit', :auth => :admin do
+      network_from_params
+      address_from_params
+      erb :edit_address
+    end
+
   end
 end

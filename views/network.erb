@@ -20,13 +20,50 @@
         <li class="nav-header">Network Actions</li>
         <li><a href="#" onclick="ip_allocator();"><i class="icon-plus"></i>Allocate new address</a></li>
       </ul>
+      <% if is_admin? %>
+        <ul class="nav nav-list">
+          <li class="nav-header">Admin Actions</li>
+          <li><a href="#" onclick="load_util('/network/<%= @network.id %>/edit');"><i class="icon-edit"></i>Edit network details</a></li>
+          <li><a href="#" onclick="load_util('/network/<%= @network.id %>/delete');"><i class="icon-trash"></i>Delete network</a></li>
+        </ul>
+      <% end %>
     </div>
 
     <div class="span10">
+      <ul class="breadcrumb">
+        <li><a href="/networks">Networks</a> <span class="divider">/</span></li>
+        <li class="active"><%= @network.to_link %></li>
+      </ul>
       <header class="jumbotron subhead">
         <h1>Network <%= @network.address.to_cidr %></h1>
         <p class="lead"><%= @network.description %></p>
       </header>
+
+      <section id="general">
+        <div class="prage-header">
+          <h3>General</h3>
+        </div>
+        <table class="table table-striped table-condensed table-bordered">
+          <tbody>
+            <tr>
+              <td style="width: 10%">VLAN ID</td>
+              <td><%= @network.vlan_id.to_s.human_empty %></td>
+            </tr>
+            <tr>
+              <td>Location</td>
+              <td><%= @network.location.to_link %></td>
+            </tr>
+            <tr>
+              <td>Usage</td>
+              <td>
+                <div class="progress <%= progress_style(@network.usage) %>">
+                  <div class="bar" style="width: <%= @network.usage %>%"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
       <section id="allocated">
         <div class="page-header">
@@ -43,7 +80,7 @@
             <tbody>
               <% @addresses.each do |address| %>
                 <tr>
-                  <td><%= address.ip_address.to_s %></td>
+                  <td><%= address.to_link %></td>
                   <td><%= address.display.human_empty %></td>
                 </tr>
               <% end %>
