@@ -1,11 +1,15 @@
 module Optopus
   class Address < Optopus::Model
-    validates :ip_address, :presence => true
+    validates :ip_address, :presence => true, :uniqueness => true
     belongs_to :network
     belongs_to :interface
 
     before_save :assign_network
     before_save :validate_address_in_network
+
+    default_scope order(:ip_address)
+
+    serialize :properties, ActiveRecord::Coders::Hstore
 
     # Return addresses that do not have any network associations
     def self.lonely
@@ -21,6 +25,10 @@ module Optopus
     # the IP's description
     def display
       self.interface ? (self.interface.node ? self.interface.node.to_link : description) : description
+    end
+
+    def to_link
+      "<a href=\"/network/#{self.network.id}/address/#{self.ip_address}\">#{self.ip_address}</a>"
     end
 
     private
