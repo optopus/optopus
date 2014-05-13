@@ -10,6 +10,8 @@ module Optopus
     before_save :assign_addresses
     before_destroy :remove_network_id_from_addresses
 
+    default_scope order(:address)
+
     def to_link
       "<a href=\"/network/#{self.id}\">#{self.address.to_cidr}</a>"
     end

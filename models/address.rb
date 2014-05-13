@@ -7,6 +7,8 @@ module Optopus
     before_save :assign_network
     before_save :validate_address_in_network
 
+    default_scope order(:ip_address)
+
     # Return addresses that do not have any network associations
     def self.lonely
       where(:network_id => nil)
