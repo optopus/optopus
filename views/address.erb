@@ -6,6 +6,8 @@
           <li class="nav-header">Address Actions</li>
           <li><a href="#" onclick="load_util('/network/<%= @network.id %>/address/<%= @address.ip_address %>/edit');"><i class="icon-edit"></i>Change description</a></li>
           <li><a href="#" onclick="load_util('/network/<%= @network.id %>/address/<%= @address.ip_address %>/delete');"><i class="icon-trash"></i>Delete address</a></li>
+	  <li><a href="#" onclick="load_util('/network/<%= @network.id %>/address/<%= @address.ip_address %>/add_property');"><i class="icon-plus"></i>Add property</a></li>
+	  <li><a href="#" onclick="load_util('/network/<%= @network.id %>/address/<%= @address.ip_address %>/remove_property');"><i class="icon-minus"></i>Remove property</a></li>
         </ul>
       </div>
     <% end %>
@@ -56,7 +58,7 @@
           <table class="table table-condensed table-striped table-bordered">
             <thead>
               <tr>
-                <th>Key</th>
+                <th style="width: 10%">Key</th>
                 <th>Value</th>
               </tr>
             </thead>

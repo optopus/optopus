@@ -73,6 +73,57 @@ module Optopus
       erb :edit_network
     end
 
+    get '/network/:id/add_property', :auth => :admin do
+      network_from_params
+      @property_action = "/network/#{params[:id]}/add_property"
+      @title = "Add property for #{@network.address.to_cidr}"
+      erb :add_property
+    end
+
+    post '/network/:id/add_property', :auth => :admin do
+      begin
+        network_from_params
+        validate_param_presence 'property-key', 'property-value'
+        key = params['property-key']
+        value = params['property-value']
+        action = @network.properties.has_key?(key) ? 'updated' : 'added'
+        @network.properties[key] = value
+        @network.save!
+        register_event "{{ references.user.to_link }} #{action} property '#{key} => #{value}' on #{@network.address.to_cidr}",
+                       :type => 'network', :references => [ @network ]
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      flash[:success] = "Successfully added new property '#{key} => #{value}'!"
+      redirect back
+    end
+
+    get '/network/:id/remove_property', :auth => :admin do
+      network_from_params
+      @property_action = "/network/#{params[:id]}/remove_property"
+      @title = "Remove property for #{@network.address.to_cidr}"
+      @properties = @network.properties
+      erb :remove_property
+    end
+
+    delete '/network/:id/remove_property', :auth => :admin do
+      begin
+        network_from_params
+        validate_param_presence 'property-key'
+        key = params['property-key']
+        @network.properties.delete(key)
+        @network.save!
+        register_event "{{ references.user.to_link }} removed property '#{key}' from #{@network.address.to_cidr}",
+                       :type => 'network', :references => [ @network ]
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      flash[:success] = "Successfully removed property '#{key}' from network!"
+      redirect back
+    end
+
     post '/network/:id/edit', :auth => :admin do
       begin
         network_from_params
@@ -198,6 +249,61 @@ module Optopus
       network_from_params
       address_from_params
       erb :edit_address
+    end
+
+    get '/network/:id/address/:ip/add_property', :auth => :admin do
+      network_from_params
+      address_from_params
+      @property_action = "/network/#{params[:id]}/address/#{params[:ip]}/add_property"
+      @title = "Add property for #{@address.ip_address.to_s}"
+      erb :add_property
+    end
+
+    post '/network/:id/address/:ip/add_property', :auth => :admin do
+      begin
+        network_from_params
+        address_from_params
+        validate_param_presence 'property-key', 'property-value'
+        key = params['property-key']
+        value = params['property-value']
+        action = @address.properties.has_key?(key) ? 'updated' : 'added'
+        @address.properties[key] = value
+        @address.save!
+        register_event "{{ references.user.to_link }} #{action} property '#{key} => #{value}' on #{@address.ip_address}",
+                       :type => 'network', :references => [ @address ]
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      flash[:success] = "Successfully added new property '#{key} => #{value}'!"
+      redirect back
+    end
+
+    get '/network/:id/address/:ip/remove_property', :auth => :admin do
+      network_from_params
+      address_from_params
+      @property_action = "/network/#{params[:id]}/address/#{params[:ip]}/remove_property"
+      @title = "Remove property for #{@address.ip_address.to_s}"
+      @properties = @address.properties
+      erb :remove_property
+    end
+
+    delete '/network/:id/address/:ip/remove_property', :auth => :admin do
+      begin
+        network_from_params
+        address_from_params
+        validate_param_presence 'property-key'
+        key = params['property-key']
+        @address.properties.delete(key)
+        @address.save!
+        register_event "{{ references.user.to_link }} removed property '#{key}' from #{@address.ip_address.to_s}",
+                       :type => 'network', :references => [ @address ]
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      flash[:success] = "Successfully removed property '#{key}' from address!"
+      redirect back
     end
 
   end
