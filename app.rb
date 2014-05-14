@@ -57,6 +57,10 @@ module Optopus
     ActiveRecord::Base.establish_connection(db_config)
     Tire::Configuration.url settings.elasticsearch[:url]
 
+    if ENV['DATABASE_DEBUG'] == 'true'
+      ActiveRecord::Base.logger = Logger.new(STDOUT)
+    end
+
     require_relative 'models/init'
     require_relative 'helpers/init'
     require_relative 'routes/init'
