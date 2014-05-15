@@ -335,5 +335,105 @@ module Optopus
       end
     end
 
+    def update_interface(name, hostname, data)
+      ip_address = data['ip_address']
+      if ip_address.nil?
+        raise 'Must supply ip_address'
+      end
+      begin
+        IPAddr.new(ip_address)
+      rescue Exception => e
+        # Warn of invalid data
+        logger.error("Invalid data for an interface: #{e}")
+        return false
+      end
+      node = Optopus::Node.find_by_hostname(hostname)
+      interface = node.interfaces.find_by_name(name) || Optopus::Interface.new(:name => name)
+      node.interfaces << interface
+      address = Optopus::Address.find_by_ip_address(ip_address) || Optopus::Address.new(:ip_address => ip_address)
+      if interface.address != address
+        interface.address.destroy unless interface.address.nil?
+        interface.address = address
+      end
+      interface.save!
+      true
+    end
+
+    post '/api/node/:hostname/interface/bulk_update' do
+      begin
+        data = JSON.parse(request.body.read)
+        interfaces = data['interfaces']
+        if interfaces.nil?
+          raise 'Must supply interfaces!'
+        end
+        interfaces.each do |interface|
+          update_interface(interface['name'], params[:hostname], interface)
+        end
+        nil
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    post '/api/node/:hostname/interface/:interface' do
+      begin
+        data = JSON.parse(request.body.read)
+        update_interface(params[:interface], params[:hostname], data)
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    def update_network(data)
+      cidr          = data['cidr']
+      location_name = data['location']
+      description   = data['description']
+      vlan_id       = data['vlan_id']
+
+      location = Optopus::Location.find_by_common_name(location_name)
+      if location.nil?
+        raise "Invalid location name #{location_name}"
+      end
+
+      network = Optopus::Network.find_by_address(cidr) || Optopus::Network.new(:address => cidr)
+      network.location = location
+      network.vlan_id = vlan_id if data.has_key?('vlan_id')
+      network.description = description unless description.nil?
+      network.save!
+    end
+
+    post '/api/networks/bulk_update' do
+      begin
+        data = JSON.parse(request.body.read)
+        networks = data['networks']
+        if networks.nil?
+          raise 'Must supply networks!'
+        end
+        networks.each do |network|
+          update_network(network)
+        end
+        nil
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    post '/api/networks' do
+      begin
+        data = JSON.parse(request.body.read)
+        update_network(data)
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
   end
 end
