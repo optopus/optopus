@@ -1,7 +1,7 @@
 module Optopus
   class App
     before do
-      @user = Optopus::User.where(:id => session[:user_id]).first
+      @user = Optopus::User.includes(:roles).where(:id => session[:user_id]).first
     end
 
     get '/' do

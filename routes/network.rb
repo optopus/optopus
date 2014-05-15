@@ -18,7 +18,7 @@ module Optopus
     end
 
     get '/networks' do
-      @lonely_addresses = Optopus::Address.lonely
+      @lonely_addresses = Optopus::Address.lonely.includes(:interface)
       unless @lonely_addresses.empty?
         @subnav = [ { :id => 'lonely-addresses', :name => 'Lonely Addresses' } ]
       end
