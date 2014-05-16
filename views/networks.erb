@@ -34,29 +34,27 @@
         </table>
       </section>
     <% end %>
-    <% locations.each do |location| %>
+    <% locations.includes(:networks).each do |location| %>
       <section id="<%= html_id(location.common_name) %>">
         <div class="page-header">
           <h3><%= location.common_name.upcase %> <small><%= location.city.downcase %>, <%= location.state.downcase %></small></h3>
         </div>
         <% if location.networks.size > 0 %>
-          <table class="table table-condensed table-bordered table-striped table-sort">
+          <table class="table table-condensed table-bordered table-striped">
             <thead>
               <tr>
                 <th style="width: 10%">CIDR</th>
                 <th style="width: 55%">Description</th>
                 <th style="width: 10%">VLAN ID</th>
-                <th style="width: 10%">Usage</th>
                 <% if is_admin? %><th style="width: 15%">Actions</th><% end %>
               </tr>
             </thead>
             <tbody>
-              <% location.networks.each do |network| %>
+              <% location.networks.includes(:addresses).each do |network| %>
                 <tr>
                   <td><%= network.to_link %></td>
                   <td><%= network.description.human_empty %></td>
                   <td><%= network.vlan_id.to_s.human_empty %></td>
-                  <td><%= network.usage %>%</td>
                   <% if is_admin? %>
                     <td>
                       <button onclick="load_util('/network/<%= network.id %>/edit');" class="btn btn-mini"><i class="icon-pencil"></i> Edit</button>

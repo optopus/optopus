@@ -1,0 +1,23 @@
+<% if @address %>
+  <form method="post" action="/network/<%= @network.id %>/address/<%= @address.ip_address %>" class="form-horizontal">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>Edit address <%= @address.ip_address %></h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="control-group">
+        <label class="control-label" for="network-description">Description</label>
+        <div class="controls">
+          <input id="address-description" name="address-description" placeholder="ex: anycast-dns" value="<%= @address.description %>">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+      <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+
+  </form>
+<% end %>

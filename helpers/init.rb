@@ -38,8 +38,13 @@ module Optopus
       end
 
       def is_admin?
-        return false unless is_user?
-        @user.roles.where(:id => admin_role.id).first != nil
+        return @is_admin if @is_admin != nil
+        if is_user?
+          @is_admin = @user.roles.where(:id => admin_role.id).first != nil
+        else
+          @is_admin = false
+        end
+        return @is_admin
       end
 
       def admin_role

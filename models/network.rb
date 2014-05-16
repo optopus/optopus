@@ -10,6 +10,10 @@ module Optopus
     before_save :assign_addresses
     before_destroy :remove_network_id_from_addresses
 
+    default_scope order(:address)
+
+    serialize :properties, ActiveRecord::Coders::Hstore
+
     def to_link
       "<a href=\"/network/#{self.id}\">#{self.address.to_cidr}</a>"
     end
@@ -24,6 +28,9 @@ module Optopus
 
     # Return the usage percentage of this network
     def usage
+      if address.netmask < 16
+        return 'n/a'
+      end
       possible_ips = available_ips.size + used_ips.size
       sprintf "%.2f", (used_ips.size.to_f / possible_ips.to_f) * 100
     end

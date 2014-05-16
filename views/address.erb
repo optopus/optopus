@@ -1,0 +1,81 @@
+<% if @address %>
+  <div class="row-fluid">
+    <% if is_admin? %>
+      <div class="span2">
+        <ul class="nav nav-list">
+          <li class="nav-header">Address Actions</li>
+          <li><a href="#" onclick="load_util('/network/<%= @network.id %>/address/<%= @address.ip_address %>/edit');"><i class="icon-edit"></i>Change description</a></li>
+          <li><a href="#" onclick="load_util('/network/<%= @network.id %>/address/<%= @address.ip_address %>/delete');"><i class="icon-trash"></i>Delete address</a></li>
+	  <li><a href="#" onclick="load_util('/network/<%= @network.id %>/address/<%= @address.ip_address %>/add_property');"><i class="icon-plus"></i>Add property</a></li>
+	  <li><a href="#" onclick="load_util('/network/<%= @network.id %>/address/<%= @address.ip_address %>/remove_property');"><i class="icon-minus"></i>Remove property</a></li>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="span10">
+      <ul class="breadcrumb">
+        <li><a href="/networks">Networks</a> <span class="divider">/</span></li>
+        <li><%= @network.to_link %> <span class="divider">/</span></li>
+        <li class="active"><%= @address.ip_address %></li>
+      </ul>
+
+      <header class="jumbotron subhead">
+        <h1>Address <%= @address.ip_address %></h1>
+      </header>
+
+      <section id="general">
+        <div class="page-header">
+          <h3>General</h3>
+        </div>
+
+        <table class="table table-condensed table-striped table-bordered">
+          <tbody>
+            <tr>
+              <td style="width: 10%">Description</td>
+              <td><%= @address.description.human_empty %></td>
+            </tr>
+            <% if @address.interface %>
+              <tr>
+                <td>Interface</td>
+                <td><%= @address.interface.name %></td>
+              </tr>
+              <tr>
+                <td>Node</td>
+                <td><%= @address.interface.node.to_link %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="properties">
+        <div class="page-header">
+          <h3>Properties</h3>
+          <small>Arbitrary properites associated with this address</small>
+        </div>
+
+        <% if @address.properties.keys.size > 0 %>
+          <table class="table table-condensed table-striped table-bordered">
+            <thead>
+              <tr>
+                <th style="width: 10%">Key</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @address.properties.keys.sort { |a,b| a <=> b }.each do |key| %>
+                <tr>
+                  <td><%= key %></td>
+                  <td><%= @address.properties[key] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <em>None</em>
+        <% end %>
+
+      </section>
+    </div>
+  </div>
+<% end %>
