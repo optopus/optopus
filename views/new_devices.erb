@@ -47,7 +47,7 @@
                 <td><%= device.serial_number.upcase %></td>
                 <td><code><%= device.primary_mac_address.upcase %></code></td>
                 <td><code><%= device.bmc_ip_address %></code></td>
-                <td><%= device.switch_name %></td>
+                <td><%= device.switch_name %> : <%= device.switch_port %></td>
               </tr>
             <% end %>
           </table>
