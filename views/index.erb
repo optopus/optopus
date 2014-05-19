@@ -153,10 +153,22 @@
     <div class='well'>
       <h3>New devices</h3>
       <table class='table table-condensed table-striped'>
-        <% @devices_to_be_provisioned.each do |device| -%>
-          <tr>
-            <td><%= device.serial_number %></td>
-          </tr>
+  <% model_counts = @devices_to_be_provisioned.reduce({}) do |m, object| %>
+    <% m[[object.model, object.location.common_name]] ||= 0 %>
+    <% m[[object.model, object.location.common_name]] += 1 %>
+    <% m %>
+  <% end %>
+            <tr>
+              <th>Model</th>
+	      <th>Location</th>
+              <th>Count</th>
+            </tr>
+            <% model_counts.each do |k,v| %>
+              <tr>
+                <td><%= k[0] %></td>
+                <td><%= k[1] %></td>
+                <td><%= v %></td>
+              </tr>
         <% end -%>
       </table>
       <p class='pull-right'><a href="/devices/new">show all</a></p>
