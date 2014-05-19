@@ -6,6 +6,7 @@ module Optopus
     end
 
     get '/devices/new' do
+      subnav_from_locations
       @devices = Optopus::Device.where(:provisioned => false)
       erb :new_devices
     end
