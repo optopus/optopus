@@ -67,8 +67,12 @@
               <li id="networks">
                 <a href='/networks'>Networks</a>
               </li>
-              <li id="events">
-                <a href='/events'>Events</a>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Events<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="/events/network">Network Events</a></li>
+                  <li><a href="/events">Other Events</a></li>
+               </ul>
               </li>
               <% settings.plugin_navigation.each do |nav_link| %>
                 <li id="<%= html_id(nav_link[:display]) %>"><a href="<%= nav_link[:route] %>"><%= nav_link[:display] %></a></li>

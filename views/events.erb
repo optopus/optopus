@@ -16,7 +16,11 @@
       <tr>
         <td><%= event.id %></td>
         <td><%= event.created_at.strftime("%D %R") %></td>
+	<% if event.type == "network_change" %>
+	<td><a href="/events/network"><%= event.type %></a></td>
+	<% else %>
         <td><a href="/search?query=event_type%3A<%= event.type %>"><%= event.type %></a></td>
+	<% end %>
         <td><%= event.rendered_message %></td>
       </tr>
     <% end %>
