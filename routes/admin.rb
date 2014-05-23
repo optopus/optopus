@@ -147,7 +147,6 @@ module Optopus
       begin
         validate_param_presence 'location-name'
         location = Optopus::Location.create!(:common_name => params['location-name'], :city => params['location-city'], :state => params['location-state'])
-        puts location.inspect
         register_event "{{ references.user.to_link }} created location #{location.common_name}", :type => 'location'
       rescue Exception => e
         handle_error(e)
@@ -183,7 +182,6 @@ module Optopus
     post '/admin/location/:id/edit' do
       begin
         location = Optopus::Location.find_by_id(params[:id])
-        puts location.inspect
         raise 'Location does not exist!' if location.nil?
 
         if params['location-name']
@@ -191,7 +189,6 @@ module Optopus
           location.city = params['location-city']
           location.state = params['location-state']
           location.save!
-          puts location.inspect
           register_event "{{ references.user.to_link }} renamed location #{location.common_name} to #{params['location-name']}", :type => 'location'
         end
       rescue Exception => e

@@ -39,7 +39,6 @@ module Optopus
     private
 
     def sanitize_data
-      puts clean_text(display_name)
       self.display_name = clean_text(display_name)
     end
   end
