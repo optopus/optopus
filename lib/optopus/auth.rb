@@ -4,7 +4,7 @@ module Optopus
       if app.settings.respond_to?(:authorization)
         type = app.settings.authorization['type']
         Optopus::Auth.constants.each do |const|
-          if type == const.downcase
+          if type == const.to_s.downcase
             puts "Loading auth plugin: #{const}"
             app.register Optopus::Auth.const_get(const)
           end
