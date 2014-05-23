@@ -36,12 +36,18 @@ module Optopus
     register Sinatra::ConfigFile
     register Sinatra::Session
     register WillPaginate::Sinatra
-    config_file ENV['OPTOPUS_CONFIG_FILE'] || File.expand_path(File.dirname(__FILE__) + '/config/application.yaml')
+    application_config_file = ENV['OPTOPUS_CONFIG_FILE'] || File.expand_path(File.dirname(__FILE__) + '/config/application.yaml')
+    config_file application_config_file
     set :root, File.dirname(__FILE__)
     enable :logging
     enable :sessions
     enable :method_override
     use Rack::Flash
+
+    # TODO: move config file validation to a proper location
+    if not settings.respond_to?(:plugins)
+      raise "Invalid application config file detected! Please add the plugins key to #{application_config_file}"
+    end
 
     register Optopus::Auth
     set(:auth) do |*roles|
