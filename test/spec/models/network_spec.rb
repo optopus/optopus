@@ -79,7 +79,7 @@ describe Optopus::Address, '#new' do
   end
 
   it 'fails to save when duplicate ip_address is defined' do
-    expect { Optopus::Address.create!(:ip_address => @valid_address) }.to raise_error(ActiveRecord::RecordNotUnique)
+    expect { Optopus::Address.create!(:ip_address => @valid_address) }.to raise_error(ActiveRecord::RecordInvalid)
   end
 
   it 'fails to save if assigned network does not contain the assigned ip_address' do
