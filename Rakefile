@@ -1,4 +1,4 @@
-require 'app'
+require './app'
 require 'active_record/fixtures'
 require 'rspec/core/rake_task'
 
