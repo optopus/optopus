@@ -72,7 +72,7 @@ describe Optopus::Node, '#facts' do
   end
 
   it 'can query for facts previously inserted' do
-    node = Optopus::Node.where("facts @> (:key => :value)", :key => 'id', :value => 'crazed').first
+    node = Optopus::Node.where("facts @> 'id=>crazed'").first
     node.id.should == @node.id
   end
 end

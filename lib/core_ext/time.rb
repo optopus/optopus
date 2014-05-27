@@ -1,7 +1,6 @@
 class Time
   def time_ago
     num = Time.now.to_i - self.to_i
-    puts num
     return "just now" if num < 10
     return "#{num} seconds ago" if num < 60
     num = num / 60

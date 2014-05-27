@@ -62,6 +62,20 @@
         </section>
       <% end %>
 
+      <% if @location.hypervisors.size > 0 %>
+        <section id="hypervisor-nodes">
+          <div class="page-header">
+            <h3>Hypervisors</h3>
+          </div>
+
+          <ul class="unstyled">
+            <% @location.hypervisors.order(:hostname).each do |node| %>
+              <li><%= node.to_link %></li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+
       <% if @location.regular_nodes.size > 0 %>
         <section id="nodes">
           <div class="page-header">

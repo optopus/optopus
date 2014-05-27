@@ -12,9 +12,10 @@ module Optopus
     def self.paths
       # In order for this to properly work inside of our Gemfile, we cannot use
       # any code from Sinatra or other gems.
+      paths = Array.new
       case defined?(Optopus::App)
       when true
-        paths = File.join(File.expand_path(Optopus::App.root), 'plugins').to_a
+        paths << File.join(File.expand_path(Optopus::App.root), 'plugins')
         if Optopus::App.settings.respond_to?(:plugins_path)
           paths << Optopus::App.settings.plugins_path
         end
@@ -23,7 +24,7 @@ module Optopus
         # determining the current environment. It's a big hairy since we could
         # theoretically have drastically different paths array based on whether
         # or not you have included Optopus::App.
-        paths = File.join(Dir.pwd, 'plugins').to_a
+        paths << File.join(Dir.pwd, 'plugins')
         config_file = ENV['OPTOPUS_CONFIG_FILE'] || File.join(Dir.pwd, 'config', 'application.yaml')
         environment = ENV['RACK_ENV'] || 'development'
         if File.exists?(config_file)
