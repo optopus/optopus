@@ -26,6 +26,8 @@ module Optopus
                 section
               end
             end
+          else
+            section
           end
         end
       end
