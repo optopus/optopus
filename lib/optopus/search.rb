@@ -10,6 +10,11 @@ module Optopus
       max_result_size = options.delete(:max_result_size) || 2000
       results = []
 
+      # Ruby 1.9.3+ compatibility since String is no longer an Enumerable
+      if types.kind_of?(String)
+        types = types.lines
+      end
+
       # Loop through each of the models, checking if they respond to search
       # if they do, perform a search and store the results
       models = types ? types.map { |t| Optopus::Models.type(t) } : Optopus::Models.list
