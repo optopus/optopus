@@ -320,6 +320,7 @@ module Optopus
       search(:size => 2000) do
         query do
           boolean do
+            must { term :active, true }
             must { term :location, location } if location
             ranges.each do |field, value|
               must { range field, value }

@@ -74,8 +74,8 @@ module Optopus
       end
 
       Optopus::Plugin.constants.each do |const|
-        next if const == 'DontCall'
-        next if const == 'Model'
+        next if const.to_s == 'DontCall'
+        next if const.to_s == 'Model'
         # Only load a plugin if we have a configuration for it
         config_key = const.to_s.demodulize.underscore
         if app.settings.respond_to?(:plugins) && app.settings.plugins.include?(config_key)

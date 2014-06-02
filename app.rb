@@ -104,11 +104,11 @@ module Optopus
       end
 
       def node_partials
-        settings.partials[:node]
+        settings.partials[:node] || []
       end
 
       def user_profile_partials
-        settings.partials[:user_profile]
+        settings.partials[:user_profile] || []
       end
     end
   end
