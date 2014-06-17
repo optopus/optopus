@@ -44,6 +44,9 @@ module Optopus
     enable :method_override
     use Rack::Flash
 
+    # Add QA to environments
+    set :environments, %w{development test production qa}
+
     # TODO: move config file validation to a proper location
     if not settings.respond_to?(:plugins)
       raise "Invalid application config file detected! Please add the plugins key to #{application_config_file}"
