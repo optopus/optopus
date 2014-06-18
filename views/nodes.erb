@@ -22,7 +22,7 @@
         </tr>
       </thead>
       <tbody>
-        <% location.nodes.includes(:node_comments, :pod).order_by_pod_name.each do |node| %>
+        <% location.nodes.includes(:node_comments, :pod).each do |node| %>
           <tr>
             <td><a class='btn btn-mini' style='float:right' href='#' onclick=<%= "'load_util(\"/node/#{node.id}/addcomment\");'"%>><i class='icon-plus'></i> </a> <%= node.to_link %><%= !node.node_comments.empty? ? "<a class='btn btn-mini' style='float:right' href='#' onclick='load_util(\"/node/#{node.id}/comments\");'><i class='icon-comment'></i> </a>" : "" %></td>
             <td><%= node.created_at.strftime("%D %R") %></td>
