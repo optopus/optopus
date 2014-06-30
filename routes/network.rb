@@ -26,7 +26,7 @@ module Optopus
       erb :networks
     end
 
-    put '/network', :auth => :admin do
+    put '/network', :auth => [:admin, :network_admin] do
       begin
         validate_param_presence 'network-address', 'network-bits', 'network-location-id'
         unless params['network-bits'].to_i.between?(1, 32)
@@ -73,14 +73,14 @@ module Optopus
       erb :edit_network
     end
 
-    get '/network/:id/add_property', :auth => :admin do
+    get '/network/:id/add_property', :auth => [:admin, :network_admin] do
       network_from_params
       @property_action = "/network/#{params[:id]}/add_property"
       @title = "Add property for #{@network.address.to_cidr}"
       erb :add_property
     end
 
-    post '/network/:id/add_property', :auth => :admin do
+    post '/network/:id/add_property', :auth => [:admin, :network_admin] do
       begin
         network_from_params
         validate_param_presence 'property-key', 'property-value'
@@ -99,7 +99,7 @@ module Optopus
       redirect back
     end
 
-    get '/network/:id/remove_property', :auth => :admin do
+    get '/network/:id/remove_property', :auth => [:admin, :network_admin] do
       network_from_params
       @property_action = "/network/#{params[:id]}/remove_property"
       @title = "Remove property for #{@network.address.to_cidr}"
@@ -107,7 +107,7 @@ module Optopus
       erb :remove_property
     end
 
-    delete '/network/:id/remove_property', :auth => :admin do
+    delete '/network/:id/remove_property', :auth => [:admin, :network_admin] do
       begin
         network_from_params
         validate_param_presence 'property-key'
@@ -124,7 +124,7 @@ module Optopus
       redirect back
     end
 
-    post '/network/:id/edit', :auth => :admin do
+    post '/network/:id/edit', :auth => [:admin, :network_admin] do
       begin
         network_from_params
         raise 'Network does not exist!' if @network.nil?
@@ -158,12 +158,12 @@ module Optopus
     end
 
     # Simple delete form that is loaded into a modal
-    get '/network/:id/delete', :auth => :admin do
+    get '/network/:id/delete', :auth => [:admin, :network_admin] do
       network_from_params
       erb :delete_network
     end
 
-    delete '/network/:id', :auth => :admin do
+    delete '/network/:id', :auth => [:admin, :network_admin] do
       begin
         network_from_params
         raise 'Network does not exist!' if @network.nil?
@@ -208,7 +208,7 @@ module Optopus
       end
     end
 
-    post '/network/:id/address/:ip', :auth => :admin do
+    post '/network/:id/address/:ip', :auth => [:admin, :network_admin] do
       begin
         network_from_params
         address_from_params
@@ -225,7 +225,7 @@ module Optopus
       redirect back
     end
 
-    delete '/network/:id/address/:ip', :auth => :admin do
+    delete '/network/:id/address/:ip', :auth => [:admin, :network_admin] do
       begin
         network_from_params
         address_from_params
@@ -239,19 +239,19 @@ module Optopus
       redirect "/network/#{@network.id}"
     end
 
-    get '/network/:id/address/:ip/delete', :auth => :admin do
+    get '/network/:id/address/:ip/delete', :auth => [:admin, :network_admin] do
       network_from_params
       address_from_params
       erb :delete_address
     end
 
-    get '/network/:id/address/:ip/edit', :auth => :admin do
+    get '/network/:id/address/:ip/edit', :auth => [:admin, :network_admin] do
       network_from_params
       address_from_params
       erb :edit_address
     end
 
-    get '/network/:id/address/:ip/add_property', :auth => :admin do
+    get '/network/:id/address/:ip/add_property', :auth => [:admin, :network_admin] do
       network_from_params
       address_from_params
       @property_action = "/network/#{params[:id]}/address/#{params[:ip]}/add_property"
@@ -259,7 +259,7 @@ module Optopus
       erb :add_property
     end
 
-    post '/network/:id/address/:ip/add_property', :auth => :admin do
+    post '/network/:id/address/:ip/add_property', :auth => [:admin, :network_admin] do
       begin
         network_from_params
         address_from_params
@@ -279,7 +279,7 @@ module Optopus
       redirect back
     end
 
-    get '/network/:id/address/:ip/remove_property', :auth => :admin do
+    get '/network/:id/address/:ip/remove_property', :auth => [:admin, :network_admin] do
       network_from_params
       address_from_params
       @property_action = "/network/#{params[:id]}/address/#{params[:ip]}/remove_property"
@@ -288,7 +288,7 @@ module Optopus
       erb :remove_property
     end
 
-    delete '/network/:id/address/:ip/remove_property', :auth => :admin do
+    delete '/network/:id/address/:ip/remove_property', :auth => [:admin, :network_admin] do
       begin
         network_from_params
         address_from_params
