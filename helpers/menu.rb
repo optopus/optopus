@@ -12,6 +12,10 @@ module Optopus::AppHelpers::Menu
     Optopus::ProfileMenu.instance.sections
   end
 
+  def navlink_sections
+    get_authorized_sections(settings.plugin_navigation)
+  end
+
   def get_authorized_sections(sections)
     sections.select do |section|
       if not section.required_role.nil?

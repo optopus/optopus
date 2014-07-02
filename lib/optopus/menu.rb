@@ -18,11 +18,12 @@ module Optopus
   class NavMenu < BaseMenu ; end
 
   class NavLink
-    attr_accessor :display, :route, :type
+    attr_accessor :display, :route, :type, :required_role
 
     def initialize(options={})
       @display = options.delete(:display)
       @route = options.delete(:route)
+      @required_role = options.delete(:required_role)
       @type = options.delete(:type) || 'simple'
     end
 
@@ -45,7 +46,6 @@ module Optopus
 
     def to_html_dropdown
       html = []
-      html << '<ul class="dropdown">'
       html << '  <li class="dropdown">'
       html << "    <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\">#{@display}<b class=\"caret\"></b></a>"
       html << '    <ul class="dropdown-menu">'
@@ -56,7 +56,6 @@ module Optopus
       end
       html << '    </ul>'
       html << '  </li>'
-      html << '</ul>'
       html.join("\n")
     end
 
