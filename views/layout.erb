@@ -76,7 +76,7 @@
                </ul>
               </li>
               <% settings.plugin_navigation.each do |nav_link| %>
-                <li id="<%= html_id(nav_link[:display]) %>"><a href="<%= nav_link[:route] %>"><%= nav_link[:display] %></a></li>
+                <%= nav_link.to_html %>
               <% end %>
             </ul>
             <ul class="nav pull-right">
