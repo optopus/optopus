@@ -1,6 +1,6 @@
 <% if @address %>
   <div class="row-fluid">
-    <% if is_admin? %>
+    <% if is_admin? || is_authorized?('network_admin') %>
       <div class="span2">
         <ul class="nav nav-list">
           <li class="nav-header">Address Actions</li>

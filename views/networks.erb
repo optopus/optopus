@@ -1,5 +1,5 @@
 <div class="row-fluid">
-  <% if is_admin? %>
+  <% if is_admin? || is_authorized?('network_admin') %>
     <div class="span2">
       <%= erb :networks_admin_menu %>
     </div>
@@ -46,7 +46,7 @@
                 <th style="width: 10%">CIDR</th>
                 <th style="width: 55%">Description</th>
                 <th style="width: 10%">VLAN ID</th>
-                <% if is_admin? %><th style="width: 15%">Actions</th><% end %>
+                <% if is_admin? || is_authorized?('network_admin') %><th style="width: 15%">Actions</th><% end %>
               </tr>
             </thead>
             <tbody>
@@ -55,7 +55,7 @@
                   <td><%= network.to_link %></td>
                   <td><%= network.description.human_empty %></td>
                   <td><%= network.vlan_id.to_s.human_empty %></td>
-                  <% if is_admin? %>
+                  <% if is_admin? || is_authorized?('network_admin')  %>
                     <td>
                       <button onclick="load_util('/network/<%= network.id %>/edit');" class="btn btn-mini"><i class="icon-pencil"></i> Edit</button>
                       <button onclick="load_util('/network/<%= network.id %>/delete');" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i> Delete</button>
