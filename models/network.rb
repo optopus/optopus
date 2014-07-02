@@ -46,7 +46,7 @@ module Optopus
 
       # if we changed our cidr address, go through and update
       # addresses that are no longer part of this network
-      if self.address_changed?
+      if !self.new_record? && self.address_changed?
         self.addresses.where('NOT ip_address << ?', self.address.to_cidr).update_all('network_id = NULL')
       end
     end

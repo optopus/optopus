@@ -1,4 +1,5 @@
 require 'backports/basic_object' unless defined? BasicObject
+require 'optopus/menu'
 require_relative 'plugin/model'
 
 module Optopus
@@ -27,10 +28,16 @@ module Optopus
     end
 
     def nav_link(options={})
-      if options.include?(:route) && options.include?(:display)
-        set :nav_link, options
+      if options.include?(:link)
+        if !options[:link].kind_of?(Optopus::NavLink)
+          raise 'link must be an Optopus::NavLink'
+        end
+        set :nav_link, options[:link]
+      elsif options.include?(:route) && options.include?(:display)
+        link = Optopus::NavLink.new(options)
+        set :nav_link, link
       else
-        raise 'nav_link must contain route and display keys'
+        raise 'nav_link must contain route and display keys, or link'
       end
     end
 
