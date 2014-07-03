@@ -44,6 +44,52 @@
       $(document).bind('keyup', 't', function() {
         $('#dt-filter-tables').focus();
       });
+
+      function createGraph(name, series, opts) {
+        opts = opts || {};
+        graphRenderer = opts.renderer || 'stack';
+        graphWidth = opts.width || 580;
+        graphHeight = opts.height || 150;
+        yAxis = opts.yAxis
+        xAxis = opts.xAxis
+        if (yAxis === undefined) {
+          yAxis = true;
+        }
+        if (xAxis === undefined) {
+          xAxis = true;
+        }
+        var graph = new Rickshaw.Graph({
+          element: document.getElementById(name + '-chart'),
+          width: graphWidth,
+          height: graphHeight,
+          renderer: graphRenderer,
+          series: series
+        });
+
+        var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+          graph: graph,
+          formatter: function(series, x, y) {
+            var date = '<span class="date">' + new Date(x * 1000).toUTCString() + '</span>';
+            var swatch = '<span class="detail_swatch" style="background-color: ' + series.color + '"></span>';
+            var content = swatch + series.name + ": " + parseInt(y) + '<br>' + date;
+            return content;
+          }
+        });
+
+        if (xAxis) {
+          var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+        }
+
+        if (yAxis) {
+          var y_axis = new Rickshaw.Graph.Axis.Y({
+            graph: graph,
+            orientation: 'left',
+            element: document.getElementById(name + '-chart-y-axis'),
+          });
+        }
+
+        return graph;
+      }
     </script>
   </head>
   <body data-spy="scroll" data-target=".subnav">
@@ -55,7 +101,7 @@
             <span class='icon-bar'></span>
             <span class='icon-bar'></span>
           </a>
-          <a class='brand' href='/'>Ops Dashboard</a>
+          <a class='brand' href='/'>Optopus</a>
           <div class='nav-collapse'>
             <ul class='nav'>
               <li id='bare_metal'>
@@ -66,6 +112,9 @@
               </li>
               <li id="networks">
                 <a href='/networks'>Networks</a>
+              </li>
+              <li id="reports">
+                <a href='/reports'>Reports</a>
               </li>
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Events<b class="caret"></b></a>
