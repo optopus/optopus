@@ -122,8 +122,13 @@ module Optopus::AppHelpers::Main
     list += '</ul>'
   end
 
-  def rickshaw_data_node_creation_by_day
-    Optopus::Node.order('date_created_at ASC').count(:group => "DATE(created_at)").inject('[') do |data, (date, count)|
+  def rickshaw_data_node_creation_by_day(days=nil)
+    if days
+      data = Optopus::Node.order('date_created_at ASC').where('created_at > ?', days.days.ago).count(:group => "DATE(created_at)")
+    else
+      data = Optopus::Node.order('date_created_at ASC').count(:group => "DATE(created_at)")
+    end
+    data.inject('[') do |data, (date, count)|
       data + "{ x: #{Time.parse(date).to_i}, y: #{count.to_i} },"
     end + ']'
   end
@@ -134,9 +139,9 @@ module Optopus::AppHelpers::Main
     end + ']'
   end
 
-  def rickshaw_series_event_types_by_day
+  def rickshaw_series_event_types_by_day(days=nil)
     Optopus::Event.unique_event_types.inject([]) do |series, event_type|
-      data = Optopus::Event.group_event_type_by_created_at(event_type).inject([]) do |data, (date, count)|
+      data = Optopus::Event.group_event_type_by_created_at(event_type, days).inject([]) do |data, (date, count)|
         data << { :x => Time.parse(date).to_i, :y => count.to_i }
       end
       series << { :data => data, :name => event_type }

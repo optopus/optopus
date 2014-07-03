@@ -1,0 +1,47 @@
+<div class='row-fluid'>
+  <div class='span7'>
+    <h3>Event types by day</h3>
+    <div class="chart-container">
+      <div class="chart" id="events-by-day-chart"></div>
+      <div class="y-axis" id="events-by-day-chart-y-axis"></div>
+    </div>
+    <h3>Active nodes over time</h3>
+    <div class="chart-container">
+      <div class="chart" id="active-nodes-over-time-chart"></div>
+      <div class="y-axis" id="active-nodes-over-time-chart-y-axis"></div>
+    </div>
+    <h3>Node creation by day</h3>
+    <div class="chart-container">
+      <div class="chart" id="nodes-by-day-chart"></div>
+      <div class="y-axis" id="nodes-by-day-chart-y-axis"></div>
+    </div>
+    <script>
+      var activeNodesOverTimeSeries = [{
+        name: 'nodes',
+        color: 'steelblue',
+        data: <%= rickshaw_data_active_nodes_over_time %>
+      }]
+      var activeNodesOverTimeGraph = createGraph('active-nodes-over-time', activeNodesOverTimeSeries);
+      activeNodesOverTimeGraph.render();
+
+      var nodesByDaySeries = [{
+        name: 'nodes',
+        color: 'steelblue',
+        data: <%= rickshaw_data_node_creation_by_day %>
+      }]
+      var nodesByDayGraph = createGraph('nodes-by-day', nodesByDaySeries, { renderer: 'bar' });
+      nodesByDayGraph.render();
+
+      var eventsByDaySeries = jQuery.parseJSON('<%= rickshaw_series_event_types_by_day %>');
+      var palette = new Rickshaw.Color.Palette();
+      $.each(eventsByDaySeries, function() {
+        if (this.color === undefined) {
+          this.color = palette.color()
+        }
+      });
+      Rickshaw.Series.zeroFill(eventsByDaySeries);
+      var eventsByDayGraph = createGraph('events-by-day', eventsByDaySeries, { renderer: 'line' });
+      eventsByDayGraph.render();
+    </script>
+  </div>
+</div>

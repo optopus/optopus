@@ -1,144 +1,43 @@
-<style>
-  .chart-container {
-    position: relative;
-    font-family: Arial, Helvetica, sans-serif;
-    margin-top: 20px;
-    margin-left: 40px;
-    margin-bottom: 20px;
-  }
-  .chart {
-    position: relative;
-    left: 40px;
-  }
-  .y-axis {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 40px;
-  }
-  .rickshaw_graph .detail .x_label { display: none }
-  .rickshaw_graph .detail .item { line-height: 1.4; padding: 0.5em }
-  .detail_swatch { float: right; display: inline-block; width: 10px; height: 10px; margin: 0 4px 0 0 }
-  .rickshaw_graph .detail .date { color: #a0a0a0 }
-</style>
 <div class='row-fluid'>
-  <div class='span7'>
-    <div class="page-header">
-      <h1>Overview</h1>
-      <p class="lead">Currently watching out for <b><%= @active_node_count %></b> nodes</p>
-    </div>
-    <h3>Event types by day</h3>
-    <div class="chart-container">
-      <div class="chart" id="events-by-day-chart"></div>
-      <div class="y-axis" id="events-by-day-chart-y-axis"></div>
-    </div>
-    <h3>Active nodes over time</h3>
-    <div class="chart-container">
-      <div class="chart" id="active-nodes-over-time-chart"></div>
-      <div class="y-axis" id="active-nodes-over-time-chart-y-axis"></div>
-    </div>
-    <h3>Node creation by day</h3>
-    <div class="chart-container">
-      <div class="chart" id="nodes-by-day-chart"></div>
-      <div class="y-axis" id="nodes-by-day-chart-y-axis"></div>
-    </div>
-    <script>
-      function createGraph(name, series, opts) {
-        opts = opts || {}
-        graphRenderer = opts.renderer || 'stack'
-        graphWidth = opts.width || 580
-        graphHeight = opts.height || 150
-        var graph = new Rickshaw.Graph({
-          element: document.getElementById(name + '-chart'),
-          width: graphWidth,
-          height: graphHeight,
-          renderer: graphRenderer,
-          series: series
-        });
-
-        var hoverDetail = new Rickshaw.Graph.HoverDetail( {
-          graph: graph,
-          formatter: function(series, x, y) {
-            var date = '<span class="date">' + new Date(x * 1000).toUTCString() + '</span>';
-            var swatch = '<span class="detail_swatch" style="background-color: ' + series.color + '"></span>';
-            var content = swatch + series.name + ": " + parseInt(y) + '<br>' + date;
-            return content;
-          }
-        });
-
-        var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
-        var y_axis = new Rickshaw.Graph.Axis.Y({
-          graph: graph,
-          orientation: 'left',
-          element: document.getElementById(name + '-chart-y-axis'),
-        });
-
-        return graph;
-      }
-
-      var activeNodesOverTimeSeries = [{
-        name: 'nodes',
-        color: 'steelblue',
-        data: <%= rickshaw_data_active_nodes_over_time %>
-      }]
-      var activeNodesOverTimeGraph = createGraph('active-nodes-over-time', activeNodesOverTimeSeries);
-      activeNodesOverTimeGraph.render();
-
-      var nodesByDaySeries = [{
-        name: 'nodes',
-        color: 'steelblue',
-        data: <%= rickshaw_data_node_creation_by_day %>
-      }]
-      var nodesByDayGraph = createGraph('nodes-by-day', nodesByDaySeries, { renderer: 'bar' });
-      nodesByDayGraph.render();
-
-      var eventsByDaySeries = jQuery.parseJSON('<%= rickshaw_series_event_types_by_day %>');
-      var palette = new Rickshaw.Color.Palette();
-      $.each(eventsByDaySeries, function() {
-        if (this.color === undefined) {
-          this.color = palette.color()
-        }
-      });
-      Rickshaw.Series.zeroFill(eventsByDaySeries);
-      var eventsByDayGraph = createGraph('events-by-day', eventsByDaySeries, { renderer: 'line' });
-      eventsByDayGraph.render();
-    </script>
+  <div class="page-header">
+    <h1>Overview</h1>
+    <p class="lead">Currently watching out for <b><%= @active_node_count %></b> nodes</p>
   </div>
-  <div class='span4'>
-  <% if @recent_events && @recent_events.size > 0 %>
-    <div class='well'>
-      <h3>Recent events</h3>
+  <div class='span4 well' style="margin: 6px">
+  <% if @devices_to_be_provisioned && @devices_to_be_provisioned.size > 0 %>
+    <% model_counts = @devices_to_be_provisioned.reduce({}) do |m, object| %>
+      <% m[[object.model, object.location.common_name]] ||= 0 %>
+      <% m[[object.model, object.location.common_name]] += 1 %>
+      <% m %>
+    <% end %>
+    <div class='unit'>
+      <h3>New devices</h3>
       <table class='table table-condensed table-striped'>
-        <% @recent_events.each do |event| -%>
+        <tr>
+          <th>Model</th>
+          <th>Location</th>
+          <th>Count</th>
+        </tr>
+        <% model_counts.each do |k,v| %>
           <tr>
-            <td><%= event.rendered_message %> <small class="pull-right muted"><%= event.time_ago %></small></td>
+            <td><%= k[0] %></td>
+            <td><%= k[1] %></td>
+            <td><%= v %></td>
           </tr>
         <% end -%>
       </table>
-      <p class='pull-right'><a href="/events">show all</a></p>
+      <p class='pull-right'><a href="/devices/new">show all</a></p>
     </div>
   <% end %>
-  <% if @inactive_nodes && @inactive_nodes.size > 0 %>
-    <div class='well'>
-      <h3>Dead nodes</h3>
-      <table class='table table-condensed table-striped'>
-        <% @inactive_nodes.each do |node| %>
-          <tr>
-            <td><%= node.to_link %></td>
-            <% if is_admin? %>
-              <td>
-                <form method="post" action="/node/<%= node.id %>" class="form-inline" style="float: left; margin: 0 0 0 5px;"><input type="hidden" name="_method" value="delete"><button type="submit" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i>Delete</button></form>
-              </td>
-            <% end %>
-          </tr>
-        <% end %>
-      </table>
-      <p class='pull-right'><a href="/nodes/dead">show all</a></p>
-    </div>
-  <% end%>
+  </div>
+  <div class='span4' style="margin: 6px">
   <% if @new_nodes && @new_nodes.size > 0 %>
     <div class='well'>
       <h3>New nodes</h3>
+      <div class="chart-container" style="margin: 0; margin-bottom: 10px; margin-top: 10px">
+        <div class="chart" id="node-creation-by-date-chart"></div>
+        <div class="y-axis" id="node-creation-by-date-chart-y-axis"></div>
+      </div>
       <table class='table table-condensed table-striped'>
         <% @new_nodes.each do |node| %>
           <tr>
@@ -149,30 +48,67 @@
       <p class='pull-right'><a href="/nodes/new">show all</a></p>
     </div>
   <% end %>
-  <% if @devices_to_be_provisioned && @devices_to_be_provisioned.size > 0 %>
+  <% if @inactive_nodes && @inactive_nodes.size > 0 %>
     <div class='well'>
-      <h3>New devices</h3>
+      <h3>Dead nodes</h3>
       <table class='table table-condensed table-striped'>
-  <% model_counts = @devices_to_be_provisioned.reduce({}) do |m, object| %>
-    <% m[[object.model, object.location.common_name]] ||= 0 %>
-    <% m[[object.model, object.location.common_name]] += 1 %>
-    <% m %>
-  <% end %>
-            <tr>
-              <th>Model</th>
-	      <th>Location</th>
-              <th>Count</th>
-            </tr>
-            <% model_counts.each do |k,v| %>
-              <tr>
-                <td><%= k[0] %></td>
-                <td><%= k[1] %></td>
-                <td><%= v %></td>
-              </tr>
+        <% @inactive_nodes.each do |node| %>
+          <tr>
+            <td><%= node.to_link %></td>
+          </tr>
+        <% end %>
+      </table>
+      <p class='pull-right'><a href="/nodes/dead">show all</a></p>
+    </div>
+  <% end%>
+  </div>
+  <div class='span4' style="margin: 6px">
+  <% if @recent_events && @recent_events.size > 0 %>
+    <div class='well'>
+      <h3>Recent events</h3>
+      <div class="chart-container" style="margin: 0; margin-bottom: 10px; margin-top: 10px">
+        <div class="chart" id="events-chart"></div>
+        <div class="y-axis" id="events-chart-y-axis"></div>
+      </div>
+      <table class='table table-condensed table-striped'>
+        <% @recent_events.each do |event| -%>
+          <tr>
+            <td><%= event.rendered_message %> <small class="pull-right muted"><%= event.time_ago %></small></td>
+          </tr>
         <% end -%>
       </table>
-      <p class='pull-right'><a href="/devices/new">show all</a></p>
+      <p class='pull-right'><a href="/events">show all</a></p>
     </div>
   <% end %>
   </div>
 </div>
+<script>
+      var eventSeries = jQuery.parseJSON('<%= rickshaw_series_event_types_by_day(10) %>');
+      var palette = new Rickshaw.Color.Palette();
+      $.each(eventSeries, function() {
+        if (this.color === undefined) {
+          this.color = palette.color()
+        }
+      });
+      Rickshaw.Series.zeroFill(eventSeries);
+
+      var nodesByDaySeries = [{
+        name: 'nodes',
+        color: 'steelblue',
+        data: <%= rickshaw_data_node_creation_by_day(10) %>
+      }]
+
+      var graphOptions = {
+        renderer: 'line',
+        width: 300,
+        height: 50,
+        xAxis: false,
+        yAxis: false,
+      };
+
+      var nodesByDayGraph = createGraph('node-creation-by-date', nodesByDaySeries, graphOptions);
+      var eventsGraph = createGraph('events', eventSeries, graphOptions);
+
+      nodesByDayGraph.render();
+      eventsGraph.render();
+</script>

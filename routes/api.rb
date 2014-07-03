@@ -352,7 +352,6 @@ module Optopus
       node.interfaces << interface
       address = Optopus::Address.find_by_ip_address(ip_address) || Optopus::Address.new(:ip_address => ip_address)
       if interface.address != address
-        interface.address.destroy unless interface.address.nil?
         interface.address = address
       end
       interface.save!
