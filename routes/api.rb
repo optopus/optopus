@@ -435,11 +435,16 @@ module Optopus
     end
 
     get '/api/device/:serial' do
-      @device = Optopus::Device.where(:serial_number => params[:serial].downcase).to_json
+      device = Optopus::Device.where(:serial_number => params[:serial].downcase).to_json
     end
 
     get '/api/device/:serial/new' do
-      @device = Optopus::Device.where(:serial_number => params[:serial].downcase, :provisioned => false).to_json
+      device = Optopus::Device.where(:serial_number => params[:serial].downcase, :provisioned => false).to_json
+    end
+
+    get '/api/devices/:location/new' do
+      location = Optopus::Location.find_by_common_name(params[:location])
+      device = Optopus::Device.where(:location_id => location, :provisioned => false).to_json
     end
   end
 end
