@@ -434,5 +434,12 @@ module Optopus
       end
     end
 
+    get '/api/device/:serial' do
+      @device = Optopus::Device.where(:serial_number => params[:serial].downcase).to_json
+    end
+
+    get '/api/device/:serial/new' do
+      @device = Optopus::Device.where(:serial_number => params[:serial].downcase, :provisioned => false).to_json
+    end
   end
 end
