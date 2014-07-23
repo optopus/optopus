@@ -183,4 +183,12 @@ module Optopus::AppHelpers::Main
 
     "<span class='badge #{ badge_class }'>#{ count }</span>"
   end
+
+  def base_url
+    base = "#{request.scheme}://#{request.host}"
+    if request.port != 80 || request.port != 443
+      base += ":#{request.port}"
+    end
+    base
+  end
 end
