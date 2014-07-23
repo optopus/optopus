@@ -179,6 +179,7 @@ module Optopus
             :properties => node.properties,
             :pod => node.pod ? node.pod.name : nil,
             :virtual => node.virtual,
+            :created_at => node.created_at,
           }
           if node.virtual
             data[:hypervisor] = node_lookup[node.hostname]
