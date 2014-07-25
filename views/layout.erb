@@ -110,9 +110,15 @@
               <li id="nodes">
                 <a href='/nodes'>Nodes</a>
               </li>
-              <li id="networks">
-                <a href='/networks'>Networks</a>
+
+              <li class="dropdown" id="networks">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Networks<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="/networks">Subnets</a></li>
+                  <li><a href="#" onclick='window.open("<%= base_url%>/network-weathermap", "_blank", "type=fullWindow, fullscreen");'>Weathermap</a></li>
+                </ul>
               </li>
+
               <li id="reports">
                 <a href='/reports'>Reports</a>
               </li>
