@@ -13,7 +13,9 @@ module Optopus::AppHelpers::Menu
   end
 
   def navlink_sections
-    get_authorized_sections(settings.plugin_navigation)
+    sections = Optopus.base_menus
+    sections += settings.plugin_navigation
+    get_authorized_sections(sections)
   end
 
   def get_authorized_sections(sections)

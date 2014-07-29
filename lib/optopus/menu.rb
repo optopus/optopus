@@ -1,6 +1,37 @@
 require 'singleton'
 
 module Optopus
+
+  def self.base_menus
+    return @base_menus if @base_menus
+    @base_menus = []
+    bare_metal_menu = Optopus::NavLink.new(:display => 'Bare Metal', :route => '/bare_metal', :id => :bare_metal)
+    nodes_menu = Optopus::NavLink.new(:display => 'Nodes', :route => '/nodes', :id => :nodes)
+    networks_menu = Optopus::NavLink.new(:display => 'Networks', :route => '/networks', :id => :networks)
+    reports_menu = Optopus::NavLink.new(:display => 'Reports', :route => '/routes', :id => :reports)
+    events_menu = Optopus::NavLink.new(:display => 'Events', :route => '/events', :id => :events)
+
+    # This should really be moved to plugins, but at the moment
+    # it is a hardcoded list.
+    events_menu.type = 'dropdown'
+    events_submenu = Optopus::Menu::Section.new(:name => 'event_types')
+    events_submenu.add_link(:display => 'Network Events', :href => '/events/network')
+    events_submenu.add_link(:display => 'Provision Events', :href => '/events/provision')
+    events_submenu.add_link(:display => 'All Events', :href => '/events')
+    events_menu.sections << events_submenu
+
+    @base_menus << bare_metal_menu
+    @base_menus << nodes_menu
+    @base_menus << networks_menu
+    @base_menus << reports_menu
+    @base_menus << events_menu
+    @base_menus
+  end
+
+  def self.get_base_menu(id)
+    base_menus.find { |m| m.options[:id] == id }
+  end
+
   class BaseMenu
     include Singleton
     def register_section(section)
@@ -18,13 +49,14 @@ module Optopus
   class NavMenu < BaseMenu ; end
 
   class NavLink
-    attr_accessor :display, :route, :type, :required_role
+    attr_accessor :display, :route, :type, :required_role, :options
 
     def initialize(options={})
       @display = options.delete(:display)
       @route = options.delete(:route)
       @required_role = options.delete(:required_role)
       @type = options.delete(:type) || 'simple'
+      @options = options
     end
 
     def sections
@@ -51,7 +83,7 @@ module Optopus
       html << '    <ul class="dropdown-menu">'
       @sections.each do |section|
         section.links.each do |link|
-          html << "<li><a href=\"#{link[:href]}\">#{link[:display]}</a></li>"
+          html << "<li><a href=\"#{link[:href]}\" onclick=\"#{link[:onclick]}\">#{link[:display]}</a></li>"
         end
       end
       html << '    </ul>'
