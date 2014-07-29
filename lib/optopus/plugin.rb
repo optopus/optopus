@@ -41,6 +41,27 @@ module Optopus
       end
     end
 
+    def register_menu_link(menu_id, options={})
+      menu = Optopus.get_base_menu(menu_id)
+      if menu.nil?
+        valid_menus = Optopus.base_menus.map { |m| m.options[:id] }
+        raise "invalid menu_id: #{menu_id}, must be one of: #{valid_menus.join(', ')}"
+      end
+      if !options.include?(:route) && !options.include?(:display)
+        raise 'register_menu_link options must include :route and :display'
+      end
+
+      # Convert the menu to a dropdown first, then add a new link
+      menu.type = 'dropdown'
+      main_section = Optopus::Menu::Section.new(:name => menu_id)
+      main_section.add_link(:display => menu.display, :href => menu.route)
+      section = Optopus::Menu::Section.new(:name => options[:display])
+      section.add_link(options)
+
+      menu.sections << main_section
+      menu.sections << section
+    end
+
     def register_partial(type, partial, options)
       plugin_settings[:partials] ||= Hash.new
       plugin_settings[:partials][type.to_sym] ||= Array.new
