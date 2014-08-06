@@ -1,6 +1,7 @@
 module Optopus
   class App
     before do
+      Optopus::App.set :erb, :layout => !request.xhr?
       @user = Optopus::User.includes(:roles).where(:id => session[:user_id]).first
     end
 
