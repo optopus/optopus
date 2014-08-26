@@ -58,7 +58,7 @@ module Optopus
 
     delete '/node/:id/comment/delete/:commentid' do
       begin
-        node = Optopus::Node.where(:id => params[:id]).first
+        @node = Optopus::Node.where(:id => params[:id]).first
         node.node_comments.where(:id => params[:commentid]).first.destroy
         redirect back
       rescue Exception => e 
@@ -140,13 +140,8 @@ module Optopus
       node = Optopus::Node.where(:id => params[:id]).first
       begin
         raise "Node '#{params[:id]}' does not exist." if node.nil?
-        case request.content_type
-        when 'application/json'
-          body(node.properties.to_json)
-        else
-          # TODO: implement erb template for viewing keys
-          raise "Route not implemented."
-        end
+        content_type :json
+        body(node.properties.to_json)
       rescue Exception => e
         handle_error(e)
       end
@@ -161,6 +156,58 @@ module Optopus
       rescue Exception => e
         handle_error(e)
       end
+    end
+
+    get '/node/:id/add_property', :auth => :admin do
+      @node = Optopus::Node.where(:id => params[:id]).first
+      @property_action = "/node/#{params[:id]}/add_property"
+      @key_placeholder = "ex: core_count"
+      @title = "Add property for #{@node.hostname}"
+      erb :add_property
+    end
+
+    post '/node/:id/add_property', :auth => :admin do
+      begin
+        @node = Optopus::Node.where(:id => params[:id]).first
+        validate_param_presence 'property-key', 'property-value'
+        key = params['property-key']
+        value = params['property-value']
+        action = @node.properties.has_key?(key) ? 'updated' : 'added'
+        @node.properties[key] = value
+        @node.save!
+        register_event "{{ references.user.to_link }} #{action} property '#{key} => #{value}' on #{@node.hostname}",
+                       :type => 'node', :references => [ @node ]
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      flash[:success] = "Successfully added new property '#{key} => #{value}'!"
+      redirect back
+    end
+
+    get '/node/:id/remove_property', :auth => :admin do
+      @node = Optopus::Node.where(:id => params[:id]).first
+      @property_action = "/node/#{params[:id]}/remove_property"
+      @title = "Remove property for #{@node.hostname}"
+      @properties = @node.properties
+      erb :remove_property
+    end
+
+    delete '/node/:id/remove_property', :auth => :admin do
+      begin
+        @node = Optopus::Node.where(:id => params[:id]).first
+        validate_param_presence 'property-key'
+        key = params['property-key']
+        @node.properties.delete(key)
+        @node.save!
+        register_event "{{ references.user.to_link }} removed property '#{key}' from #{@node.hostname}",
+                       :type => 'node', :references => [ @node ]
+      rescue Exception => e
+        handle_error(e)
+      end
+
+      flash[:success] = "Successfully removed property '#{key}' from node!"
+      redirect back
     end
   end
 end
