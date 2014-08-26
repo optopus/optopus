@@ -58,7 +58,7 @@ module Optopus
 
     delete '/node/:id/comment/delete/:commentid' do
       begin
-        @node = Optopus::Node.where(:id => params[:id]).first
+        node = Optopus::Node.where(:id => params[:id]).first
         node.node_comments.where(:id => params[:commentid]).first.destroy
         redirect back
       rescue Exception => e 
