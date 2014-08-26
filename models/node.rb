@@ -274,7 +274,7 @@ module Optopus
       end
       indexes :puppet_classes, :as => 'puppet_classes', :type => 'array'
       indexes :facts,          :boost => 1
-      indexes :libvirt,        :as => 'libvirt_data', :type => 'object'
+      indexes :libvirt,        :as => 'libvirt_data',   :type => 'object'
     end
 
     def self.find_domain(domain)

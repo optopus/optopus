@@ -104,26 +104,6 @@
           <a class='brand' href='/'>Optopus</a>
           <div class='nav-collapse'>
             <ul class='nav'>
-              <li id='bare_metal'>
-                <a href='/bare_metal'>Bare Metal</a>
-              </li>
-              <li id="nodes">
-                <a href='/nodes'>Nodes</a>
-              </li>
-              <li id="networks">
-                <a href='/networks'>Networks</a>
-              </li>
-              <li id="reports">
-                <a href='/reports'>Reports</a>
-              </li>
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Events<b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="/events/network">Network Events</a></li>
-                  <li><a href="/events/provision">Provision Events</a></li>
-                  <li><a href="/events">Other Events</a></li>
-               </ul>
-              </li>
               <% navlink_sections.each do |nav_link| %>
                 <%= nav_link.to_html %>
               <% end %>

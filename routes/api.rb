@@ -435,6 +435,18 @@ module Optopus
       end
     end
 
+    get '/api/networks' do
+      result = Optopus::Location.all.inject({}) do |result, location|
+        meta = {}
+        location.networks.each do |network|
+          meta[network.address.to_cidr] = { :description => network.description, :properties => network.properties }
+        end
+        result[location.common_name] = meta
+        result
+      end
+      body(result.to_json)
+    end
+
     get '/api/device/:serial' do
       device = Optopus::Device.where(:serial_number => params[:serial].downcase).to_json
     end

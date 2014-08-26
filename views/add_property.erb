@@ -8,14 +8,14 @@
       <div class="control-group">
         <label class="control-label" for="property-key">Key</label>
         <div class="controls">
-          <input id="property-key" name="property-key" placeholder="ex: bgp_peer">
+          <input id="property-key" name="property-key" placeholder="<%= @key_placeholder || "ex: bgp_peer" %>">
         </div>
       </div>
 
       <div class="control-group">
         <label class="control-label" for="property-value">Value</label>
         <div class="controls">
-          <input id="property-value" name="property-value" placeholder="ex: true">
+          <input id="property-value" name="property-value" placeholder="<%= @value_placeholder || "ex: true" %>">
         </div>
       </div>
     </div>
