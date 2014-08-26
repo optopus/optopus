@@ -35,6 +35,10 @@ module Optopus
       sprintf "%.2f", (used_ips.size.to_f / possible_ips.to_f) * 100
     end
 
+    def self.possible_networks(ip)
+      where('address >> ?', ip)
+    end
+
     private
 
     # Associate addresses that are contained in this network, but

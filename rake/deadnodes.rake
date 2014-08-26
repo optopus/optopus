@@ -6,7 +6,12 @@ namespace :optopus do
     nodes = Optopus::Node.where(:active => true).where("updated_at < ?", dead_node_threshold.day.ago)
     nodes.each do |node|
       node.active = false
-      node.save!
+      begin
+        node.save!
+      rescue Exception => e
+        warn "Failed to mark node '#{node.hostname}' as dead: #{e}"
+        warn e.backtrace.join("\n\t")
+      end
     end
 
     # log that we marked a bunch of nodes dead

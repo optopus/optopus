@@ -39,6 +39,36 @@
           </fieldset>
         </form>
       </section>
+
+      <section id="properties">
+        <div class="page-header">
+          <h3>Properties</h3>
+          <small>Arbitrary properites associated with this node</small>
+        </div>
+
+        <% if @node.properties.keys.size > 0 %>
+          <table class="table table-condensed table-striped table-bordered">
+            <thead>
+              <tr>
+                <th style="width: 10%">Key</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @node.properties.keys.sort { |a,b| a <=> b }.each do |key| %>
+              <% next if key == "puppet_classes" %>
+                <tr>
+                  <td><%= key %></td>
+                  <td><%= @node.properties[key] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <em>None</em>
+        <% end %>
+
+      </section>
       <section id="general">
         <div class="page-header">
           <h3>General</h3>
