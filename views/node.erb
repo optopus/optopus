@@ -46,7 +46,7 @@
           <small>Arbitrary properites associated with this node</small>
         </div>
 
-        <% if @node.properties.keys.size > 0 %>
+        <% if @node.properties.except("puppet_classes").keys.size > 0 %>
           <table class="table table-condensed table-striped table-bordered">
             <thead>
               <tr>
@@ -55,8 +55,7 @@
               </tr>
             </thead>
             <tbody>
-              <% @node.properties.keys.sort { |a,b| a <=> b }.each do |key| %>
-              <% next if key == "puppet_classes" %>
+              <% @node.properties.except("puppet_classes").keys.sort { |key_1,key_2| key_1 <=> key_2 }.each do |key| %>
                 <tr>
                   <td><%= key %></td>
                   <td><%= @node.properties[key] %></td>
