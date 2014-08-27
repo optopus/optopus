@@ -388,6 +388,23 @@ module Optopus
       end
     end
 
+    post '/api/device/:name/property/add' do
+      begin
+        node = Optopus::Node.find_by_hostname(params[:name])
+        validate_param_presence 'key', 'value'
+        key = params['key']
+        value = params['value']
+        action = node.properties.has_key?(key) ? 'updated' : 'added'
+        node.properties[key] = value
+        node.save!
+        nil
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
     def update_network(data)
       cidr          = data['cidr']
       location_name = data['location']
