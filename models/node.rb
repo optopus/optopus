@@ -50,6 +50,7 @@ module Optopus
         indexes :active
       end
       indexes :puppet_classes, :as => 'puppet_classes', :type => 'array'
+      indexes :properties,     :as => 'properties'
       indexes :facts,          :boost => 1
     end
 
@@ -273,6 +274,7 @@ module Optopus
         indexes :active
       end
       indexes :puppet_classes, :as => 'puppet_classes', :type => 'array'
+      indexes :properties,     :as => 'properties'
       indexes :facts,          :boost => 1
       indexes :libvirt,        :as => 'libvirt_data',   :type => 'object'
     end
