@@ -298,6 +298,37 @@ module Optopus
       end
     end
 
+    # Get all the node properties for a given server
+    get '/api/node/:name/properties' do
+      begin
+        node = Optopus::Node.find_by_hostname(params[:name])
+        content_type :json
+        body(node.properties.to_json)
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    # This will allow nodes to be tagged with arbitrary key/value info
+    post '/api/node/:name/properties' do
+      begin
+        node = Optopus::Node.find_by_hostname(params[:name])
+        validate_param_presence 'key', 'value'
+        key = params['key']
+        value = params['value']
+        action = node.properties.has_key?(key) ? 'updated' : 'added'
+        node.properties[key] = value
+        node.save!
+        nil
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
     # Simplified output of all nodes for use with monitoring configs
     get '/api/nodes/monitoring' do
       output = Hash.new
@@ -381,23 +412,6 @@ module Optopus
       begin
         data = JSON.parse(request.body.read)
         update_interface(params[:interface], params[:hostname], data)
-      rescue Exception => e
-        logger.error(e.to_s)
-        logger.error(e.backtrace.join("\t\n"))
-        halt 400, { :error => e.to_s }.to_json
-      end
-    end
-
-    post '/api/device/:name/property/add' do
-      begin
-        node = Optopus::Node.find_by_hostname(params[:name])
-        validate_param_presence 'key', 'value'
-        key = params['key']
-        value = params['value']
-        action = node.properties.has_key?(key) ? 'updated' : 'added'
-        node.properties[key] = value
-        node.save!
-        nil
       rescue Exception => e
         logger.error(e.to_s)
         logger.error(e.backtrace.join("\t\n"))
