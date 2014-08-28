@@ -388,7 +388,21 @@ module Optopus
       end
     end
 
-    post '/api/device/:name/property/add' do
+    # Get all the node properties for a given server
+    get '/api/node/:name/properties' do
+      begin
+        node = Optopus::Node.find_by_hostname(params[:name])
+        content_type :json
+        body(node.properties.to_json)
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    # This will allow nodes to be tagged with arbitrary key/value info
+    post '/api/node/:name/properties' do
       begin
         node = Optopus::Node.find_by_hostname(params[:name])
         validate_param_presence 'key', 'value'
