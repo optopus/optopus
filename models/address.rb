@@ -42,7 +42,11 @@ module Optopus
     end
 
     def to_link
-      "<a href=\"/network/#{self.network.id}/address/#{self.ip_address}\">#{self.ip_address}</a>"
+      if self.network
+        "<a href=\"/network/#{self.network.id}/address/#{self.ip_address}\">#{self.ip_address}</a>"
+      else
+        self.ip_address.to_cidr
+      end
     end
 
     private
