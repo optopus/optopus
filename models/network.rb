@@ -1,5 +1,8 @@
 module Optopus
   class Network < Optopus::Model
+    include Tire::Model::Search
+    include Tire::Model::Callbacks
+
     validates :address, :location, :presence => true
     validates_associated :location
     liquid_methods :to_link
@@ -13,6 +16,26 @@ module Optopus
     default_scope order(:address)
 
     serialize :properties, ActiveRecord::Coders::Hstore
+
+    set_search_options :default_operator => 'AND',
+                       :fields => [:description, :location, 'properties.*']
+
+    set_search_display_key :link
+
+    mapping do
+      indexes :address,    :as => 'address.to_cidr', :index => :not_analyzed
+      indexes :created_at
+      indexes :link,       :as => 'to_link', :index => :not_analyzed
+      indexes :location,   :as => 'location_name', :boot => 10
+      indexes :properties, :type => 'object'
+      indexes :updated_at
+      indexes :vlan_id
+    end
+
+    # A wrapper method for indexing the location name of a node
+    def location_name
+      location ? location.common_name : nil
+    end
 
     def to_link
       "<a href=\"/network/#{self.id}\">#{self.address.to_cidr}</a>"
