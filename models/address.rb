@@ -20,6 +20,7 @@ module Optopus
     set_search_display_key :link
 
     mapping do
+      indexes :description
       indexes :ip_address, :as => 'ip_address.to_cidr', :index => :not_analyzed
       indexes :link,       :as => 'to_link', :index => :not_analyzed
       indexes :properties, :type => 'object'

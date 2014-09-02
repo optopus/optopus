@@ -25,6 +25,7 @@ module Optopus
     mapping do
       indexes :address,    :as => 'address.to_cidr', :index => :not_analyzed
       indexes :created_at
+      indexes :description
       indexes :link,       :as => 'to_link', :index => :not_analyzed
       indexes :location,   :as => 'location_name', :boot => 10
       indexes :properties, :type => 'object'
