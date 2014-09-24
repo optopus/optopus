@@ -1,5 +1,8 @@
 module Optopus
   class Address < Optopus::Model
+    include Tire::Model::Search
+    include Tire::Model::Callbacks
+
     validates :ip_address, :presence => true, :uniqueness => true
     belongs_to :network
     belongs_to :interface
@@ -10,6 +13,18 @@ module Optopus
     default_scope order(:ip_address)
 
     serialize :properties, ActiveRecord::Coders::Hstore
+
+    set_search_options :default_operator => 'AND',
+                       :fields => [:description, 'properties.*']
+
+    set_search_display_key :link
+
+    mapping do
+      indexes :description
+      indexes :ip_address, :as => 'ip_address.to_cidr', :index => :not_analyzed
+      indexes :link,       :as => 'to_link', :index => :not_analyzed
+      indexes :properties, :type => 'object'
+    end
 
     # Return addresses that do not have any network associations
     def self.lonely
@@ -28,7 +43,11 @@ module Optopus
     end
 
     def to_link
-      "<a href=\"/network/#{self.network.id}/address/#{self.ip_address}\">#{self.ip_address}</a>"
+      if self.network
+        "<a href=\"/network/#{self.network.id}/address/#{self.ip_address}\">#{self.ip_address}</a>"
+      else
+        self.ip_address.to_cidr
+      end
     end
 
     private
