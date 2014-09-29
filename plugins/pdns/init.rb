@@ -83,6 +83,7 @@ module Optopus
         def after_save(node)
           hostname_array = node.hostname.split(".",2)
           pdns_client = Optopus::Plugin::PDNS.pdns_client
+          autoupdate_settings = Optopus::Plugin::PDNS.autoupdate_settings
 
           ip_record = pdns_client.record_from_content(node.facts['ipaddress'])
           hostname_record = pdns_client.record_from_hostname(node.hostname)
@@ -115,9 +116,9 @@ module Optopus
               #event.properties['node_id'] = node.id
               #event.save!
             end
-          elsif ip_record && hostname_record.nil?
-            hostname_regex =  /^(dev|qa|prod|ops|itops)-\w+\d+\.(nj|ma|tx|ny)\d+/
-            unless hostname_regex.match(node.hostname)
+          elsif ip_record && hostname_record.nil? && !autoupdate_settings['hostname_regex'].nil?
+            hostname_regex = Regexp.new(autoupdate_settings['hostname_regex'])
+            if hostname_regex && hostname_regex.match(node.hostname)
               domain = pdns_client.domain_from_name(node.facts['domain'])
               pdns_client.delete_record(ip_record['id'])
               pdns_client.create_record(
@@ -201,11 +202,16 @@ module Optopus
           :mysql_username => plugin_settings['mysql']['username'],
           :mysql_password => plugin_settings['mysql']['password'],
           :mysql_database => plugin_settings['mysql']['database'],
+          :hostname_regex => plugin_settings['autoupdate']['hostname_regex']
         }
         unless admin
           pdns_settings[:restrict_domains] = plugin_settings['mysql']['restrict_domains']
         end
         @pdns_client = ::PDNS::Client.new(pdns_settings)
+      end
+
+      def self.autoupdate_settings
+        plugin_settings['autoupdate']
       end
 
       plugin do
