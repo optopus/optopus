@@ -32,7 +32,7 @@
           </table>
           <hr />
           <h4>Device List</h4>
-          <input type="button" class="btn" data-toggle="collapse" data-target="#<%= location.common_name %>_table" value="+/-">
+          <input type="button" class="btn" data-toggle="collapse" data-target="#<%= location.common_name %>_table" value="Show Devices">
           <div class="accordion-body collapse" id="<%= location.common_name %>_table">
             <table class="table table-condensed table-striped table-sort-no-filter-input">
               <tr>
@@ -41,6 +41,9 @@
                 <th>eth0 MAC</th>
                 <th>BMC IP</th>
                 <th>eth0 Switch Connection</th>
+                <% if is_admin? %>
+                <th>Actions</th>
+                <% end %>
               </tr>
               <% model_array = [] %>
               <% location.devices.where(:provisioned => false).each do |device| %>
@@ -50,6 +53,9 @@
                   <td><code><%= device.primary_mac_address.upcase %></code></td>
                   <td><code><%= device.bmc_ip_address %></code></td>
                   <td><%= device.switch_name %> : <%= device.switch_port %></td>
+                  <% if is_admin? %>
+                  <td><button onclick="load_util('/device/<%= device.id %>/delete')" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i> Delete</button></td>
+                  <% end %>
                 </tr>
               <% end %>
             </table>
