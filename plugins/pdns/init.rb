@@ -117,11 +117,11 @@ module Optopus
             end
           elsif ip_record && hostname_record.nil?
             #log.warn("ip exists in records table, hostname '#{node.hostname}' do not exist, emailing error")
-            #event = Optopus::Event.new
-            #event.message = "The node '#{node.hostname}' has an ip of '#{node.facts['ipaddress']}, which already exists in the records table. dns update failed"
-            #event.type = 'dns_update_failed'
-            #event.properties['node_id'] = node.id
-            #event.save!
+            event = Optopus::Event.new
+            event.message = "The node '#{node.hostname}' has an ip of '#{node.facts['ipaddress']}, which already exists in the records table. dns update failed"
+            event.type = 'dns_update_failed'
+            event.properties['node_id'] = node.id
+            event.save!
           elsif hostname_record
             if !hostname_record['content'].eql? node.facts['ipaddress']
               old_ip = hostname_record['content']
