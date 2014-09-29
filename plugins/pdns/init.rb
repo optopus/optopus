@@ -116,6 +116,18 @@ module Optopus
               #event.save!
             end
           elsif ip_record && hostname_record.nil?
+            hostname_regex =  /^(dev|qa|prod|ops|itops)-\w+\d+\.(nj|ma|tx|ny)\d+/
+            unless hostname_regex.match(node.hostname)
+              domain = pdns_client.domain_from_name(node.facts['domain'])
+              pdns_client.delete_record(ip_record['id'])
+              pdns_client.create_record(
+                :domain_id => "#{domain['id']}",
+                :name      => "#{node.hostname}",
+                :type      => "A",
+                :content   => "#{node.facts['ipaddress']}",
+                :ttl       => "600"
+              )
+            end
             #log.warn("ip exists in records table, hostname '#{node.hostname}' do not exist, emailing error")
             #event = Optopus::Event.new
             #event.message = "The node '#{node.hostname}' has an ip of '#{node.facts['ipaddress']}, which already exists in the records table. dns update failed"
