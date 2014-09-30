@@ -118,7 +118,7 @@ module Optopus
             end
           elsif ip_record && hostname_record.nil? && !autoupdate_settings['hostname_regex'].nil?
             hostname_regex = Regexp.new(autoupdate_settings['hostname_regex'])
-            if hostname_regex && hostname_regex.match(node.hostname)
+            if hostname_regex.match(node.hostname) && node.facts['ipaddress'] != "127.0.0.1"
               domain = pdns_client.domain_from_name(node.facts['domain'])
               pdns_client.delete_record(ip_record['id'])
               pdns_client.create_record(
