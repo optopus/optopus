@@ -47,6 +47,10 @@ module PDNS
       mysql_query("SELECT * FROM records WHERE content='#{escape(ipaddress.to_s)}' and type='#{type}'").first
     end
 
+    def records_from_content(ipaddress,type="A")
+      mysql_query("SELECT * FROM records WHERE content='#{escape(ipaddress.to_s)}' and type='#{type}'")
+    end
+
     def update_record(id, data={})
       # TODO: clean this up..
       record = record_from_id(id)
