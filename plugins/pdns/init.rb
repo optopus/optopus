@@ -83,12 +83,19 @@ module Optopus
         def after_save(node)
           hostname_array = node.hostname.split(".",2)
           pdns_client = Optopus::Plugin::PDNS.pdns_client
+          autoupdate_settings = Optopus::Plugin::PDNS.autoupdate_settings
 
           ip_record = pdns_client.record_from_content(node.facts['ipaddress'])
           hostname_record = pdns_client.record_from_hostname(node.hostname)
 
-          ## force admins to manually create/update dns for anything with a tunnel device
-          if node.facts['interfaces'] && node.facts['interfaces'].include?("tun")
+          ## force admins to manually create/update dns for Docker nodes or anything with a tunnel device
+          ## Only do this if there's no record for this hostname already
+          if !hostname_record && node.facts['interfaces'] && node.facts['interfaces'].include?("tun") or node.facts['interfaces'].include?("docker")
+            #event = Optopus::Event.new
+            #event.message = "The node '#{node.hostname}/(#{node.facts['ipaddress']})' has an unsupported interface. Please create this record manually."
+            #event.type = 'dns_create_failed'
+            #event.properties['node_id'] = node.id
+            #event.save!
             return
           end
 
@@ -115,24 +122,47 @@ module Optopus
               #event.properties['node_id'] = node.id
               #event.save!
             end
-          elsif ip_record && hostname_record.nil?
-            #log.warn("ip exists in records table, hostname '#{node.hostname}' do not exist, emailing error")
-            #event = Optopus::Event.new
-            #event.message = "The node '#{node.hostname}' has an ip of '#{node.facts['ipaddress']}, which already exists in the records table. dns update failed"
-            #event.type = 'dns_update_failed'
-            #event.properties['node_id'] = node.id
-            #event.save!
+          elsif ip_record && hostname_record.nil? && !autoupdate_settings['hostname_regex'].nil?
+            # If we have a match, we need to make sure we nuke ALL records with this IP (if they match the regex), then replace
+            hostname_regex = Regexp.new(autoupdate_settings['hostname_regex'])
+            
+            domain     = pdns_client.domain_from_name(node.facts['domain'])
+            ip_records = pdns_client.records_from_content(node.facts['ipaddress'])
+
+            ip_records.each do |record|
+              if hostname_regex.match(record['name'])
+                pdns_client.delete_record(record['id'])
+                event = Optopus::Event.new
+                event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but DNS has this assigned to #{record["name"]}. Deleting."
+                event.type = 'dns_replace_record'
+                event.properties['node_id'] = node.id
+                event.save!
+              else
+                event = Optopus::Event.new
+                event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but DNS has this assigned to #{record["name"]}. Skipping, since this is not a node record."
+                event.type = 'dns_replace_record'
+                event.properties['node_id'] = node.id
+                event.save!
+              end
+            end
+            pdns_client.create_record(
+              :domain_id => "#{domain['id']}",
+              :name      => "#{node.hostname}",
+              :type      => "A",
+              :content   => "#{node.facts['ipaddress']}",
+              :ttl       => "600"
+            )
           elsif hostname_record
             if !hostname_record['content'].eql? node.facts['ipaddress']
               old_ip = hostname_record['content']
               new_ip = node.facts['ipaddress']
               pdns_client.update_record(hostname_record['id'],:content => node.facts['ipaddress'])
               update_or_create_ptr(node)
-              #event = Optopus::Event.new
-              #event.message = "Automatic DNS update: updated A record dns of #{node.hostname} from #{old_ip} to #{new_ip}" 
-              #event.type = 'dns_update'
-              #event.properties['node_id'] = node.id
-              #event.save!
+              event = Optopus::Event.new
+              event.message = "Updated A record for #{node.hostname} from #{old_ip} to #{new_ip}"
+              event.type = 'dns_update'
+              event.properties['node_id'] = node.id
+              event.save!
             end
           end
 
@@ -189,11 +219,16 @@ module Optopus
           :mysql_username => plugin_settings['mysql']['username'],
           :mysql_password => plugin_settings['mysql']['password'],
           :mysql_database => plugin_settings['mysql']['database'],
+          :hostname_regex => plugin_settings['autoupdate']['hostname_regex']
         }
         unless admin
           pdns_settings[:restrict_domains] = plugin_settings['mysql']['restrict_domains']
         end
         @pdns_client = ::PDNS::Client.new(pdns_settings)
+      end
+
+      def self.autoupdate_settings
+        plugin_settings['autoupdate']
       end
 
       plugin do
