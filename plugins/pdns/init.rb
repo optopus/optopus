@@ -126,10 +126,10 @@ module Optopus
             # If we have a match, we need to make sure we nuke ALL records with this IP (if they match the regex), then replace
             hostname_regex = Regexp.new(autoupdate_settings['hostname_regex'])
             
-            domain = pdns_client.domain_from_name(node.facts['domain'])
+            domain     = pdns_client.domain_from_name(node.facts['domain'])
             ip_records = pdns_client.records_from_content(node.facts['ipaddress'])
 
-            ip_records.each do |record| unless ip_records.nil?
+            ip_records.each do |record|
               if hostname_regex.match(record['name'])
                 pdns_client.delete_record(record['id'])
                 event = Optopus::Event.new
@@ -143,8 +143,6 @@ module Optopus
                 event.type = 'dns_replace_record'
                 event.properties['node_id'] = node.id
                 event.save!
-
-                return
               end
             end
             pdns_client.create_record(
@@ -161,7 +159,7 @@ module Optopus
               pdns_client.update_record(hostname_record['id'],:content => node.facts['ipaddress'])
               update_or_create_ptr(node)
               event = Optopus::Event.new
-              event.message = "Automatic DNS update: updated A record dns of #{node.hostname} from #{old_ip} to #{new_ip}"
+              event.message = "Updated A record for #{node.hostname} from #{old_ip} to #{new_ip}"
               event.type = 'dns_update'
               event.properties['node_id'] = node.id
               event.save!
