@@ -81,6 +81,9 @@ module Optopus
         observe Optopus::Node
 
         def after_save(node)
+          # If this is a network node, skip it.
+          return if node.is_a?(Optopus::NetworkNode)
+
           hostname_array = node.hostname.split(".",2)
           pdns_client = Optopus::Plugin::PDNS.pdns_client
           autoupdate_settings = Optopus::Plugin::PDNS.autoupdate_settings
