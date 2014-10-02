@@ -123,8 +123,8 @@ module Optopus
               #event.save!
             end
           elsif ip_record && hostname_record.nil? && !autoupdate_settings['hostname_regex'].nil?
-            hostname_regex = autoupdate_settings['hostname_regex']
-            if hostname_regex.match(node.hostname) && hostname_regex.match(ip_record['name'])
+            hostname_regex = Regexp.new(autoupdate_settings['hostname_regex'])
+            if hostname_regex.match(ip_record['name'])
               domain = pdns_client.domain_from_name(node.facts['domain'])
               pdns_client.delete_record(ip_record['id'])
               pdns_client.create_record(
@@ -142,7 +142,7 @@ module Optopus
               event.save!
             else
               event = Optopus::Event.new
-              event.message = "WARNING: IP #{node.facts['ipaddress']} already exists for #{ip_record["name"]}, but this record is not a host record. Skipping."
+              event.message = "WARNING: IP #{node.facts['ipaddress']} already exists for #{ip_record["name"]}, but this is not a host record. Skipping."
               event.type = 'dns_replace_record_failed'
               event.properties['node_id'] = node.id
               event.save!
