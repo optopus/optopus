@@ -145,7 +145,7 @@ module Optopus
               update_or_create_ptr(node)
 
               event = Optopus::Event.new
-              event.message = "Creating A record for IP #{node.facts['ipaddress']} pointing to #{node.hostname}."
+              event.message = "Creating A record for #{node.hostname} pointing to IP #{node.facts['ipaddress']}."
               event.type = 'dns_create_record'
               event.properties['node_id'] = node.id
               event.save!
