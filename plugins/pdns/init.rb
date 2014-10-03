@@ -125,6 +125,7 @@ module Optopus
                 event.save!
               end
             end
+            update_or_create_ptr(node)
           end
 
           ## determine if ip of node already exists & if hostname matches
