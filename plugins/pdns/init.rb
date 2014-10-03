@@ -94,7 +94,7 @@ module Optopus
           # PTR data for checks
           ptr_address     = node.facts['ipaddress'].split(".",4).reverse.join('.') + ".in-addr.arpa"
           ptr_host_record = pdns_client.record_from_content(node.hostname, 'PTR')
-          ptr_ip_record   = pdns_client.record_from_name(ptr_address, 'PTR')
+          ptr_ip_record   = pdns_client.record_from_hostname(ptr_address, 'PTR')
 
           ## force admins to manually create/update dns for Docker nodes or anything with a tunnel device
           ## Only do this if there's no record for this hostname already
@@ -113,7 +113,7 @@ module Optopus
 
             # If we have an IP record but no host record, nuke it
             if ptr_ip_record && !ptr_host_record
-              ptr_records = pdns_client.record_fron_name(ptr_address, 'PTR')
+              ptr_records = pdns_client.record_from_hostname(ptr_address, 'PTR')
               ptr.records.each do |record|
                 pdns_client.delete_record(record['id'])
                 event = Optopus::Event.new

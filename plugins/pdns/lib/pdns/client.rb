@@ -47,7 +47,7 @@ module PDNS
       mysql_query("SELECT * FROM records WHERE content='#{escape(ipaddress.to_s)}' and type='#{type}'").first
     end
 
-    def records_from_name(hostname,type="A")
+    def records_from_hostname(hostname,type="A")
       mysql_query("SELECT * FROM records WHERE name='#{escape(hostname.to_s)}' and type='#{type}'")
     end
 
