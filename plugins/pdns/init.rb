@@ -168,7 +168,7 @@ module Optopus
               :content   => "#{node.facts['ipaddress']}",
               :ttl       => "600"
             )
-            pdns_client.update_or_create_ptr(node)
+            update_or_create_ptr(node)
           elsif hostname_record
             if !hostname_record['content'].eql? node.facts['ipaddress']
               old_ip = hostname_record['content']
