@@ -114,7 +114,7 @@ module Optopus
 
           # If we have an IP record but no host record, nuke it
           if ptr_ip_record && !ptr_host_record
-            ptr_records = pdns_client.record_from_hostname(ptr_address, 'PTR')
+            ptr_records = pdns_client.records_from_hostname(ptr_address, 'PTR')
             ptr_records.each do |record|
               if hostname_regex.match(record['content'])
                 pdns_client.delete_record(record['id'])
