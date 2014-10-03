@@ -88,8 +88,13 @@ module Optopus
           pdns_client = Optopus::Plugin::PDNS.pdns_client
           autoupdate_settings = Optopus::Plugin::PDNS.autoupdate_settings
 
-          ip_record = pdns_client.record_from_content(node.facts['ipaddress'])
+          ip_record       = pdns_client.record_from_content(node.facts['ipaddress'])
           hostname_record = pdns_client.record_from_hostname(node.hostname)
+
+          # PTR data for checks
+          ptr_address     = node.facts['ipaddress'].split(".",4).reverse.join('.') + ".in-addr.arpa"
+          ptr_host_record = pdns_client.record_from_content(node.hostname, 'PTR')
+          ptr_ip_record   = pdns_client.record_fron_name(ptr_address, 'PTR')
 
           ## force admins to manually create/update dns for Docker nodes or anything with a tunnel device
           ## Only do this if there's no record for this hostname already
@@ -100,6 +105,24 @@ module Optopus
             #event.properties['node_id'] = node.id
             #event.save!
             return
+          end
+
+          # Force a check of PTR records; for now, just see if they match our data.
+          # If not, delete them, and we'll create them below.
+          if ptr_host_record && ptr_ip_record
+
+            # If we have an IP record but no host record, nuke it
+            if ptr_ip_record && !ptr_host_record
+              ptr_records = pdns_client.record_fron_name(ptr_address, 'PTR')
+              ptr.records.each do |record|
+                pdns_client.delete_record(record['id'])
+                event = Optopus::Event.new
+                event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but the DNS PTR record points to #{ptr["content"]}. Deleting."
+                event.type = 'dns_replace_ptr_record'
+                event.properties['node_id'] = node.id
+                event.save!
+            end
+
           end
 
           ## determine if ip of node already exists & if hostname matches
@@ -117,6 +140,12 @@ module Optopus
               )
               ## create PTR record while we're at it
               update_or_create_ptr(node)
+
+              event = Optopus::Event.new
+              event.message = "Creating A record for IP #{node.facts['ipaddress']} pointing to #{node.hostname}."
+              event.type = 'dns_create_record'
+              event.properties['node_id'] = node.id
+              event.save!
             else
               #log.warn("ip and hostname for #{node.hostname} do not exist in pdns, neither does domain in domains table")
               #event = Optopus::Event.new
@@ -140,19 +169,6 @@ module Optopus
                 event.type = 'dns_replace_record'
                 event.properties['node_id'] = node.id
                 event.save!
-
-                ptr_record = pdns_client.records_from_content(node.hostname, 'PTR')
-
-                if ptr_record
-                  ptr_record.each do |ptr|
-                    pdns_client.delete_record(ptr['id'])
-                    event = Optopus::Event.new
-                    event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but the DNS PTR record points to #{ptr["content"]}. Deleting."
-                    event.type = 'dns_replace_ptr_record'
-                    event.properties['node_id'] = node.id
-                    event.save!
-                  end
-                end
               else
                 event = Optopus::Event.new
                 event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but DNS has this assigned to #{record["name"]}. Skipping, since this is not a node record."
