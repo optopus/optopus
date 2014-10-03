@@ -140,6 +140,19 @@ module Optopus
                 event.type = 'dns_replace_record'
                 event.properties['node_id'] = node.id
                 event.save!
+
+                ptr_record = pdns_client.records_from_content(node.hostname, 'PTR')
+
+                if ptr_record
+                  ptr_record.each do |ptr|
+                    pdns_client.delete_record(ptr['id'])
+                    event = Optopus::Event.new
+                    event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but the DNS PTR record points to #{ptr["content"]}. Deleting."
+                    event.type = 'dns_replace_ptr_record'
+                    event.properties['node_id'] = node.id
+                    event.save!
+                  end
+                end
               else
                 event = Optopus::Event.new
                 event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but DNS has this assigned to #{record["name"]}. Skipping, since this is not a node record."
@@ -155,6 +168,7 @@ module Optopus
               :content   => "#{node.facts['ipaddress']}",
               :ttl       => "600"
             )
+            pdns_client.update_or_create_ptr(node)
           elsif hostname_record
             if !hostname_record['content'].eql? node.facts['ipaddress']
               old_ip = hostname_record['content']
