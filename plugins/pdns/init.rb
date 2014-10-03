@@ -117,7 +117,7 @@ module Optopus
             if ptr_ip_record && !ptr_host_record
               ptr_records = pdns_client.record_from_hostname(ptr_address, 'PTR')
               ptr.records.each do |record|
-                if hostname_regex.match(record['content')
+                if hostname_regex.match(record['content'])
                   pdns_client.delete_record(record['id'])
                   event = Optopus::Event.new
                   event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but the DNS PTR record points to #{ptr["content"]}. Deleting."
