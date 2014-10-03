@@ -121,6 +121,7 @@ module Optopus
                 event.type = 'dns_replace_ptr_record'
                 event.properties['node_id'] = node.id
                 event.save!
+              end
             end
 
           end
