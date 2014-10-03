@@ -84,14 +84,16 @@ module Optopus
           # If this is a network node, skip it.
           return if node.is_a?(Optopus::NetworkNode)
 
-          hostname_array = node.hostname.split(".",2)
-          pdns_client = Optopus::Plugin::PDNS.pdns_client
+          hostname_array      = node.hostname.split(".",2)
+          pdns_client         = Optopus::Plugin::PDNS.pdns_client
           autoupdate_settings = Optopus::Plugin::PDNS.autoupdate_settings
+          hostname_regex      = Regexp.new(autoupdate_settings['hostname_regex'])
 
+          # A record data
           ip_record       = pdns_client.record_from_content(node.facts['ipaddress'])
           hostname_record = pdns_client.record_from_hostname(node.hostname)
 
-          # PTR data for checks
+          # PTR record data for checks
           ptr_address     = node.facts['ipaddress'].split(".",4).reverse.join('.') + ".in-addr.arpa"
           ptr_host_record = pdns_client.record_from_content(node.hostname, 'PTR')
           ptr_ip_record   = pdns_client.record_from_hostname(ptr_address, 'PTR')
@@ -115,12 +117,14 @@ module Optopus
             if ptr_ip_record && !ptr_host_record
               ptr_records = pdns_client.record_from_hostname(ptr_address, 'PTR')
               ptr.records.each do |record|
-                pdns_client.delete_record(record['id'])
-                event = Optopus::Event.new
-                event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but the DNS PTR record points to #{ptr["content"]}. Deleting."
-                event.type = 'dns_replace_ptr_record'
-                event.properties['node_id'] = node.id
-                event.save!
+                if hostname_regex.match(record['content')
+                  pdns_client.delete_record(record['id'])
+                  event = Optopus::Event.new
+                  event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but the DNS PTR record points to #{ptr["content"]}. Deleting."
+                  event.type = 'dns_replace_ptr_record'
+                  event.properties['node_id'] = node.id
+                  event.save!
+                end
               end
             end
 
@@ -156,9 +160,8 @@ module Optopus
               #event.save!
             end
           elsif ip_record && hostname_record.nil? && !autoupdate_settings['hostname_regex'].nil?
+
             # If we have a match, we need to make sure we nuke ALL records with this IP (if they match the regex), then replace
-            hostname_regex = Regexp.new(autoupdate_settings['hostname_regex'])
-            
             domain     = pdns_client.domain_from_name(node.facts['domain'])
             ip_records = pdns_client.records_from_content(node.facts['ipaddress'])
 
