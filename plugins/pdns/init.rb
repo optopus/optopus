@@ -111,23 +111,20 @@ module Optopus
 
           # Force a check of PTR records; for now, just see if they match our data.
           # If not, delete them, and we'll create them below.
-          if ptr_host_record && ptr_ip_record
 
-            # If we have an IP record but no host record, nuke it
-            if ptr_ip_record && !ptr_host_record
-              ptr_records = pdns_client.record_from_hostname(ptr_address, 'PTR')
-              ptr.records.each do |record|
-                if hostname_regex.match(record['content'])
-                  pdns_client.delete_record(record['id'])
-                  event = Optopus::Event.new
-                  event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but the DNS PTR record points to #{ptr["content"]}. Deleting."
-                  event.type = 'dns_replace_ptr_record'
-                  event.properties['node_id'] = node.id
-                  event.save!
-                end
+          # If we have an IP record but no host record, nuke it
+          if ptr_ip_record && !ptr_host_record
+            ptr_records = pdns_client.record_from_hostname(ptr_address, 'PTR')
+            ptr.records.each do |record|
+              if hostname_regex.match(record['content'])
+                pdns_client.delete_record(record['id'])
+                event = Optopus::Event.new
+                event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but the DNS PTR record points to #{ptr["content"]}. Deleting."
+                event.type = 'dns_replace_ptr_record'
+                event.properties['node_id'] = node.id
+                event.save!
               end
             end
-
           end
 
           ## determine if ip of node already exists & if hostname matches
