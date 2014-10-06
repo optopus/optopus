@@ -128,6 +128,19 @@ module Optopus
             update_or_create_ptr(node)
           end
 
+          ## Check to see if there are any other PTR records with our information; if so, kill them if they match our hostname filter
+          if ptr_host_record
+            ptr_records = pdns_client.records_from_hostname(ptr_address, 'PTR')
+            ptr_records.each do |record|
+              if hostname_regex.match(record['content'])
+              event = Optopus::Event.new
+              event.message = "Duplicate PTR record found for IP #{node.facts['ipaddress']} pointing to #{record["content"]}. Deleting."
+              event.type = 'dns_replace_ptr_record'
+              event.properties['node_id'] = node.id
+              event.save!
+            end
+          end
+
           ## determine if ip of node already exists & if hostname matches
           ## - if ip/hostname doesnt match, raise error/warning & email
           if ip_record.nil? && hostname_record.nil?
@@ -145,7 +158,7 @@ module Optopus
               update_or_create_ptr(node)
 
               event = Optopus::Event.new
-              event.message = "Creating A record for #{node.hostname} pointing to IP #{node.facts['ipaddress']}."
+              event.message = "Creating DNS records for #{node.hostname} pointing to IP #{node.facts['ipaddress']}."
               event.type = 'dns_create_record'
               event.properties['node_id'] = node.id
               event.save!
