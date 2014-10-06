@@ -135,7 +135,7 @@ module Optopus
               if hostname_regex.match(record['content']) && record['content'] != node.hostname
                 pdns_client.delete_record(record['id'])
                 event = Optopus::Event.new
-                event.message = "Duplicate PTR record found for IP #{node.facts['ipaddress']} pointing to #{record["content"]}. Deleting."
+                event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but a duplicate DNS PTR record points to #{record["content"]}. Deleting."
                 event.type = 'dns_replace_ptr_record'
                 event.properties['node_id'] = node.id
                 event.save!
