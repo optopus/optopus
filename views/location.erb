@@ -51,7 +51,12 @@
       <% if @location.devices.size > 0 %>
         <% model_array = [] %>
         <% @location.devices.each do |device| %>
-          <% model_array.push(device.model) %>
+          <% if device.model.nil? %>
+            <% entry = "No Model" %>
+          <% else %>
+            <% entry = device.model.strip %>
+          <% end %>
+          <% model_array.push(entry) %>
         <% end %>
         <h4>Device Counts</h4>
         <table class="table table-condensed table-striped table-sort-no-filter-input">
