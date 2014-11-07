@@ -58,10 +58,10 @@ module Optopus::AppHelpers::Main
     redirect back
   end
 
-  def handle_unauthorized_access
+  def handle_unauthorized_access(roles)
     if logged_in?
       flash[:error] = 'You are unauthorized.'
-      logger.debug "Unauthorized access to #{request.url}, user must be #{type}"
+      logger.debug "Unauthorized access to #{request.url}, user must be #{roles.join(',')}"
       redirect '/' if request.referer.nil?
       redirect back
     else

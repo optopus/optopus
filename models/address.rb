@@ -39,7 +39,14 @@ module Optopus
     # Display either an associated node's hostname or
     # the IP's description
     def display
-      self.interface ? (self.interface.node ? self.interface.node.to_link : description) : description
+      # If we're dealing with an 'Anycast' network, display the service associated with the address
+      # since there is going to be multiple nodes. If we cannot find a service name, fall back
+      # to the standard way of handling display.
+      if self.network && self.network.properties['anycast'] && self.properties['service']
+        self.properties['service']
+      else
+        self.interface ? (self.interface.node ? self.interface.node.to_link : description) : description
+      end
     end
 
     def to_link
