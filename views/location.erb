@@ -48,6 +48,29 @@
         </section>
       <% end %>
 
+      <% if @location.devices.size > 0 %>
+        <% model_array = [] %>
+        <% @location.devices.each do |device| %>
+          <% model_array.push(device.model) %>
+        <% end %>
+        <h4>Device Counts</h4>
+        <table class="table table-condensed table-striped table-sort-no-filter-input">
+          <tr>
+            <th>Model</th>
+            <th>Count</th>
+          </tr>
+          <% model_array.reduce(Hash.new(0)) do |memo,object| %>
+            <% memo[object] += 1 %>
+            <% memo %>
+          <% end.each do |key,value| %>
+            <tr>
+              <td><%= key %></td>
+              <td><%= value %></td>
+            </tr>
+          <% end %>
+        </table>
+      <% end %>
+
       <% if @location.network_nodes.size > 0 %>
         <section id="network-nodes">
           <div class="page-header">
