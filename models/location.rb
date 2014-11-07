@@ -9,6 +9,8 @@ module Optopus
     has_many :networks
     has_many :pods
 
+    serialize :properties, ActiveRecord::Coders::Hstore
+
     def nodes
       Optopus::Node.where("facts -> 'location' = '#{self.common_name}'")
     end

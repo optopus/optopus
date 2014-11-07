@@ -48,17 +48,55 @@
         </section>
       <% end %>
 
+      <% if @location.devices.size > 0 %>
+        <% model_array = [] %>
+        <% @location.devices.each do |device| %>
+          <% model_array.push(device.model) %>
+        <% end %>
+        <h4>Device Counts</h4>
+        <table class="table table-condensed table-striped table-sort-no-filter-input">
+          <tr>
+            <th width="75%">Model</th>
+            <th>Count</th>
+          </tr>
+          <% model_array.reduce(Hash.new(0)) do |memo,object| %>
+            <% memo[object] += 1 %>
+            <% memo %>
+          <% end.each do |key,value| %>
+            <tr>
+              <td><%= key %></td>
+              <td><%= value %></td>
+            </tr>
+          <% end %>
+        </table>
+      <% end %>
+
       <% if @location.network_nodes.size > 0 %>
         <section id="network-nodes">
           <div class="page-header">
             <h3>Network Nodes</h3>
           </div>
 
-          <ul class="unstyled">
-            <% @location.network_nodes.order(:hostname).each do |node| %>
-              <li><%= node.to_link %></li>
+          <% model_array = [] %>
+          <% @location.network_nodes.each do |device| %>
+            <% model_array.push(device.facts["boardmanufacturer"]) %>
+          <% end %>
+          <h4>Device Counts</h4>
+          <table class="table table-condensed table-striped table-sort-no-filter-input">
+            <tr>
+              <th width="75%">Model</th>
+              <th>Count</th>
+            </tr>
+            <% model_array.reduce(Hash.new(0)) do |memo,object| %>
+              <% memo[object] += 1 %>
+              <% memo %>
+            <% end.each do |key,value| %>
+              <tr>
+                <td><%= key %></td>
+                <td><%= value %></td>
+              </tr>
             <% end %>
-          </ul>
+          </table>
         </section>
       <% end %>
 
@@ -68,25 +106,26 @@
             <h3>Hypervisors</h3>
           </div>
 
-          <ul class="unstyled">
-            <% @location.hypervisors.order(:hostname).each do |node| %>
-              <li><%= node.to_link %></li>
+          <% model_array = [] %>
+          <% @location.hypervisors.each do |device| %>
+            <% model_array.push(device.facts["productname"]) %>
+          <% end %>
+          <h4>Device Counts</h4>
+          <table class="table table-condensed table-striped table-sort-no-filter-input">
+            <tr>
+              <th width="75%">Model</th>
+              <th>Count</th>
+            </tr>
+            <% model_array.reduce(Hash.new(0)) do |memo,object| %>
+              <% memo[object] += 1 %>
+              <% memo %>
+            <% end.each do |key,value| %>
+              <tr>
+                <td><%= key %></td>
+                <td><%= value %></td>
+              </tr>
             <% end %>
-          </ul>
-        </section>
-      <% end %>
-
-      <% if @location.regular_nodes.size > 0 %>
-        <section id="nodes">
-          <div class="page-header">
-            <h3>Nodes</h3>
-          </div>
-
-          <ul class="unstyled">
-            <% @location.regular_nodes.order(:hostname).each do |node| %>
-              <li><%= node.to_link %></li>
-            <% end %>
-          </ul>
+          </table>
         </section>
       <% end %>
     </div>

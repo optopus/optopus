@@ -56,7 +56,7 @@ module Optopus
     set(:auth) do |*roles|
       condition do
         unless roles.any? { |role| (role == :user) ? is_user? : is_authorized?(role) }
-          handle_unauthorized_access
+          handle_unauthorized_access(roles)
         end
       end
     end
