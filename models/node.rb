@@ -186,10 +186,11 @@ module Optopus
         self.device = Device.where(:serial_number => self.serial_number.downcase).where(:primary_mac_address => self.primary_mac_address.downcase).first
 
         unless self.facts.nil?
+          # we should update the device's location on each save, in case we move a box
+          location_name = self.facts['location']
+          location = Location.where(:common_name => location_name).first
           if self.device.nil?
             # if we are unable to find a suitable device, ensure necessary facts exist and then create a new one
-            location_name = self.facts['location']
-            location = Location.where(:common_name => location_name).first
             if location.nil? && !location_name.nil?
               # create a new location since obviously it must exist if a node is registering from there
               location = Location.create(:common_name => location_name, :city => 'Unknown', :state => 'Unknown')
@@ -205,6 +206,7 @@ module Optopus
           else
             # make sure if we already found a device, that it is marked as provisioned since registration
             # typically requires a node to have a full OS installation
+            self.device.location    = location
             self.device.provisioned = true unless self.device.provisioned
             if self.facts['boardmanufacturer'] && self.facts['productname']
               self.device.brand = self.facts['boardmanufacturer']
