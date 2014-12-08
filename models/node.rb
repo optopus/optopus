@@ -161,6 +161,8 @@ module Optopus
           # Find out if we have a fact which contains the ipaddress for this interface
           # TODO: abstract this away so it is less facter specific
           if ip = self.facts["ipaddress_#{name}"]
+            # Every device has a 127.0.0.1 ip, don't bother keeping track of this.
+            next if ip == '127.0.0.1'
             address = Optopus::Address.where(:ip_address => ip).first || Optopus::Address.new(:ip_address => ip)
             if interface.address != address
               # Clean up addresses that are no longer in use
