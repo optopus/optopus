@@ -12,7 +12,7 @@ module Optopus
     serialize :properties, ActiveRecord::Coders::Hstore
 
     def nodes
-      Optopus::Node.where("facts -> 'location' = '#{self.common_name}'")
+      Optopus::Node.where("facts -> 'location' = '#{self.common_name}'").order('hostname ASC')
     end
 
     def hypervisors
