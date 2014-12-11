@@ -216,6 +216,7 @@ module Optopus
             end
           end
 
+          # ----------- OOB ------------
           if node.facts.include?("bmc_ip_address")
             # Similar to above, we need to make the OOB records self-healing
             oob_ip_record = pdns_client.record_from_content(node.facts['bmc_ip_address'])
@@ -275,7 +276,6 @@ module Optopus
                 old_ip = hostname_record['content']
                 new_ip = node.facts['bmc_ip_address']
                 pdns_client.update_record(hostname_record['id'],:content => node.facts['bmc_ip_address'])
-                update_or_create_ptr(node)
                 event = Optopus::Event.new
                 event.message = "Updated A record for oob#{node.hostname} from #{old_ip} to #{new_ip}"
                 event.type = 'dns_oob_update'
