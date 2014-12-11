@@ -235,19 +235,20 @@ module Optopus
               ip_records = pdns_client.records_from_content(node.facts['bmc_ip_address'])
 
               ip_records.each do |record|
-              if hostname_regex.match(record['name'])
-                pdns_client.delete_record(record['id'])
-                event = Optopus::Event.new
-                event.message = "WARNING: #{node.hostname} has OOB IP #{node.facts['bmc_ip_address']}, but DNS has this assigned to #{record["name"]}. Deleting."
-                event.type = 'dns_replace_record'
-                event.properties['node_id'] = node.id
-                event.save!
-              else
-                event = Optopus::Event.new
-                event.message = "WARNING: #{node.hostname} has OOB IP #{node.facts['bmc_ip_address']}, but DNS has this assigned to #{record["name"]}. Skipping, since this is not a node record."
-                event.type = 'dns_replace_record'
-                event.properties['node_id'] = node.id
-                event.save!
+                if hostname_regex.match(record['name'])
+                  pdns_client.delete_record(record['id'])
+                  event = Optopus::Event.new
+                  event.message = "WARNING: #{node.hostname} has OOB IP #{node.facts['bmc_ip_address']}, but DNS has this assigned to #{record["name"]}. Deleting."
+                  event.type = 'dns_replace_record'
+                  event.properties['node_id'] = node.id
+                  event.save!
+                else
+                  event = Optopus::Event.new
+                  event.message = "WARNING: #{node.hostname} has OOB IP #{node.facts['bmc_ip_address']}, but DNS has this assigned to #{record["name"]}. Skipping, since this is not a node record."
+                  event.type = 'dns_replace_record'
+                  event.properties['node_id'] = node.id
+                  event.save!
+                end
               end
 
               pdns_client.create_record(
@@ -264,7 +265,6 @@ module Optopus
               event.properties['node_id'] = node.id
               event.save!
             elsif oob_hostname_record
-              # stub
               if !oob_hostname_record['content'].eql? node.facts['bmc_ip_address']
                 old_ip = hostname_record['content']
                 new_ip = node.facts['bmc_ip_address']
