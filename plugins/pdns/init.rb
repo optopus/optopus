@@ -273,11 +273,10 @@ module Optopus
             elsif oob_hostname_record
               if !oob_hostname_record['content'].eql? node.facts['bmc_ip_address']
                 old_ip = hostname_record['content']
-                new_ip = node.facts['bmc_ip_address']
                 pdns_client.update_record(hostname_record['id'],:content => node.facts['bmc_ip_address'])
 
                 event = Optopus::Event.new
-                event.message = "Updated A record for oob#{node.hostname} from #{old_ip} to #{new_ip}"
+                event.message = "Updated A record for oob#{node.hostname} from #{old_ip} to #{node.facts['bmc_ip_address']}"
                 event.type = 'dns_oob_update'
                 event.properties['node_id'] = node.id
                 event.save!
