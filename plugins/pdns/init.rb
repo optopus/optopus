@@ -216,12 +216,10 @@ module Optopus
             end
           end
 
-          # ----------- OOB ------------
           if node.facts.include?("bmc_ip_address")
-            # Similar to above, we need to make the OOB records self-healing
-            oob_ip_record       = pdns_client.record_from_content(node.facts['bmc_ip_address'])
-            oob_hostname_record = pdns_client.record_from_hostname("oob#{node.hostname}")
-            domain              = pdns_client.domain_from_name(node.facts['domain'])
+            oob_ip_record = pdns_client.record_from_content(node.facts['bmc_ip_address'])
+            oob_hostname_record = pdns_client.record_from_hostname("oob" + node.hostname)
+            domain = pdns_client.domain_from_name(node.facts['domain'])
             if oob_hostname_record.nil? && oob_ip_record.nil? && !domain.nil?
               pdns_client.create_record(
                 :domain_id => "#{domain['id']}",
@@ -230,7 +228,6 @@ module Optopus
                 :content   => "#{node.facts['bmc_ip_address']}",
                 :ttl       => "600"
               )
-
               event = Optopus::Event.new
               event.message = "Creating DNS records for oob#{node.hostname} pointing to IP #{node.facts['bmc_ip_address']}."
               event.type = 'dns_create_oob_record'
@@ -248,6 +245,20 @@ module Optopus
                   event.type = 'dns_replace_oob_record'
                   event.properties['node_id'] = node.id
                   event.save!
+
+                  pdns_client.create_record(
+                    :domain_id => "#{domain['id']}",
+                    :name      => "oob#{node.hostname}",
+                    :type      => "A",
+                    :content   => "#{node.facts['bmc_ip_address']}",
+                    :ttl       => "600"
+                  )
+
+                  event = Optopus::Event.new
+                  event.message = "Creating DNS records for oob#{node.hostname} pointing to IP #{node.facts['bmc_ip_address']}."
+                  event.type = 'dns_create_oob_record'
+                  event.properties['node_id'] = node.id
+                  event.save!
                 else
                   event = Optopus::Event.new
                   event.message = "WARNING: oob#{node.hostname} has IP #{node.facts['bmc_ip_address']}, but DNS has this assigned to #{record["name"]}. Skipping, since this is not a node record."
@@ -256,20 +267,6 @@ module Optopus
                   event.save!
                 end
               end
-
-              pdns_client.create_record(
-                :domain_id => "#{domain['id']}",
-                :name      => "oob#{node.hostname}",
-                :type      => "A",
-                :content   => "#{node.facts['bmc_ip_address']}",
-                :ttl       => "600"
-              )
-
-              event = Optopus::Event.new
-              event.message = "Creating DNS records for oob#{node.hostname} pointing to IP #{node.facts['bmc_ip_address']}."
-              event.type = 'dns_create_oob_record'
-              event.properties['node_id'] = node.id
-              event.save!
             elsif oob_hostname_record
               if !oob_hostname_record['content'].eql? node.facts['bmc_ip_address']
                 old_ip = hostname_record['content']
