@@ -44,6 +44,9 @@ module Optopus
     enable :method_override
     use Rack::Flash
 
+    # Set timeout on the session to 14 hours
+    set :sessions, :expire_after => 50400
+
     # Add QA to environments
     set :environments, %w{development test production qa}
 
