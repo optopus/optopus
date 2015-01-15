@@ -220,7 +220,7 @@ module Optopus
           if node.facts.include?("bmc_ip_address")
             unless node.facts["bmc_ip_address"].nil? || node.facts["bmc_ip_address"] == "0.0.0.0" || node.facts["bmc_ip_address"] == node.facts["ipaddress"]
               oob_ip_record       = pdns_client.record_from_content(node.facts['bmc_ip_address'])
-              oob_hostname_record = pdns_client.record_from_hostname("oob" + node.hostname)
+              oob_hostname_record = pdns_client.record_from_hostname("oob#{node.hostname}")
               domain              = pdns_client.domain_from_name(node.facts['domain'])
 
               if oob_hostname_record.nil? && oob_ip_record.nil? && !domain.nil?
@@ -240,9 +240,9 @@ module Optopus
                 # If we get a match, nuke all records with this IP if they match the regex, then replace them
                 oob_records = pdns_client.records_from_content(node.facts['bmc_ip_address'])
 
-                oob_records.each do |record|
-                  if hostname_regex.match(record['name'])
-                    pdns_client.delete_record(record['id'])
+                oob_records.each do |oob_record|
+                  if hostname_regex.match(oob_record['name'])
+                    pdns_client.delete_record(oob_record['id'])
                     event                       = Optopus::Event.new
                     event.message               = "WARNING: oob#{node.hostname} has IP #{node.facts['bmc_ip_address']}, but DNS has this assigned to #{record["name"]}. Deleting."
                     event.type                  = 'dns_replace_oob_record'
@@ -278,8 +278,8 @@ module Optopus
 
               elsif oob_hostname_record
                 if !oob_hostname_record['content'].eql? node.facts['bmc_ip_address']
-                  old_ip = hostname_record['content']
-                  pdns_client.update_record(hostname_record['id'],:content => node.facts['bmc_ip_address'])
+                  old_ip = oob_hostname_record['content']
+                  pdns_client.update_record(oob_hostname_record['id'],:content => node.facts['bmc_ip_address'])
 
                   event                       = Optopus::Event.new
                   event.message               = "Updated A record for oob#{node.hostname} from #{old_ip} to #{node.facts['bmc_ip_address']}"
