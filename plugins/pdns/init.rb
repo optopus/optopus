@@ -260,7 +260,7 @@ module Optopus
                 # Verify that no record are using this IP now
                 oob_records = pdns_client.records_from_content(node.facts['bmc_ip_address'])
 
-                if oob_records.empty?
+                if oob_records.count == 0
                   pdns_client.create_record(
                     :domain_id => "#{domain['id']}",
                     :name      => "oob#{node.hostname}",
