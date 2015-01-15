@@ -244,13 +244,13 @@ module Optopus
                   if hostname_regex.match(oob_record['name'])
                     pdns_client.delete_record(oob_record['id'])
                     event                       = Optopus::Event.new
-                    event.message               = "WARNING: oob#{node.hostname} has IP #{node.facts['bmc_ip_address']}, but DNS has this assigned to #{record["name"]}. Deleting."
+                    event.message               = "WARNING: oob#{node.hostname} has IP #{node.facts['bmc_ip_address']}, but DNS has this assigned to #{oob_record["name"]}. Deleting."
                     event.type                  = 'dns_replace_oob_record'
                     event.properties['node_id'] = node.id
                     event.save!
                   else
                     event = Optopus::Event.new
-                    event.message               = "WARNING: oob#{node.hostname} has IP #{node.facts['bmc_ip_address']}, but DNS has this assigned to #{record["name"]}. Skipping, since this is not a node record."
+                    event.message               = "WARNING: oob#{node.hostname} has IP #{node.facts['bmc_ip_address']}, but DNS has this assigned to #{oob_record["name"]}. Skipping, since this is not a node record."
                     event.type                  = 'dns_replace_oob_record'
                     event.properties['node_id'] = node.id
                     event.save!
