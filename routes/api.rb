@@ -164,6 +164,7 @@ module Optopus
         hypervisors = Optopus::Hypervisor.search(:size => 1500) do
           fields 'libvirt.domains.name', :hostname
           query { string '*:*' }
+          sort { by :hostname, 'desc' }
         end
         node_lookup = {}
         node_lookup = hypervisors.inject({}) do |l, h|
