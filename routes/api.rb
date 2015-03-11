@@ -166,7 +166,7 @@ module Optopus
         if node.virtual
           hypervisor_search = node.find_hypervisor_host
 
-          if hypervisor_search.results
+          unless hypervisor_search.results.empty?
             hypervisor = hypervisor_search.results.first["hostname"]
           else
             hypervisor = nil
