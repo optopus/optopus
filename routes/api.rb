@@ -160,7 +160,7 @@ module Optopus
 
     get '/api/node/:name' do
       begin
-        node = Optopus::Node.find_by_hostname(params[:name]).to_hash
+        node = Optopus::Node.find_by_hostname(params[:name])
         raise "No node named '#{params[:name]}'" if node.nil?
 
         hypervisor      = display_unstyled_list_from_array(node.find_hypervisor_host)
@@ -170,8 +170,10 @@ module Optopus
           }
         }
 
-        node.merge!(hypervisor_hash)
-        body(node.to_json)
+        node_hash = node.to_hash
+
+        node_hash.merge!(hypervisor_hash)
+        body(node_hash.to_json)
       rescue Exception => e
         status 500
         body({ :server_error => e.to_s })
