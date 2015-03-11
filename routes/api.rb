@@ -163,17 +163,20 @@ module Optopus
         node = Optopus::Node.find_by_hostname(params[:name])
         raise "No node named '#{params[:name]}'" if node.nil?
 
-        hypervisor      = display_unstyled_list_from_array(node.find_hypervisor_host)
-        hypervisor_hash = {
-          :node => {
-            :hypervisor => hypervisor,
+        if node.virtual
+          hypervisor      = node.find_hypervisor_host
+          hypervisor_hash = {
+            :hypervisor => hypervisor.results.first["hostname"],
           }
-        }
 
-        node_hash = node.to_hash
+          node_hash = node.to_hash
 
-        node_hash.merge!(hypervisor_hash)
-        body(node_hash.to_json)
+          node_hash.merge!(hypervisor_hash)
+          body(node_hash.to_json)
+        else
+          body(node.to_json)
+        end
+
       rescue Exception => e
         status 500
         body({ :server_error => e.to_s })
