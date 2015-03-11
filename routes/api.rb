@@ -166,7 +166,7 @@ module Optopus
         if node.virtual
           hypervisor      = node.find_hypervisor_host
           hypervisor_hash = {
-            :hypervisor => hypervisor.results.first["hostname"],
+            :hypervisor => hypervisor.results.first["hostname"] rescue nil,
           }
 
           node_hash = node.to_hash
