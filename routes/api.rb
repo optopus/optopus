@@ -158,6 +158,17 @@ module Optopus
       body(events.to_json)
     end
 
+    get '/api/node/:name' do
+      begin
+        node = Optopus::Node.find_by_hostname(params[:name])
+        raise "No node named '#{params[:name]}'" if node.nil?
+        body(node.to_json)
+      rescue Exception => e
+        status 500
+        body({ :server_error => e.to_s })
+      end
+    end
+
     get '/api/nodes/active' do
       begin
         results = []
