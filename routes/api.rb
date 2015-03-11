@@ -164,9 +164,16 @@ module Optopus
         raise "No node named '#{params[:name]}'" if node.nil?
 
         if node.virtual
-          hypervisor      = node.find_hypervisor_host
+          hypervisor_search = node.find_hypervisor_host
+
+          if hypervisor_search.results
+            hypervisor = hypervisor_search.results.first["hostname"]
+          else
+            hypervisor = nil
+          end
+
           hypervisor_hash = {
-            :hypervisor => hypervisor.results.first["hostname"] || nil,
+            :hypervisor => hypervisor,
           }
 
           node_hash = node.to_hash
