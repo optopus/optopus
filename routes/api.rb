@@ -185,8 +185,8 @@ module Optopus
         end
 
       rescue Exception => e
-        status 500
-        body({ :server_error => e.to_s })
+        status 404
+        body({ :server_error => "Node not found" })
       end
     end
 
