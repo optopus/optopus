@@ -170,9 +170,7 @@ module Optopus
           }
         }
 
-        node_hash = node.to_json
-
-        node_hash.merge!(hypervisor_hash)
+        node.merge!(hypervisor_hash)
         body(node.to_json)
       rescue Exception => e
         status 500
