@@ -160,7 +160,7 @@ module Optopus
 
     get '/api/node/:name' do
       begin
-        node = Optopus::Node.find_by_hostname(params[:name])
+        node = Optopus::Node.find_by_hostname(params[:name]).to_hash
         raise "No node named '#{params[:name]}'" if node.nil?
 
         hypervisor      = display_unstyled_list_from_array(node.find_hypervisor_host)
