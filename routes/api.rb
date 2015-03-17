@@ -158,6 +158,38 @@ module Optopus
       body(events.to_json)
     end
 
+    get '/api/node/:name' do
+      begin
+        node = Optopus::Node.find_by_hostname(params[:name])
+        raise "No node named '#{params[:name]}'" if node.nil?
+
+        if node.virtual
+          hypervisor_search = node.find_hypervisor_host
+
+          unless hypervisor_search.results.empty?
+            hypervisor = hypervisor_search.results.first["hostname"]
+          else
+            hypervisor = nil
+          end
+
+          hypervisor_hash = {
+            :hypervisor => hypervisor,
+          }
+
+          node_hash = node.to_hash
+
+          node_hash.merge!(hypervisor_hash)
+          body(node_hash.to_json)
+        else
+          body(node.to_json)
+        end
+
+      rescue Exception => e
+        status 404
+        body({ :server_error => "Node not found" })
+      end
+    end
+
     get '/api/nodes/active' do
       begin
         results = []
