@@ -66,7 +66,7 @@ module Optopus
       end
     end
 
-    delete '/node/:id', :auth => :admin do
+    delete '/node/:id', :auth => [:admin, :server_admin] do
       node = Optopus::Node.where(:id => params[:id]).first
       begin
         node.destroy
@@ -79,7 +79,7 @@ module Optopus
     end
 
     # assign a node to a pod
-    post '/node/:id/pod', :auth => :admin do
+    post '/node/:id/pod', :auth => [:admin, :server_admin] do
       node = Optopus::Node.where(:id => params[:id]).first
       begin
         raise "Node '#{params[:id]}' does not exists." if node.nil?
@@ -97,7 +97,7 @@ module Optopus
     end
 
     # mark node as dead
-    post '/node/:id/inactive', :auth => :admin do
+    post '/node/:id/inactive', :auth => [:admin, :server_admin] do
       node = Optopus::Node.where(:id => params[:id]).first
       begin
         raise "Node '#{params[:id]}' does not exists." if node.nil?
@@ -158,7 +158,7 @@ module Optopus
       end
     end
 
-    get '/node/:id/add_property', :auth => :admin do
+    get '/node/:id/add_property', :auth => [:admin, :server_admin] do
       @node = Optopus::Node.where(:id => params[:id]).first
       @property_action = "/node/#{params[:id]}/add_property"
       @key_placeholder = "ex: core_count"
@@ -166,7 +166,7 @@ module Optopus
       erb :add_property
     end
 
-    post '/node/:id/add_property', :auth => :admin do
+    post '/node/:id/add_property', :auth => [:admin, :server_admin] do
       begin
         @node = Optopus::Node.where(:id => params[:id]).first
         validate_param_presence 'property-key', 'property-value'
@@ -185,7 +185,7 @@ module Optopus
       redirect back
     end
 
-    get '/node/:id/remove_property', :auth => :admin do
+    get '/node/:id/remove_property', :auth => [:admin, :server_admin] do
       @node = Optopus::Node.where(:id => params[:id]).first
       @property_action = "/node/#{params[:id]}/remove_property"
       @title = "Remove property for #{@node.hostname}"
@@ -193,7 +193,7 @@ module Optopus
       erb :remove_property
     end
 
-    delete '/node/:id/remove_property', :auth => :admin do
+    delete '/node/:id/remove_property', :auth => [:admin, :server_admin] do
       begin
         @node = Optopus::Node.where(:id => params[:id]).first
         validate_param_presence 'property-key'

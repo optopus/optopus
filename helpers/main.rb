@@ -42,8 +42,22 @@ module Optopus::AppHelpers::Main
     return @is_admin
   end
 
+  def is_server_admin?
+    return @is_server_admin if @is_server_admin != nil
+    if is_user?
+      @is_server_admin = @user.roles.where(:id => server_admin_role.id).first != nil
+    else
+      @is_server_admin = false
+    end
+    return @is_server_admin
+  end
+
   def admin_role
     @admin_role ||= Optopus::Role.where(:name => 'admin').first
+  end
+
+  def server_admin_role
+    @server_admin_role ||= Optopus::Role.where(:name => 'server_admin').first
   end
 
   def locations

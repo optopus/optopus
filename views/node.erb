@@ -1,6 +1,6 @@
 <% if @node %>
   <div class="row-fluid">
-    <% if is_admin? %>
+    <% if is_admin?  || is_server_admin? %>
       <div class="span2">
         <%= erb :node_admin_menu %>
       </div>
