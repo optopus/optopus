@@ -115,6 +115,7 @@ module Optopus
 
     # List of roles to include by default
     Optopus::Models.ensure_exists('Optopus::Role', :name => 'network_admin')
+    Optopus::Models.ensure_exists('Optopus::Role', :name => 'server_admin')
 
     # ensure any data registered by plugins exists
     # and that any mixins are included
