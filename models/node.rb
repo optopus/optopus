@@ -327,6 +327,7 @@ module Optopus
         query do
           boolean do
             must { term :active, true }
+            must { term :hostname, /^ops-kvm/ }
             must { term :location, location } if location
             ranges.each do |field, value|
               must { range field, value }
