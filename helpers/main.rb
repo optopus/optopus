@@ -113,7 +113,7 @@ module Optopus::AppHelpers::Main
       'progress-success'
     when 21..60
       'progress-info'
-    when 61..90
+    when 61..80
       'progress-warning'
     else
       'progress-danger'

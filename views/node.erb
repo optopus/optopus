@@ -124,17 +124,24 @@
         <section id="hypervisor">
           <div class="page-header">
             <h3>Hypervisor Data</h3>
-            <small>Data gathered from the libvirtd mcollective agent</small>
+            <small>Available resources on this Hypervisor (data gathered from the libvirtd mcollective agent)</small>
           </div>
           <% if @node.libvirt_data.include?('cpu_utilization') || @node.libvirt_data.include?('memory_utilization')  || @node.libvirt_data.include?('disk_utilization') %>
+          <% # set our variables up here for cleanliness %>
+
+
             <table class="table table-condensed">
               <% if @node.libvirt_data.include?('cpu_utilization') %>
                 <tr>
-                  <td style="width: 150px">Provisioned CPU (<%= @node.libvirt_data['cpu_utilization'] %>%)</td>
+                  <td style="width: 150px">
+                      Allocated CPU
+                      <br />
+                      <%= @node.libvirt_data["node_running_cpus"] %> core(s) used of <%= @node.libvirt_data["node_total_cpus"] %>
+                  </td>
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['cpu_utilization'].to_i) %>">
                       <div class="bar" style="width: <%= @node.libvirt_data['cpu_utilization'] %>%">
-                        Test
+                        <%= @node.libvirt_data['cpu_utilization'] %>%
                       </div>
                     </div>
                   </td>
@@ -142,20 +149,32 @@
               <% end %>
               <% if @node.libvirt_data.include?('memory_utilization') %>
                 <tr>
-                  <td style="width: 150px">Provisioned RAM (<%= @node.libvirt_data['memory_utilization'] %>%)</td>
+                  <td style="width: 150px">
+                    Allocated RAM
+                    <br />
+                    <%= (((@node.libvirt_data["node_total_memory"]) * 1024) - @node.libvirt_data["node_free_memory"]) / (1024 ** 3) %> GB of <%= (@node.libvirt_data["node_total_memory"]) / (1024 ** 2) %> GB used
+                  </td>
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['memory_utilization'].to_i) %>">
-                      <div class="bar" style="width: <%= @node.libvirt_data['memory_utilization'] %>%"></div>
+                      <div class="bar" style="width: <%= @node.libvirt_data['memory_utilization'] %>%">
+                        <%= @node.libvirt_data['memory_utilization'] %>%
+                      </div>
                     </div>
                   </td>
                 </tr>
               <% end %>
               <% if @node.libvirt_data.include?('disk_utilization') %>
                 <tr>
-                  <td style="width: 150px">Provisioned Disk (<%= @node.libvirt_data['disk_utilization'] %>%)</td>
+                  <td style="width: 150px">
+                    Allocated Disk
+                    <br />
+                    <%= @node.libvirt_data["used_disk"] / (1024 ** 3) %> GB of <%= (@node.libvirt_data["used_disk"] + @node.libvirt_data["free_disk"]) / (1024 ** 3) %> GB used
+                    </td>
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['disk_utilization'].to_i) %>">
-                      <div class="bar" style="width: <%= @node.libvirt_data['disk_utilization'] %>%"></div>
+                      <div class="bar" style="width: <%= @node.libvirt_data['disk_utilization'] %>%">
+                        <%= @node.libvirt_data['disk_utilization'] %>%
+                      </div>
                     </div>
                   </td>
                 </tr>
