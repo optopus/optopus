@@ -130,17 +130,19 @@
             <table class="table table-condensed">
               <% if @node.libvirt_data.include?('cpu_utilization') %>
                 <tr>
-                  <td style="width: 150px">CPU Utilization (<%= @node.libvirt_data['cpu_utilization'] %>%)</td>
+                  <td style="width: 150px">Provisioned CPU (<%= @node.libvirt_data['cpu_utilization'] %>%)</td>
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['cpu_utilization'].to_i) %>">
-                      <div class="bar" style="width: <%= @node.libvirt_data['cpu_utilization'] %>%"></div>
+                      <div class="bar" style="width: <%= @node.libvirt_data['cpu_utilization'] %>%">
+                        Test
+                      </div>
                     </div>
                   </td>
                 </tr>
               <% end %>
               <% if @node.libvirt_data.include?('memory_utilization') %>
                 <tr>
-                  <td style="width: 150px">Memory Utilization (<%= @node.libvirt_data['memory_utilization'] %>%)</td>
+                  <td style="width: 150px">Provisioned RAM (<%= @node.libvirt_data['memory_utilization'] %>%)</td>
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['memory_utilization'].to_i) %>">
                       <div class="bar" style="width: <%= @node.libvirt_data['memory_utilization'] %>%"></div>
@@ -150,7 +152,7 @@
               <% end %>
               <% if @node.libvirt_data.include?('disk_utilization') %>
                 <tr>
-                  <td style="width: 150px">Disk Utilization (<%= @node.libvirt_data['disk_utilization'] %>%)</td>
+                  <td style="width: 150px">Provisioned Disk (<%= @node.libvirt_data['disk_utilization'] %>%)</td>
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['disk_utilization'].to_i) %>">
                       <div class="bar" style="width: <%= @node.libvirt_data['disk_utilization'] %>%"></div>
