@@ -124,12 +124,9 @@
         <section id="hypervisor">
           <div class="page-header">
             <h3>Hypervisor Data</h3>
-            <small>Available resources on this Hypervisor (data gathered from the libvirtd mcollective agent)</small>
+            <small>Available resources on this hypervisor</small>
           </div>
           <% if @node.libvirt_data.include?('cpu_utilization') || @node.libvirt_data.include?('memory_utilization')  || @node.libvirt_data.include?('disk_utilization') %>
-          <% # set our variables up here for cleanliness %>
-
-
             <table class="table table-condensed">
               <% if @node.libvirt_data.include?('cpu_utilization') %>
                 <tr>
