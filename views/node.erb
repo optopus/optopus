@@ -134,9 +134,9 @@
               <% if @node.libvirt_data.include?('cpu_utilization') %>
                 <tr>
                   <td style="width: 150px">
-                      Allocated CPU
-                      <br />
-                      <%= @node.libvirt_data["node_running_cpus"] %> core(s) used of <%= @node.libvirt_data["node_total_cpus"] %>
+                    Allocated CPU
+                    <br />
+                    <%= @node.libvirt_data["node_running_cpus"] %> core(s) of <%= @node.libvirt_data["node_total_cpus"] %> used
                   </td>
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['cpu_utilization'].to_i) %>">
