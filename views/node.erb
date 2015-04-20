@@ -138,7 +138,7 @@
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['cpu_utilization'].to_i) %>">
                       <div class="bar" style="width: <%= @node.libvirt_data['cpu_utilization'] %>%">
-                        <%= @node.libvirt_data['cpu_utilization'] %>% allocated - <%= @node.libvirt_data["node_total_cpus"] -  @node.libvirt_data["node_running_cpus"] %> cores available
+                        <%= @node.libvirt_data['cpu_utilization'] %>% allocated - <%= @node.libvirt_data["node_free_cpus"] %> cores available
                       </div>
                     </div>
                   </td>
