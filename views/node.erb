@@ -137,7 +137,14 @@
                   </td>
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['cpu_utilization'].to_i) %>">
-                      <div class="bar" style="width: <%= @node.libvirt_data['cpu_utilization'] %>%">
+                      <%
+                        if @node.libvirt_data['cpu_utilization'] < 20
+                          cpu_width = 20
+                        else
+                          cpu_width = @node.libvirt_data['cpu_utilization']
+                        end
+                      %>
+                      <div class="bar" style="width: <%= cpu_width %>%">
                         <%= @node.libvirt_data['cpu_utilization'] %>% allocated - <%= @node.libvirt_data["node_free_cpus"] %> cores available
                       </div>
                     </div>
@@ -153,7 +160,14 @@
                   </td>
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['memory_utilization'].to_i) %>">
-                      <div class="bar" style="width: <%= @node.libvirt_data['memory_utilization'] %>%">
+                      <%
+                        if @node.libvirt_data['memory_utilization'] < 20
+                          memory_width = 20
+                        else
+                          memory_width = @node.libvirt_data['memory_utilization']
+                        end
+                      %>
+                      <div class="bar" style="width: <%= memory_width %>%">
                         <%= @node.libvirt_data['memory_utilization'] %>% allocated - <%= @node.libvirt_data["node_free_memory"] / (1024 ** 3) %> GB available
                       </div>
                     </div>
@@ -169,7 +183,14 @@
                   </td>
                   <td>
                     <div class="progress <%= progress_style(@node.libvirt_data['disk_utilization'].to_i) %>">
-                      <div class="bar" style="width: <%= @node.libvirt_data['disk_utilization'] %>%">
+                      <%
+                        if @node.libvirt_data['disk_utilization'] < 20
+                          disk_width = 20
+                        else
+                          disk_width = @node.libvirt_data['disk_utilization']
+                        end
+                      %>
+                      <div class="bar" style="width: <%= disk_width %>%">
                         <%= @node.libvirt_data['disk_utilization'] %>% allocated - <%= @node.libvirt_data["free_disk"] / (1024 ** 3) %> GB available
                       </div>
                     </div>
