@@ -520,8 +520,39 @@ module Optopus
     end
 
     get '/api/devices/:location/new' do
-      location = Optopus::Location.find_by_common_name(params[:location])
-      device = Optopus::Device.where(:location_id => location, :provisioned => false).to_json
+      begin
+        location = Optopus::Location.find_by_common_name(params[:location])
+        device = Optopus::Device.where(:location_id => location, :provisioned => false).to_json if location != nil
+        raise "Unknown location #{params[:location]}" if location == nil
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    get '/api/location/:location/nodes' do
+      begin
+        location = Optopus::Location.find_by_common_name(params[:location]) || nil
+        location.nodes.to_json if location != nil
+        raise "Unknown location #{params[:location]}" if location == nil
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    get '/api/environment/:environment/nodes' do
+      begin
+        nodes = Optopus::Node.where("facts @> 'environment => #{params[:environment]}'")
+        raise "No results" if nodes.count <= 0
+        nodes.to_json if nodes.count > 0
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
     end
   end
 end
