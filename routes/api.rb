@@ -523,5 +523,10 @@ module Optopus
       location = Optopus::Location.find_by_common_name(params[:location])
       device = Optopus::Device.where(:location_id => location, :provisioned => false).to_json
     end
+
+    get '/api/devices/:location' do
+      location = Optopus::Location.find_by_common_name(params[:location])
+      device = Optopus::Device.where(:location_id => location, :provisioned => true).to_json
+    end
   end
 end
