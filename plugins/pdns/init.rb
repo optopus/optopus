@@ -98,9 +98,9 @@ module Optopus
           ptr_host_record = pdns_client.record_from_content(node.hostname, 'PTR')
           ptr_ip_record   = pdns_client.record_from_hostname(ptr_address, 'PTR')
 
-          ## force admins to manually create/update dns for Docker nodes or anything with a tunnel device
+          ## force admins to manually create/update dns for anything with a tunnel device
           ## Only do this if there's no record for this hostname already
-          if !hostname_record && node.facts['interfaces'] && node.facts['interfaces'].include?("tun") or node.facts['interfaces'].include?("docker")
+          if !hostname_record && node.facts['interfaces'] && node.facts['interfaces'].include?("tun")
             #event = Optopus::Event.new
             #event.message = "The node '#{node.hostname}/(#{node.facts['ipaddress']})' has an unsupported interface. Please create this record manually."
             #event.type = 'dns_create_failed'
