@@ -18,37 +18,8 @@ module Optopus
           record.nil? ? false : record['content'] == self.facts['ipaddress']
         end
 
-        def has_ptr_record?
-          !ptr_record.nil?
-        end
-
         def a_record
           pdns_client.record_from_hostname(self.hostname)
-        end
-
-        def ptr_record
-          pdns_client.record_from_content(self.hostname, 'PTR')
-        end
-
-        def set_ptr_record!
-          ip = IPAddr.new(self.facts['ipaddress'])
-          record = ptr_record
-
-          if record.nil?
-            # TODO: this needs to be configurable, basically we take
-            # 117.2.8.10.in-addr.arpa and turn it into 10.in-addr.arpa as the reverse dns zone
-            domain = pdns_client.domain_from_name(ip.reverse.split('.').last(3).join('.'))
-            pdns_client.create_record(
-              :domain_id => domain['id'].to_s,
-              :name      => ip.reverse,
-              :type      => 'PTR',
-              :content   => self.hostname,
-              :ttl       => '600'
-            )
-          else
-            pdns_client.update_record(record['id'], :name => ip.reverse)
-          end
-          nil
         end
 
         def set_a_record!
@@ -93,11 +64,6 @@ module Optopus
           ip_record       = pdns_client.record_from_content(node.facts['ipaddress'])
           hostname_record = pdns_client.record_from_hostname(node.hostname)
 
-          # PTR record data for checks
-          ptr_address     = node.facts['ipaddress'].split(".",4).reverse.join('.') + ".in-addr.arpa"
-          ptr_host_record = pdns_client.record_from_content(node.hostname, 'PTR')
-          ptr_ip_record   = pdns_client.record_from_hostname(ptr_address, 'PTR')
-
           ## force admins to manually create/update dns for anything with a tunnel device
           ## Only do this if there's no record for this hostname already
           if !hostname_record && node.facts['interfaces'] && node.facts['interfaces'].include?("tun")
@@ -107,40 +73,6 @@ module Optopus
             #event.properties['node_id'] = node.id
             #event.save!
             return
-          end
-
-          # Force a check of PTR records; for now, just see if they match our data.
-          # If not, delete them, and we'll create them below.
-
-          # If we have an IP record but no host record, nuke it
-          if ptr_ip_record && !ptr_host_record
-            ptr_records = pdns_client.records_from_hostname(ptr_address, 'PTR')
-            ptr_records.each do |record|
-              if hostname_regex.match(record['content'])
-                pdns_client.delete_record(record['id'])
-                event = Optopus::Event.new
-                event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but the DNS PTR record points to #{record["content"]}. Deleting."
-                event.type = 'dns_replace_ptr_record'
-                event.properties['node_id'] = node.id
-                event.save!
-              end
-            end
-            update_or_create_ptr(node)
-          end
-
-          ## Check to see if there are any other PTR records with our information; if so, kill them if they match our hostname filter
-          if ptr_host_record
-            ptr_records = pdns_client.records_from_hostname(ptr_address, 'PTR')
-            ptr_records.each do |record|
-              if hostname_regex.match(record['content']) && record['content'] != node.hostname
-                pdns_client.delete_record(record['id'])
-                event = Optopus::Event.new
-                event.message = "WARNING: #{node.hostname} has IP #{node.facts['ipaddress']}, but a duplicate DNS PTR record points to #{record["content"]}. Deleting."
-                event.type = 'dns_replace_ptr_record'
-                event.properties['node_id'] = node.id
-                event.save!
-              end
-            end
           end
 
           ## determine if ip of node already exists & if hostname matches
@@ -156,8 +88,6 @@ module Optopus
                 :content   => "#{node.facts['ipaddress']}",
                 :ttl       => "600"
               )
-              ## create PTR record while we're at it
-              update_or_create_ptr(node)
 
               event = Optopus::Event.new
               event.message = "Creating DNS records for #{node.hostname} pointing to IP #{node.facts['ipaddress']}."
@@ -201,13 +131,11 @@ module Optopus
               :content   => "#{node.facts['ipaddress']}",
               :ttl       => "600"
             )
-            update_or_create_ptr(node)
           elsif hostname_record
             if !hostname_record['content'].eql? node.facts['ipaddress']
               old_ip = hostname_record['content']
               new_ip = node.facts['ipaddress']
               pdns_client.update_record(hostname_record['id'],:content => node.facts['ipaddress'])
-              update_or_create_ptr(node)
               event = Optopus::Event.new
               event.message = "Updated A record for #{node.hostname} from #{old_ip} to #{new_ip}"
               event.type = 'dns_update'
@@ -229,30 +157,6 @@ module Optopus
                 :ttl       => "600"
               )
             end
-          end
-        end
-
-        def update_or_create_ptr(node)
-          pdns_client = Optopus::Plugin::PDNS.pdns_client
-          reverse = node.facts['ipaddress'].split(".",4).reverse.join('.') + ".in-addr.arpa"
-          ptr_record = pdns_client.record_from_content(node.hostname,"PTR")
-          if ptr_record.nil?
-            ## no ptr found, go ahead and create it.
-            ## TODO:
-            ## - we should do something like::  select * from domains where name rlike '^(33\.)?(2\.)?(1\.)?10.in-addr.arpa$';
-            ## - this method would match more reverse lookup zones in the hopes to find the most specific one
-            ## - for now we assume class A reverse address spece
-            reverse_domain = node.facts['ipaddress'].split(".",4)[0] + ".in-addr.arpa"
-            domain = pdns_client.domain_from_name(reverse_domain)
-            pdns_client.create_record(
-              :domain_id => "#{domain['id']}",
-              :name      => "#{reverse}",
-              :type      => "PTR",
-              :content   => "#{node.hostname}",
-              :ttl       => "600"
-            )
-          else
-            pdns_client.update_record(ptr_record['id'], :name => reverse)
           end
         end
       end
