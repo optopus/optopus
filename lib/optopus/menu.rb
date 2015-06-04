@@ -17,6 +17,7 @@ module Optopus
     events_submenu = Optopus::Menu::Section.new(:name => 'event_types')
     events_submenu.add_link(:display => 'Network Events', :href => '/events/network')
     events_submenu.add_link(:display => 'Provision Events', :href => '/events/provision')
+    events_submenu.add_link(:display => 'Deployment Events', :href => '/events/deploy')
     events_submenu.add_link(:display => 'All Events', :href => '/events')
     events_menu.sections << events_submenu
 
