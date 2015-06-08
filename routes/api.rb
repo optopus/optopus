@@ -531,6 +531,7 @@ module Optopus
       end
     end
 
+    # ALL nodes in a given location
     get '/api/location/:location/nodes' do
       begin
         location = Optopus::Location.find_by_common_name(params[:location]) || nil
@@ -543,9 +544,62 @@ module Optopus
       end
     end
 
+    # Active nodes in a given location
+    get '/api/location/:location/nodes/active' do
+      begin
+        location = Optopus::Location.find_by_common_name(params[:location]) || nil
+        location.nodes.where(:active => true).to_json if location != nil
+        raise "Unknown location #{params[:location]}" if location == nil
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    # Dead nodes in a given location
+    get '/api/location/:location/nodes/dead' do
+      begin
+        location = Optopus::Location.find_by_common_name(params[:location]) || nil
+        location.nodes.where(:active => false).to_json if location != nil
+        raise "Unknown location #{params[:location]}" if location == nil
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    # ALL nodes in a given environment
     get '/api/environment/:environment/nodes' do
       begin
         nodes = Optopus::Node.where("facts @> 'environment => #{params[:environment]}'")
+        raise "No results" if nodes.count <= 0
+        nodes.to_json if nodes.count > 0
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    # Active nodes in a given environment
+    get '/api/environment/:environment/nodes/active' do
+      begin
+        nodes = Optopus::Node.where(:active => true).where("facts @> 'environment => #{params[:environment]}'")
+        raise "No results" if nodes.count <= 0
+        nodes.to_json if nodes.count > 0
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
+    # Dead nodes in a given environment
+    get '/api/environment/:environment/nodes/dead' do
+      begin
+        nodes = Optopus::Node.where(:active => false).where("facts @> 'environment => #{params[:environment]}'")
         raise "No results" if nodes.count <= 0
         nodes.to_json if nodes.count > 0
       rescue Exception => e
