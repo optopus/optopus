@@ -1,6 +1,5 @@
 $: << File.expand_path(File.dirname(__FILE__) + '/lib')
 source "https://rubygems.org"
-source "http://gems.shuttercorp.net"
 
 gem 'rack', '1.4.1'
 gem "activesupport", "3.2.8"
