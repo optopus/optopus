@@ -67,7 +67,8 @@ module Optopus
     db_config_file = ENV['OPTOPUS_DATABASE_CONFIG_FILE'] || File.join(File.dirname(__FILE__), 'config', 'databases.yaml')
     db_config = YAML::load(File.open(db_config_file))[Optopus::App.environment.to_s]
     ActiveRecord::Base.establish_connection(db_config)
-    Tire::Configuration.url settings.elasticsearch[:url]
+
+    Tire::Configuration.url settings.elasticsearch[:hosts]
 
     # This should be moved out into it's own file, but this is a quick way to add
     # query tracing to find a line of code that shows the calling information.
@@ -157,4 +158,3 @@ module Optopus
     end
   end
 end
-
