@@ -329,10 +329,10 @@ module Optopus
           :mysql_username      => plugin_settings['mysql']['username'],
           :mysql_password      => plugin_settings['mysql']['password'],
           :mysql_database      => plugin_settings['mysql']['database'],
-          :hostname_regex      => plugin_settings['autoupdate']['hostname_regex']
-          :ns_default_content  => plugin_settings['ns_defaults']['content']
-          :ns_default_ttl      => plugin_settings['ns_defaults']['ttl']
-          :soa_default_content => plugin_settings['soa_defaults']['content']
+          :hostname_regex      => plugin_settings['autoupdate']['hostname_regex'],
+          :ns_default_content  => plugin_settings['ns_defaults']['content'],
+          :ns_default_ttl      => plugin_settings['ns_defaults']['ttl'],
+          :soa_default_content => plugin_settings['soa_defaults']['content'],
           :soa_default_ttl     => plugin_settings['soa_defaults']['ttl']
         }
         unless admin
