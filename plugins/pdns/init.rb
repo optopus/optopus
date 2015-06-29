@@ -325,11 +325,15 @@ module Optopus
 
       def self.pdns_client(admin=false)
         pdns_settings = {
-          :mysql_hostname => plugin_settings['mysql']['hostname'],
-          :mysql_username => plugin_settings['mysql']['username'],
-          :mysql_password => plugin_settings['mysql']['password'],
-          :mysql_database => plugin_settings['mysql']['database'],
-          :hostname_regex => plugin_settings['autoupdate']['hostname_regex']
+          :mysql_hostname      => plugin_settings['mysql']['hostname'],
+          :mysql_username      => plugin_settings['mysql']['username'],
+          :mysql_password      => plugin_settings['mysql']['password'],
+          :mysql_database      => plugin_settings['mysql']['database'],
+          :hostname_regex      => plugin_settings['autoupdate']['hostname_regex'],
+          :ns_default_content  => plugin_settings['ns_defaults']['content'],
+          :ns_default_ttl      => plugin_settings['ns_defaults']['ttl'],
+          :soa_default_content => plugin_settings['soa_defaults']['content'],
+          :soa_default_ttl     => plugin_settings['soa_defaults']['ttl']
         }
         unless admin
           pdns_settings[:restrict_domains] = plugin_settings['mysql']['restrict_domains']
@@ -367,7 +371,7 @@ module Optopus
       put '/pdns/domain', :auth => [:dns_admin, :admin] do
         begin
           validate_param_presence 'name'
-          pdns_client.create_domain(params['name'])
+          new_domain = pdns_client.create_domain(params['name'])
           flash[:success] = "Successfully created a domain for #{params['name']}!"
           register_event "{{ references.user.to_link }} created dns domain #{params['name']}", :type => 'dns_domain_create'
         rescue Exception => e
