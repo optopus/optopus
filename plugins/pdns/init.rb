@@ -88,10 +88,6 @@ module Optopus
           pdns_client         = Optopus::Plugin::PDNS.pdns_client
           autoupdate_settings = Optopus::Plugin::PDNS.autoupdate_settings
           hostname_regex      = Regexp.new(autoupdate_settings['hostname_regex'])
-          ns_default_content  = autoupdate_settings['ns_defaults']['content'].to_s
-          ns_default_ttl      = autoupdate_settings['ns_defaults']['ttl'].to_s
-          soa_default_content = autoupdate_settings['soa_defaults']['content'].to_s
-          soa_default_ttl     = autoupdate_settings['soa_defaults']['ttl'].to_s
 
           # A record data
           ip_record       = pdns_client.record_from_content(node.facts['ipaddress'])
@@ -333,7 +329,11 @@ module Optopus
           :mysql_username      => plugin_settings['mysql']['username'],
           :mysql_password      => plugin_settings['mysql']['password'],
           :mysql_database      => plugin_settings['mysql']['database'],
-          :hostname_regex      => plugin_settings['autoupdate']['hostname_regex']
+          :hostname_regex      => plugin_settings['autoupdate']['hostname_regex'],
+          :ns_default_content  => plugin_settings['ns_defaults']['content'],
+          :ns_default_ttl      => plugin_settings['ns_defaults']['ttl'],
+          :soa_default_content => plugin_settings['soa_defaults']['content'],
+          :soa_default_ttl     => plugin_settings['soa_defaults']['ttl']
         }
         unless admin
           pdns_settings[:restrict_domains] = plugin_settings['mysql']['restrict_domains']
@@ -372,24 +372,6 @@ module Optopus
         begin
           validate_param_presence 'name'
           new_domain = pdns_client.create_domain(params['name'])
-
-          # Create our NS and SOA records
-          pdns_client.create_record(
-            :domain_id => "#{new_domain['id']}",
-            :name      => "#{params['name']}",
-            :type      => "NS",
-            :content   => ns_default_content,
-            :ttl       => ns_default_ttl
-          )
-
-          pdns_client.create_record(
-            :domain_id => "#{new_domain['id']}",
-            :name      => "#{params['name']}",
-            :type      => "NS",
-            :content   => soa_default_content,
-            :ttl       => soa_default_ttl
-          )
-
           flash[:success] = "Successfully created a domain for #{params['name']}!"
           register_event "{{ references.user.to_link }} created dns domain #{params['name']}", :type => 'dns_domain_create'
         rescue Exception => e
