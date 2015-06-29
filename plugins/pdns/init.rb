@@ -88,6 +88,10 @@ module Optopus
           pdns_client         = Optopus::Plugin::PDNS.pdns_client
           autoupdate_settings = Optopus::Plugin::PDNS.autoupdate_settings
           hostname_regex      = Regexp.new(autoupdate_settings['hostname_regex'])
+          ns_default_content  = autoupdate_settings['ns_defaults']['content'].to_s
+          ns_default_ttl      = autoupdate_settings['ns_defaults']['ttl'].to_s
+          soa_default_content = autoupdate_settings['soa_defaults']['content'].to_s
+          soa_default_ttl     = autoupdate_settings['soa_defaults']['ttl'].to_s
 
           # A record data
           ip_record       = pdns_client.record_from_content(node.facts['ipaddress'])
@@ -269,11 +273,7 @@ module Optopus
           :mysql_username      => plugin_settings['mysql']['username'],
           :mysql_password      => plugin_settings['mysql']['password'],
           :mysql_database      => plugin_settings['mysql']['database'],
-          :hostname_regex      => plugin_settings['autoupdate']['hostname_regex'],
-          :ns_default_content  => plugin_settings['ns_defaults']['content'],
-          :ns_default_ttl      => plugin_settings['ns_defaults']['ttl'],
-          :soa_default_content => plugin_settings['soa_defaults']['content'],
-          :soa_default_ttl     => plugin_settings['soa_defaults']['ttl']
+          :hostname_regex      => plugin_settings['autoupdate']['hostname_regex']
         }
         unless admin
           pdns_settings[:restrict_domains] = plugin_settings['mysql']['restrict_domains']
@@ -318,16 +318,16 @@ module Optopus
             :domain_id => "#{new_domain['id']}",
             :name      => "#{params['name']}",
             :type      => "NS",
-            :content   => pdns_client.pdns_settings[:ns_default_content].to_s,
-            :ttl       => pdns_client.pdns_settings[:ns_default_ttl].to_s
+            :content   => ns_default_content,
+            :ttl       => ns_default_ttl
           )
 
           pdns_client.create_record(
             :domain_id => "#{new_domain['id']}",
             :name      => "#{params['name']}",
             :type      => "NS",
-            :content   => pdns_client.pdns_settings[:soa_default_content].to_s,
-            :ttl       => pdns_client.pdns_settings[:soa_default_ttl].to_s
+            :content   => soa_default_content,
+            :ttl       => soa_default_ttl
           )
 
           flash[:success] = "Successfully created a domain for #{params['name']}!"
