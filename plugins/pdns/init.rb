@@ -318,16 +318,16 @@ module Optopus
             :domain_id => "#{new_domain['id']}",
             :name      => "#{params['name']}",
             :type      => "NS",
-            :content   => pdns_settings[:ns_default_content].to_s,
-            :ttl       => pdns_settings[:ns_default_ttl].to_s
+            :content   => pdns_client.pdns_settings[:ns_default_content].to_s,
+            :ttl       => pdns_client.pdns_settings[:ns_default_ttl].to_s
           )
 
           pdns_client.create_record(
             :domain_id => "#{new_domain['id']}",
             :name      => "#{params['name']}",
             :type      => "NS",
-            :content   => pdns_settings[:soa_default_content].to_s,
-            :ttl       => pdns_settings[:soa_default_ttl].to_s
+            :content   => pdns_client.pdns_settings[:soa_default_content].to_s,
+            :ttl       => pdns_client.pdns_settings[:soa_default_ttl].to_s
           )
 
           flash[:success] = "Successfully created a domain for #{params['name']}!"
