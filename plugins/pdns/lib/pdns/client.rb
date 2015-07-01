@@ -4,15 +4,25 @@ module PDNS
 
   class Client
     def initialize(options={})
-      @mysql_hostname = options.delete(:mysql_hostname)
-      @mysql_username = options.delete(:mysql_username)
-      @mysql_password = options.delete(:mysql_password)
-      @mysql_database = options.delete(:mysql_database)
-      @restrict_domains = options.delete(:restrict_domains)
+      @mysql_hostname      = options.delete(:mysql_hostname)
+      @mysql_username      = options.delete(:mysql_username)
+      @mysql_password      = options.delete(:mysql_password)
+      @mysql_database      = options.delete(:mysql_database)
+      @restrict_domains    = options.delete(:restrict_domains)
+      @hostname_regex      = options.delete(:hostname_regex)
+      @ns_default_content  = options.delete(:ns_default_content)
+      @ns_default_ttl      = options.delete(:ns_default_ttl)
+      @soa_default_content = options.delete(:soa_default_content)
+      @soa_default_ttl     = options.delete(:soa_default_ttl)
       raise 'Missing mysql hostname' if @mysql_hostname.nil?
       raise 'Missing mysql username' if @mysql_username.nil?
       raise 'Missing mysql password' if @mysql_password.nil?
       raise 'Missing mysql database' if @mysql_database.nil?
+      raise 'Missing hostname regex' if @hostname_regex.nil?
+      raise 'Missing NS record default content' if @ns_default_content.nil?
+      raise 'Missing NS record default TTL' if @ns_default_ttl.nil?
+      raise 'Missing SOA record default content' if @soa_default_content.nil?
+      raise 'Missing SOA record default TTL' if @soa_default_ttl.nil?
     end
 
     def domains
@@ -95,6 +105,10 @@ module PDNS
       mysql_query("INSERT INTO domains SET name='#{escape(name)}', type='NATIVE'")
       domain = domain_from_name(name)
       mysql_query("INSERT INTO zones SET domain_id=#{domain['id']}, owner=1, zone_templ_id=1")
+
+      # Create NS and SOA records from the get-go
+      mysql_query("INSERT INTO records SET domain_id=#{domain['id']}, name='#{escape(name)}', type='NS', content='#{@ns_default_content}', ttl=#{@ns_default_ttl}, change_date=unix_timestamp(now())")
+      mysql_query("INSERT INTO records SET domain_id=#{domain['id']}, name='#{escape(name)}', type='SOA', content='#{@soa_default_content}', ttl=#{@soa_default_ttl}, change_date=unix_timestamp(now())")
       domain
     end
 
