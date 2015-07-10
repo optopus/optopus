@@ -453,7 +453,7 @@ module Optopus
     end
 
     # Route to mark nodes as down via the API
-    put '/api/node/:name/down' do
+    put '/api/node/:name/dead' do
       begin
         node = Optopus::Node.find_by_hostname(params[:name])
         node.active = false
