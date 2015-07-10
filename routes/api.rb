@@ -452,6 +452,20 @@ module Optopus
       end
     end
 
+    # Route to mark nodes as down via the API
+    put '/api/node/:name/dead' do
+      begin
+        node = Optopus::Node.find_by_hostname(params[:name])
+        node.active = false
+        node.save!
+        return { "status" => "ok" }.to_json
+      rescue Exception => e
+        logger.error(e.to_s)
+        logger.error(e.backtrace.join("\t\n"))
+        halt 400, { :error => e.to_s }.to_json
+      end
+    end
+
     def update_network(data)
       cidr          = data['cidr']
       location_name = data['location']
