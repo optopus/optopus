@@ -458,7 +458,7 @@ module Optopus
         node = Optopus::Node.find_by_hostname(params[:name])
         node.active = false
         node.save!
-        return { "status": "ok"}
+        return { "status" => "ok" }.to_json
       rescue Exception => e
         logger.error(e.to_s)
         logger.error(e.backtrace.join("\t\n"))
