@@ -17,5 +17,10 @@ module Optopus
     get '/reports' do
       erb :reports
     end
+
+    get '/healthcheck.html' do
+      content_type 'text/plain'
+      return "YESOK"
+    end
   end
 end
