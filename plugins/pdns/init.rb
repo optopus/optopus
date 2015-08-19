@@ -292,6 +292,21 @@ module Optopus
           end
         end
 
+        def after_destroy(node)
+          # Make sure we clean up after ourselves
+          ip_records = pdns_client.records_from_content(node.facts['ipaddress'])
+          ip_records.each do |record|
+            if hostname_regex.match(record['name'])
+              pdns_client.delete_record(record['id'])
+              event = Optopus::Event.new
+              event.message = "Deleting DNS records for #{node.hostname} pointing to #{node.facts['ipaddress']}"
+              event.type = 'dns_delete_record'
+              event.properties['node_id'] = node.id
+              event.save!
+            end
+          end
+        end
+
         def update_or_create_ptr(node)
           pdns_client = Optopus::Plugin::PDNS.pdns_client
           reverse = node.facts['ipaddress'].split(".",4).reverse.join('.') + ".in-addr.arpa"
