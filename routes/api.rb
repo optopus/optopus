@@ -517,7 +517,7 @@ module Optopus
       result = Optopus::Location.all.inject({}) do |result, location|
         meta = {}
         location.networks.each do |network|
-          meta[network.address.to_cidr] = { :description => network.description, :properties => network.properties, :id => network.vlan_id }
+          meta[network.address.to_cidr] = { :description => network.description, :properties => network.properties, :vlan_id => network.vlan_id }
         end
         result[location.common_name] = meta
         result
