@@ -294,7 +294,12 @@ module Optopus
 
         def after_destroy(node)
           # Make sure we clean up after ourselves
-          ip_records = pdns_client.records_from_content(node.facts['ipaddress'])
+
+          hostname_array      = node.hostname.split(".",2)
+          pdns_client         = Optopus::Plugin::PDNS.pdns_client
+          autoupdate_settings = Optopus::Plugin::PDNS.autoupdate_settings
+          hostname_regex      = Regexp.new(autoupdate_settings['hostname_regex'])
+          ip_records          = pdns_client.records_from_content(node.facts['ipaddress'])
           ip_records.each do |record|
             if hostname_regex.match(record['name'])
               pdns_client.delete_record(record['id'])
