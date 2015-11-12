@@ -75,10 +75,13 @@ module Optopus
         serial_number = params.delete('serial_number').downcase.strip
         location_name = params.delete('location_name').downcase.strip
         device = Optopus::Device.where(:primary_mac_address => primary_mac_address, :serial_number => serial_number).first
-        if device.nil?
-          device = Optopus::Device.new(:serial_number => serial_number, :primary_mac_address => primary_mac_address)
-          logger.info "New device found: #{device.serial_number} #{device.primary_mac_address}"
+        unless device.nil?
+          unless serial_number != device.serial_number
+            device.destroy!
+          end
         end
+        device = Optopus::Device.new(:serial_number => serial_number, :primary_mac_address => primary_mac_address)
+        logger.info "New device found: #{device.serial_number} #{device.primary_mac_address}"
         location = Optopus::Location.where(:common_name => location_name).first
         if location.nil?
           location = Optopus::Location.new(:common_name => location_name, :city => 'unknown', :state => 'unknown')
