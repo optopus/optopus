@@ -76,7 +76,7 @@ module Optopus
         location_name = params.delete('location_name').downcase.strip
         device = Optopus::Device.where(:primary_mac_address => primary_mac_address, :serial_number => serial_number).first
         unless device.nil?
-          unless serial_number != device.serial_number
+          unless serial_number == device.serial_number
             device.destroy!
           end
         end
